@@ -1,0 +1,37 @@
+#inputArea
+{
+	position: absolute;
+	left: 100px;
+	width: 300px;
+	height: 200px;
+}
+
+#countdown
+{
+	position: absolute;
+	right: 0;
+	top: 0;
+	font-size: 30px;
+}
+
+#referenceWord
+{
+	font-size: 20px;
+}
+
+#answerList
+{
+}
+
+#answerText
+{
+	position: absolute;
+	bottom: 0;
+}
+
+#button
+{
+	position: absolute;
+	bottom: 0;
+	font-size: 30px;
+}

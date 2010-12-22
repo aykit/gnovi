@@ -4,7 +4,7 @@ var StateEngine = new Class({
 		this.game = game;
 	},
 
-	start: function() {},
+	start: function(options) {},
 	end: function() {},
 	drawGame: function(context) {},
 	timerEvent: function(delta) {},
@@ -17,22 +17,29 @@ var StateEngineWait = new Class({
 
 	clickEvent: function(event)
 	{
-		this.game.setStateEngine(this.getNextStateEngine());
+		this.proceedToNextState();
 	},
 
 	keypressEvent: function(event)
 	{
 		if (event.event.keyCode == 13)
-			this.game.setStateEngine(this.getNextStateEngine());
+			this.proceedToNextState();
 
 		return true;
+	},
+
+	proceedToNextState: function()
+	{
+		var nextStateEngine = this.getNextStateEngine();
+		if (nextStateEngine)
+			this.game.setStateEngine(nextStateEngine);
 	},
 
 	getNextStateEngine: function() { },
 });
 
 var StateEngineStart = new Class({
-	Extends: StateEngine,
+	Extends: StateEngineWait,
 
 	drawGame: function(context)
 	{
@@ -44,16 +51,192 @@ var StateEngineStart = new Class({
 		context.fillText("click to start", 100, 20);
 	},
 
-	clickEvent: function(event)
+	getNextStateEngine: function() { return StateEngineWordCollecting; },
+});
+
+function fillTextRect(context, wordList, x, y, width, spacing, lineHeight)
+{
+	var wordOffsetX = 0;
+	var wordOffsetY = 0;
+
+	for (var i = 0; i < wordList.length; i++)
 	{
-		this.game.setStateEngine(StateEngineWordCollecting);
+		var textWidth = context.measureText(wordList[i]).width;
+
+		if (wordOffsetX != 0 && wordOffsetX + textWidth > width)
+		{
+			wordOffsetX = 0;
+			wordOffsetY += lineHeight;
+		}
+
+		context.fillText(wordList[i], x + wordOffsetX, y + wordOffsetY);
+
+		wordOffsetX += textWidth + spacing;
+	}
+}
+
+var StateEngineWordsFinished = new Class({
+	Extends: StateEngineWait,
+
+	start: function(options)
+	{
+		this.inputList = options;
+		this.game.setTimer(30);
+		this.fadeEffect = 0;
+	},
+
+	drawGame: function(context)
+	{
+		context.clearRect(0, 0, this.game.gameWidth, this.game.gameHeight);
+
+		context.fillStyle = "rgba(0, 0, 0, " + this.fadeEffect + ")";
+
+		context.font = "bold 20px Courier New";
+
+		context.fillText("Words entered:", 20, 20);
+
+		fillTextRect(context, this.inputList, 40, 50, 300, 10, 25);
+
+		if (this.fadeEffect < 1)
+			return;
+		context.font = "bold 14px Courier New";
+		context.fillText("press Enter to continue", 20, 300);
+	},
+
+	timerEvent: function(delta)
+	{
+		this.fadeEffect += delta / 2;
+		if (this.fadeEffect >= 1)
+		{
+			this.fadeEffect = 1;
+			this.game.setTimer(0);
+		}
+		this.game.draw();
+	},
+
+	getNextStateEngine: function()
+	{
+		if (this.fadeEffect >= 1)
+			return StateEngineStart;
+		else
+			return null;
+	},
+});
+
+var StateEngineWordsFinished = new Class({
+	Extends: StateEngineWait,
+
+	start: function(options)
+	{
+		this.inputList = options;
+		this.game.setTimer(30);
+		this.fadeEffect = 0;
+	},
+
+	drawGame: function(context)
+	{
+		context.clearRect(0, 0, this.game.gameWidth, this.game.gameHeight);
+
+		context.fillStyle = "rgba(0, 0, 0, " + this.fadeEffect + ")";
+
+		context.font = "bold 20px Courier New";
+
+		context.fillText("Words entered:", 20, 20);
+
+		fillTextRect(context, this.inputList, 40, 50, 300, 10, 25);
+
+		if (this.fadeEffect < 1)
+			return;
+		context.font = "bold 14px Courier New";
+		context.fillText("press Enter to continue", 20, 300);
+	},
+
+	timerEvent: function(delta)
+	{
+		this.fadeEffect += delta / 2;
+		if (this.fadeEffect >= 1)
+		{
+			this.fadeEffect = 1;
+			this.game.setTimer(0);
+		}
+		this.game.draw();
+	},
+
+	getNextStateEngine: function()
+	{
+		if (this.fadeEffect >= 1)
+			return StateEngineInputLocation;
+		else
+			return null;
+	},
+});
+
+var StateEngineInputLocation = new Class({
+	Extends: StateEngine,
+
+	start: function(options)
+	{
+	},
+
+	drawGame: function(context)
+	{
+		context.clearRect(0, 0, this.game.gameWidth, this.game.gameHeight);
+
+		context.fillStyle = "black";
+
+		context.font = "bold 20px Courier New";
+		context.fillText(Math.ceil(this.timeLeft), 400, 20);
+
+		context.fillText("Baum", 20, 20);
+
+		context.font = "bold 15px Courier New";
+		context.fillText(this.currentInputText, 20, 300);
+
+		for (var i = 0; i < this.inputList.length; i++)
+		{
+			var a = this.inputListAnimation[i];
+			var b = 1 - a;
+			context.fillText(this.inputList[i], 20, (i * 20 + 50) * a + 300 * b );
+		}
+	},
+
+	timerEvent: function(delta)
+	{
 	},
 
 	keypressEvent: function(event)
 	{
-		if (event.event.keyCode == 13)
-			this.game.setStateEngine(StateEngineWordCollecting);
+		if (this.timeLeft <= 0)
+			return true;
 
+		if (event.event.keyCode == 8)
+		{
+			this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
+			this.game.draw();
+			return false;
+		}
+
+		if (event.event.keyCode == 13)
+		{
+			if (this.currentInputText != "")
+			{
+				this.inputList.push(this.currentInputText);
+				this.inputListAnimation.push(0);
+
+				this.currentInputText = "";
+				this.game.draw();
+			}
+			return false;
+		}
+
+		if (event.event.keyCode == 32)
+			return false; // stop from scolling browser window
+
+		if (event.event.keyCode < 32)
+			return true;
+
+		this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
+		this.game.draw();
 		return true;
 	},
 });
@@ -171,9 +354,18 @@ var Game = new Class({
 
 		var context = this.gameCanvas.getContext('2d');
 		context.save();
+		context.shadowColor = "#aac";
+		context.shadowBlur = 4;
+		context.shadowOffsetX = 2;
+		context.shadowOffsetY = 2;
 		this.currentStateEngine.drawGame(context);
 		context.restore();
 
+		context.save();
+		context.shadowColor = "black";
+		context.shadowBlur = 2;
+		context.shadowOffsetX = 1;
+		context.shadowOffsetY = 1;
 		context.strokeStyle = "black";
 		context.fillStyle = "black";
 
@@ -181,14 +373,13 @@ var Game = new Class({
 		var txt = Math.round(1 / this.delta) + " fps";
 		context.fillText(txt, 460 - context.measureText(txt).width / 2, 380);
 
-		context.save();
 		context.translate(460, 350);
 		context.rotate(this.drawCount * 2 * Math.PI / 64);
 		context.strokeRect(-10, -10, 20, 20);
 		context.restore();
 	},
 
-	setStateEngine: function(stateEngineClass)
+	setStateEngine: function(stateEngineClass, options)
 	{
 		this.setTimer(0);
 
@@ -198,7 +389,7 @@ var Game = new Class({
 		if (stateEngineClass)
 		{
 			this.currentStateEngine = new stateEngineClass(this);
-			this.currentStateEngine.start();
+			this.currentStateEngine.start(options);
 			this.draw();
 		}
 		else

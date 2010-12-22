@@ -17,23 +17,16 @@ var StateEngineWait = new Class({
 
 	clickEvent: function(event)
 	{
-		this.proceedToNextState();
+		this.continueEvent();
 	},
 
 	keypressEvent: function(event)
 	{
 		if (event.event.keyCode == 13)
-			this.proceedToNextState();
+			this.continueEvent();
 	},
 
-	proceedToNextState: function()
-	{
-		var nextStateEngine = this.getNextStateEngine();
-		if (nextStateEngine)
-			this.game.setStateEngine(nextStateEngine);
-	},
-
-	getNextStateEngine: function() { },
+	continueEvent: function() { },
 });
 
 var StateEngineStart = new Class({
@@ -49,7 +42,7 @@ var StateEngineStart = new Class({
 		context.fillText("click to start", 100, 20);
 	},
 
-	getNextStateEngine: function() { return StateEngineWordCollecting; },
+	continueEvent: function() { this.game.setStateEngine(StateEngineWordCollecting); },
 });
 
 function fillTextRect(context, wordList, x, y, width, spacing, lineHeight)
@@ -78,7 +71,6 @@ var StateEngineWordsFinished = new Class({
 
 	start: function(options)
 	{
-		this.inputList = options;
 		this.game.setTimer(30);
 		this.fadeEffect = 0;
 	},
@@ -93,7 +85,7 @@ var StateEngineWordsFinished = new Class({
 
 		context.fillText("Words entered:", 20, 20);
 
-		fillTextRect(context, this.inputList, 40, 50, 300, 10, 25);
+		fillTextRect(context, this.game.data.inputList, 40, 50, 300, 10, 25);
 
 		if (this.fadeEffect < 1)
 			return;
@@ -103,7 +95,7 @@ var StateEngineWordsFinished = new Class({
 
 	timerEvent: function(delta)
 	{
-		this.fadeEffect += delta / 2;
+		this.fadeEffect += delta;
 		if (this.fadeEffect >= 1)
 		{
 			this.fadeEffect = 1;
@@ -112,60 +104,10 @@ var StateEngineWordsFinished = new Class({
 		this.game.draw();
 	},
 
-	getNextStateEngine: function()
+	continueEvent: function()
 	{
 		if (this.fadeEffect >= 1)
-			return StateEngineStart;
-		else
-			return null;
-	},
-});
-
-var StateEngineWordsFinished = new Class({
-	Extends: StateEngineWait,
-
-	start: function(options)
-	{
-		this.inputList = options;
-		this.game.setTimer(30);
-		this.fadeEffect = 0;
-	},
-
-	drawGame: function(context)
-	{
-		context.clearRect(0, 0, this.game.gameWidth, this.game.gameHeight);
-
-		context.fillStyle = "rgba(0, 0, 0, " + this.fadeEffect + ")";
-
-		context.font = "bold 20px Courier New";
-
-		context.fillText("Words entered:", 20, 20);
-
-		fillTextRect(context, this.inputList, 40, 50, 300, 10, 25);
-
-		if (this.fadeEffect < 1)
-			return;
-		context.font = "bold 14px Courier New";
-		context.fillText("press Enter to continue", 20, 300);
-	},
-
-	timerEvent: function(delta)
-	{
-		this.fadeEffect += delta / 2;
-		if (this.fadeEffect >= 1)
-		{
-			this.fadeEffect = 1;
-			this.game.setTimer(0);
-		}
-		this.game.draw();
-	},
-
-	getNextStateEngine: function()
-	{
-		if (this.fadeEffect >= 1)
-			return StateEngineInputLocation;
-		else
-			return null;
+			this.game.setStateEngine(StateEngineInputLocation);
 	},
 });
 
@@ -174,6 +116,7 @@ var StateEngineInputLocation = new Class({
 
 	start: function(options)
 	{
+		this.currentInputText = "";
 	},
 
 	drawGame: function(context)
@@ -181,21 +124,12 @@ var StateEngineInputLocation = new Class({
 		context.clearRect(0, 0, this.game.gameWidth, this.game.gameHeight);
 
 		context.fillStyle = "black";
-
 		context.font = "bold 20px Courier New";
-		context.fillText(Math.ceil(this.timeLeft), 400, 20);
 
-		context.fillText("Baum", 20, 20);
+		context.fillText("Enter your location:", 20, 20);
 
 		context.font = "bold 15px Courier New";
-		context.fillText(this.currentInputText, 20, 300);
-
-		for (var i = 0; i < this.inputList.length; i++)
-		{
-			var a = this.inputListAnimation[i];
-			var b = 1 - a;
-			context.fillText(this.inputList[i], 20, (i * 20 + 50) * a + 300 * b );
-		}
+		context.fillText(this.currentInputText, 30, 50);
 	},
 
 	timerEvent: function(delta)
@@ -213,18 +147,15 @@ var StateEngineInputLocation = new Class({
 
 		if (event.event.keyCode == 13)
 		{
-			if (this.currentInputText != "")
+			if (this.currentInputText.trim() != "")
 			{
-				this.inputList.push(this.currentInputText);
-				this.inputListAnimation.push(0);
-
-				this.currentInputText = "";
-				this.game.draw();
+				this.game.data.location = this.currentInputText;
+				this.game.setStateEngine(StateEngineLocationWordCollecting);
 			}
 			return;
 		}
 
-		if (event.event.keyCode <= 32)
+		if (event.event.keyCode < 32)
 			return;
 
 		this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
@@ -239,8 +170,9 @@ var StateEngineWordCollecting = new Class({
 	{
 		this.timeLeft = 3;
 		this.currentInputText = "";
-		this.inputList = ["hallo", "du"];
-		this.inputListAnimation = [0, 0];
+		this.inputList = [];
+		this.inputListAnimation = [];
+		this.headWord = "Berg";
 
 		this.game.setTimer(10);
 	},
@@ -250,6 +182,9 @@ var StateEngineWordCollecting = new Class({
 		context.clearRect(0, 0, this.game.gameWidth, this.game.gameHeight);
 
 		context.fillStyle = "black";
+
+		context.font = "bold 25px Courier New";
+		context.fillText(this.headWord, 20, 20);
 
 		context.font = "bold 20px Courier New";
 		context.fillText(Math.ceil(this.timeLeft), 400, 20);
@@ -261,7 +196,7 @@ var StateEngineWordCollecting = new Class({
 		{
 			var a = this.inputListAnimation[i];
 			var b = 1 - a;
-			context.fillText(this.inputList[i], 20, (i * 20 + 20) * a + 300 * b );
+			context.fillText(this.inputList[i], 20, (i * 20 + 50) * a + 300 * b );
 		}
 	},
 
@@ -272,7 +207,8 @@ var StateEngineWordCollecting = new Class({
 		this.timeLeft -= delta;
 		if (this.timeLeft < 0)
 		{
-			this.game.setStateEngine(StateEngineWordsFinished, this.inputList);
+			this.finishInput();
+			return;
 		}
 
 		var updateScreen = false;
@@ -316,6 +252,28 @@ var StateEngineWordCollecting = new Class({
 		this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
 		this.game.draw();
 	},
+
+	finishInput: function()
+	{
+		this.game.data.inputList = this.inputList;
+		this.game.setStateEngine(StateEngineWordsFinished);
+	},
+});
+
+var StateEngineLocationWordCollecting = new Class({
+	Extends: StateEngineWordCollecting,
+
+	start: function()
+	{
+		this.parent();
+		this.headWord = this.game.data.location;
+	},
+
+	finishInput: function()
+	{
+		this.game.data.locationInputList = this.inputList;
+		this.game.setStateEngine(StateEngineStart);
+	},
 });
 
 var Game = new Class({
@@ -332,6 +290,8 @@ var Game = new Class({
 		this.delta = 0;
 		this.drawCount = 0;
 
+		this.data = {};
+
 		this.currentStateEngine = null;
 		this.setStateEngine(StateEngineStart);
     },
@@ -346,6 +306,7 @@ var Game = new Class({
 		context.shadowBlur = 4;
 		context.shadowOffsetX = 2;
 		context.shadowOffsetY = 2;
+
 		this.currentStateEngine.drawGame(context);
 		context.restore();
 
@@ -416,6 +377,6 @@ var Game = new Class({
 	},
 });
 
-window.addEvent('domready', function() {
+window.addEvent("domready", function() {
 	new Game();
 });

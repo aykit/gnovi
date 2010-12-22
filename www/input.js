@@ -28,7 +28,7 @@ var StateEngineWait = new Class({
 		return true;
 	},
 
-	getNextStateEngine: function() { };
+	getNextStateEngine: function() { },
 });
 
 var StateEngineStart = new Class({

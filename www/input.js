@@ -8,7 +8,7 @@ var StateEngine = new Class({
 	end: function() {},
 	drawGame: function(context) {},
 	timerEvent: function(delta) {},
-	keypressEvent: function(event) { return true; },
+	keypressEvent: function(event) { },
 	clickEvent: function(event) { },
 });
 
@@ -24,8 +24,6 @@ var StateEngineWait = new Class({
 	{
 		if (event.event.keyCode == 13)
 			this.proceedToNextState();
-
-		return true;
 	},
 
 	proceedToNextState: function()
@@ -206,14 +204,11 @@ var StateEngineInputLocation = new Class({
 
 	keypressEvent: function(event)
 	{
-		if (this.timeLeft <= 0)
-			return true;
-
 		if (event.event.keyCode == 8)
 		{
 			this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
 			this.game.draw();
-			return false;
+			return;
 		}
 
 		if (event.event.keyCode == 13)
@@ -226,18 +221,14 @@ var StateEngineInputLocation = new Class({
 				this.currentInputText = "";
 				this.game.draw();
 			}
-			return false;
+			return;
 		}
 
-		if (event.event.keyCode == 32)
-			return false; // stop from scolling browser window
-
-		if (event.event.keyCode < 32)
-			return true;
+		if (event.event.keyCode <= 32)
+			return;
 
 		this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
 		this.game.draw();
-		return true;
 	},
 });
 
@@ -246,10 +237,10 @@ var StateEngineWordCollecting = new Class({
 
 	start: function()
 	{
-		this.timeLeft = 10;
+		this.timeLeft = 3;
 		this.currentInputText = "";
-		this.inputList = [];
-		this.inputListAnimation = [];
+		this.inputList = ["hallo", "du"];
+		this.inputListAnimation = [0, 0];
 
 		this.game.setTimer(10);
 	},
@@ -280,7 +271,9 @@ var StateEngineWordCollecting = new Class({
 
 		this.timeLeft -= delta;
 		if (this.timeLeft < 0)
-			this.timeLeft = 0;
+		{
+			this.game.setStateEngine(StateEngineWordsFinished, this.inputList);
+		}
 
 		var updateScreen = false;
 		for (var i = 0; i < this.inputListAnimation.length; i++)
@@ -303,14 +296,11 @@ var StateEngineWordCollecting = new Class({
 
 	keypressEvent: function(event)
 	{
-		if (this.timeLeft <= 0)
-			return true;
-
 		if (event.event.keyCode == 8)
 		{
 			this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
 			this.game.draw();
-			return false;
+			return;
 		}
 
 		if (event.event.keyCode == 13)
@@ -320,13 +310,11 @@ var StateEngineWordCollecting = new Class({
 
 			this.currentInputText = "";
 			this.game.draw();
-			return false;
+			return;
 		}
 
 		this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
 		this.game.draw();
-
-		return event.event.keyCode != 32;
 	},
 });
 
@@ -418,7 +406,8 @@ var Game = new Class({
 
 	onKeypress: function(event)
 	{
-		return this.currentStateEngine.keypressEvent(event);
+		this.currentStateEngine.keypressEvent(event);
+		return event.event.keyCode != 8 && event.event.keyCode != 32;
 	},
 
 	onClick: function(event)

@@ -12,6 +12,25 @@ var StateEngine = new Class({
 	clickEvent: function(event) { },
 });
 
+var StateEngineWait = new Class({
+	Extends: StateEngine,
+
+	clickEvent: function(event)
+	{
+		this.game.setStateEngine(this.getNextStateEngine());
+	},
+
+	keypressEvent: function(event)
+	{
+		if (event.event.keyCode == 13)
+			this.game.setStateEngine(this.getNextStateEngine());
+
+		return true;
+	},
+
+	getNextStateEngine: function() { };
+});
+
 var StateEngineStart = new Class({
 	Extends: StateEngine,
 
@@ -125,13 +144,6 @@ var StateEngineWordCollecting = new Class({
 		this.game.draw();
 
 		return event.event.keyCode != 32;
-	},
-
-	addAnswer: function(text)
-	{
-		this.inputList.push(text);
-		var textElement = new Element('li', {text: text});
-		this.answerListElement.grab(textElement);
 	},
 });
 

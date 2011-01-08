@@ -12,50 +12,20 @@ var ImageLoader = new Class({
 	},
 });
 
-var Utilities = new Class();
-
-Utilities.getScreenPos = function(element)
-{
-	var x = 0;
-	var y = 0;
-
-	do
-	{
-		x += element.offsetLeft;
-		y += element.offsetTop;
-		element = element.offsetParent;
-	}
-	while (element);
-
-	return {x: x, y: y};
-};
-
 var Graph = new Class({
-    initialize: function(canvas)
+	Extends: Game,
+
+    initialize: function(canvas, scaling)
     {
-		this.canvas = canvas;
-		this.realWidth = this.canvas.getSize().x;
-		this.realHeight = this.canvas.getSize().y;
+    	this.parent(canvas, new Graphics(), 1);
+
+		console.log(this.canvas);
+
+		this.realWidth = this.canvasWidth;
+		this.realHeight = this.canvasHeight;
 
 		this.nominalWidth = 500;
 		this.nominalHeight = 400;
-
-		this.graphics = new Graphics(this.canvas.getContext('2d'));
-
-		var context = this.canvas.getContext('2d');
-		context.scale(this.realWidth / this.nominalWidth, this.realHeight / this.nominalHeight);
-
-		var screenPos = Utilities.getScreenPos(this.canvas);
-		this.clientPosX = screenPos.x + this.canvas.clientLeft;
-		this.clientPosY = screenPos.y + this.canvas.clientTop;
-
-		document.addEvent("keypress", this.onKeypress.bind(this));
-		this.canvas.addEvent("click", this.onClick.bind(this));
-		this.canvas.addEvent("mousemove", this.onMouseMove.bind(this));
-
-		this.timer = null;
-		this.delta = 0;
-		this.drawCount = 0;
 
 		this.currentData = null;
 		this.currentNodes = null;
@@ -96,9 +66,6 @@ var Graph = new Class({
 		}
 
 		this.buildVisualizationData(this.sampleA);
-
-		this.mouseX = 0;
-		this.mouseY = 0;
 
 		this.setTimer(30);
     },
@@ -207,20 +174,16 @@ var Graph = new Class({
 
 	draw: function()
 	{
-		this.drawCount++;
+		this.parent();
 
-		var context = this.canvas.getContext('2d');
-		context.save();
+		this.context.save();
 
-		context.fillStyle = "white";
-		context.fillRect(0, 0, this.nominalWidth, this.nominalHeight);
+		this.context.fillStyle = "white";
+		this.context.fillRect(0, 0, this.nominalWidth, this.nominalHeight);
 
-		context.translate(this.nominalWidth / 2, this.nominalHeight / 2);
+		this.context.translate(this.nominalWidth / 2, this.nominalHeight / 2);
 
-		var scaling = Math.exp((this.mouseY - this.nominalHeight / 2) / 50);
-		//context.scale(scaling, scaling);
-
-		context.textBaseline = "middle";
+		this.context.textBaseline = "middle";
 
 		for (var i = 0; i < this.connections.length; i++)
 		{
@@ -232,12 +195,12 @@ var Graph = new Class({
 			var posX1 = connection[1].position.r * Math.cos(connection[1].position.phi);
 			var posY1 = connection[1].position.r * Math.sin(connection[1].position.phi);
 
-			context.beginPath();
-			context.moveTo(posX0, posY0);
-			context.lineTo(posX1, posY1);
+			this.context.beginPath();
+			this.context.moveTo(posX0, posY0);
+			this.context.lineTo(posX1, posY1);
 
-			context.strokeStyle = "black";
-			context.stroke();
+			this.context.strokeStyle = "black";
+			this.context.stroke();
 		}
 
 		for (var i = 0; i < this.nodesToDraw.length; i++)
@@ -252,62 +215,35 @@ var Graph = new Class({
 
 			var dx = posX - this.mouseX + this.nominalWidth / 2;
 			var dy = posY - this.mouseY + this.nominalHeight / 2;
-
 			var glow = dx*dx + dy*dy < 15*15;
+			//console.log(dy);
 
 			if (false) // is root
 			{
-				context.font = "bold 14px Verdana";
-				this.graphics.drawGnoviIcon(context, 0, 0, 50, true);
-				context.fillStyle = "red";
-				this.graphics.drawCenteredText(context, this.data.root.label, 0, 40);
+				this.context.font = "bold 14px Verdana";
+				this.graphics.drawGnoviIcon(0, 0, 50, true);
+				this.context.fillStyle = "red";
+				this.graphics.drawCenteredText(this.data.root.label, 0, 40);
 			}
 			else
 			{
-				context.font = "bold 10px Verdana";
-				this.graphics.drawGnoviIcon(context, posX, posY, 30, glow);
-				context.fillStyle = "black";
-				this.graphics.drawCenteredText(context, node.label, posX, posY + 25);
+				this.context.font = "bold 10px Verdana";
+				this.graphics.drawGnoviIcon(posX, posY, 30, glow);
+				this.context.fillStyle = "black";
+				this.graphics.drawCenteredText(node.label, posX, posY + 25);
 			}
 		}
 
-		context.restore();
+		this.context.restore();
 
-		context.save();
-		context.shadowColor = "black";
-		context.shadowBlur = 2;
-		context.shadowOffsetX = 1;
-		context.shadowOffsetY = 1;
-		context.strokeStyle = "black";
-		context.fillStyle = "black";
-
-		context.font = "8px";
-		var txt = Math.round(1 / this.delta) + " fps";
-		context.fillText(txt, 460 - context.measureText(txt).width / 2, 380);
-
-		context.translate(460, 350);
-		context.rotate(this.drawCount * 2 * Math.PI / 64);
-		context.strokeRect(-10, -10, 20, 20);
-		context.restore();
-	},
-
-	setTimer: function(interval)
-	{
-		if (this.timer)
-			clearInterval(this.timer);
-
-		this.lastTimerEventTime = Date.now() / 1000;
-
-		if (interval == 0)
-			this.timer = null;
-		else
-			this.timer = this.onTimer.periodical(interval, this);
+		this.context.save();
+		this.graphics.drawDebugInfo(1 / this.delta, this.drawCount);
+		this.context.restore();
 	},
 
 	onTimer: function()
 	{
-		this.delta = Date.now() / 1000 - this.lastTimerEventTime;
-		this.lastTimerEventTime += this.delta;
+		this.parent();
 
 		if (this.interpolationRunning)
 		{
@@ -322,26 +258,16 @@ var Graph = new Class({
 		this.draw();
 	},
 
-	onKeypress: function(event)
-	{
-
-		return event.event.keyCode != 8 && event.event.keyCode != 32;
-	},
-
 	onClick: function(event)
 	{
+		this.parent();
+
 		if (this.uahh = !this.uahh)
 			this.buildVisualizationData(this.sampleB);
 		else
 			this.buildVisualizationData(this.sampleA);
 
 		this.transformProgress = 0;
-	},
-
-	onMouseMove: function(event)
-	{
-		this.mouseX = (event.event.clientX - this.clientPosX) * this.nominalWidth / this.realWidth;
-		this.mouseY = (event.event.clientY - this.clientPosY) * this.nominalHeight / this.realHeight;
 	},
 });
 

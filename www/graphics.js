@@ -1,6 +1,6 @@
 /*
  *  Attribute und Methoden, die mit Unterstrich beginnen,
- *  werden nur in dieser Datei verwendet und kšnnen geŠndert werden
+ *  werden nur in dieser Datei verwendet und kÃ¶nnen geÃ¤ndert werden
  */
 
 var Graphics = new Class({

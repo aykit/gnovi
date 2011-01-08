@@ -16,14 +16,9 @@ var StateEngine = new Class({
 var StateEngineStart = new Class({
 	Extends: StateEngine,
 
-	drawGame: function(context)
+	drawGame: function(graphics, context)
 	{
-		context.clearRect(0, 0, this.game.gameWidth, this.game.gameHeight);
-
-		context.fillStyle = "black";
-
-		context.font = "bold 20px Courier New";
-		context.fillText("click to start", 100, 20);
+		graphics.drawStartScreen();
 	},
 
 	continueEvent: function()
@@ -31,27 +26,6 @@ var StateEngineStart = new Class({
 		this.game.setStateEngine(StateEngineWordCollecting);
 	},
 });
-
-function fillTextRect(context, wordList, x, y, width, spacing, lineHeight)
-{
-	var wordOffsetX = 0;
-	var wordOffsetY = 0;
-
-	for (var i = 0; i < wordList.length; i++)
-	{
-		var textWidth = context.measureText(wordList[i]).width;
-
-		if (wordOffsetX != 0 && wordOffsetX + textWidth > width)
-		{
-			wordOffsetX = 0;
-			wordOffsetY += lineHeight;
-		}
-
-		context.fillText(wordList[i], x + wordOffsetX, y + wordOffsetY);
-
-		wordOffsetX += textWidth + spacing;
-	}
-}
 
 var StateEngineWordsFinished = new Class({
 	Extends: StateEngine,
@@ -62,22 +36,9 @@ var StateEngineWordsFinished = new Class({
 		this.fadeEffect = 0;
 	},
 
-	drawGame: function(context)
+	drawGame: function(graphics, context)
 	{
-		context.clearRect(0, 0, this.game.gameWidth, this.game.gameHeight);
-
-		context.fillStyle = "rgba(0, 0, 0, " + this.fadeEffect + ")";
-
-		context.font = "bold 20px Courier New";
-
-		context.fillText("Words entered:", 20, 20);
-
-		fillTextRect(context, this.game.data.inputList, 40, 50, 300, 10, 25);
-
-		if (this.fadeEffect < 1)
-			return;
-		context.font = "bold 14px Courier New";
-		context.fillText("press Enter to continue", 20, 300);
+		graphics.drawWordsFinishedScreen(this.game.data.inputList, this.fadeEffect, this.fadeEffect >= 1);
 	},
 
 	timerEvent: function(delta)
@@ -106,17 +67,9 @@ var StateEngineInputLocation = new Class({
 		this.currentInputText = "";
 	},
 
-	drawGame: function(context)
+	drawGame: function(graphics, context)
 	{
-		context.clearRect(0, 0, this.game.gameWidth, this.game.gameHeight);
-
-		context.fillStyle = "black";
-		context.font = "bold 20px Courier New";
-
-		context.fillText("Enter your location:", 20, 20);
-
-		context.font = "bold 15px Courier New";
-		context.fillText(this.currentInputText, 30, 50);
+		graphics.drawInputLocationScreen(this.currentInputText);
 	},
 
 	timerEvent: function(delta)
@@ -155,7 +108,8 @@ var StateEngineWordCollecting = new Class({
 
 	start: function()
 	{
-		this.timeLeft = 30;
+		this.totalTime = 3;
+		this.timeLeft = this.totalTime;
 		this.currentInputText = "";
 		this.inputList = [];
 		this.inputListAnimation = [];
@@ -164,27 +118,10 @@ var StateEngineWordCollecting = new Class({
 		this.game.setTimer(10);
 	},
 
-	drawGame: function(context)
+	drawGame: function(graphics, context)
 	{
-		context.clearRect(0, 0, this.game.gameWidth, this.game.gameHeight);
-
-		context.fillStyle = "black";
-
-		context.font = "bold 25px Courier New";
-		context.fillText(this.headWord, 20, 20);
-
-		context.font = "bold 20px Courier New";
-		context.fillText(Math.ceil(this.timeLeft), 400, 20);
-
-		context.font = "bold 15px Courier New";
-		context.fillText(this.currentInputText, 20, 300);
-
-		for (var i = 0; i < this.inputList.length; i++)
-		{
-			var a = this.inputListAnimation[i];
-			var b = 1 - a;
-			context.fillText(this.inputList[i], 20, (i * 20 + 50) * a + 300 * b );
-		}
+		graphics.drawWordCollectingScreen(this.headWord, this.timeLeft, this.totalTime,
+			this.currentInputText, this.inputList, this.inputListAnimation);
 	},
 
 	timerEvent: function(delta)
@@ -287,7 +224,7 @@ var Input = new Class({
 		this.parent();
 
 		this.context.save();
-		this.currentStateEngine.drawGame(this.context);
+		this.currentStateEngine.drawGame(this.graphics, this.context);
 		this.context.restore();
 
 		this.context.save();

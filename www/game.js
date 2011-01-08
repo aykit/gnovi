@@ -12,9 +12,6 @@ var Game = new Class({
 		this.graphics = graphics;
 		this.scaling = scaling;
 
-		this.clientWidth = this.canvas.clientWidth;
-		this.clientHeight = this.canvas.clientHeight;
-
 		var canvasPos = this.canvas.getPosition();
 		this.clientX = canvasPos.x + this.canvas.clientLeft;
 		this.clientY = canvasPos.y + this.canvas.clientTop;

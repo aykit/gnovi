@@ -210,9 +210,6 @@ var Input = new Class({
 	{
     	this.parent(canvas, new InputGraphics(), 1);
 
-		this.gameWidth = this.clientWidth; // BLA
-		this.gameHeight = this.clientHeight;
-
 		this.data = {};
 
 		this.currentStateEngine = null;

@@ -15,7 +15,6 @@ var Graphics = new Class({
 	{
 		this.context.beginPath();
 		this.context.arc(x, y, r, 0, 2 * Math.PI, false);
-		this.context.closePath();
 		this.context.fill();	
 	},
 
@@ -56,6 +55,11 @@ var Graphics = new Class({
 		}
 	},
 
+	_clearCanvas: function()
+	{
+		this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+	},
+
 	drawDebugInfo: function(fps, drawCount)
 	{
 		this.context.shadowColor = "black";
@@ -77,14 +81,6 @@ var Graphics = new Class({
 
 var InputGraphics = new Class({
 	Extends: Graphics,
-
-	_drawWidth: 500,
-	_drawHeight: 400,
-
-	_clearCanvas: function()
-	{
-		this.context.clearRect(0, 0, this._drawWidth, this._drawHeight);
-	},
 
 	drawStartScreen: function()
 	{
@@ -155,12 +151,9 @@ var InputGraphics = new Class({
 var GraphGraphics = new Class({
 	Extends: Graphics,
 
-	_drawWidth: 500,
-	_drawHeight: 400,
-
 	drawBackground: function()
 	{
-		this.context.clearRect(0, 0, this._drawWidth, this._drawHeight);
+		this._clearCanvas();
 	},
 
 	drawNode: function(node, posX, posY, isRoot, mouseOver)
@@ -196,7 +189,7 @@ var GraphGraphics = new Class({
 
 	getGraphCenter: function()
 	{
-		return {x: this._drawWidth / 2, y: this._drawHeight / 2 };
+		return {x: 250, y: 200 };
 	},
 
 	getNodeStartDistance: function() { return 350; },

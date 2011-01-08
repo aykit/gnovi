@@ -1,17 +1,3 @@
-var ImageLoader = new Class({
-	initialize: function()
-	{
-	},
-
-	load: function(source)
-	{
-		var img = new Image();
-		img.onload = function() { }
-		img.onerror = function() { }
-		img.src = source;
-	},
-});
-
 var Graph = new Class({
 	Extends: Game,
 

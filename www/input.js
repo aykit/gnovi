@@ -266,51 +266,33 @@ var StateEngineLocationWordCollecting = new Class({
 	},
 });
 
-var Game = new Class({
-    initialize: function()
-    {
-		this.gameCanvas = $("game");
-		this.gameWidth = this.gameCanvas.getSize().x;
-		this.gameHeight = this.gameCanvas.getSize().y;
+var Input = new Class({
+	Extends: Game,
 
-		document.addEvent("keypress", this.onKeypress.bind(this));
-		this.gameCanvas.addEvent("click", this.onClick.bind(this));
+	initialize: function(canvas)
+	{
+    	this.parent(canvas, new InputGraphics(), 1);
 
-		this.timer = null;
-		this.delta = 0;
-		this.drawCount = 0;
+		this.gameWidth = this.clientWidth; // BLA
+		this.gameHeight = this.clientHeight;
 
 		this.data = {};
 
 		this.currentStateEngine = null;
 		this.setStateEngine(StateEngineStart);
-    },
+	},
 
 	draw: function()
 	{
-		this.drawCount++;
+		this.parent();
 
-		var context = this.gameCanvas.getContext('2d');
-		context.save();
-		this.currentStateEngine.drawGame(context);
-		context.restore();
+		this.context.save();
+		this.currentStateEngine.drawGame(this.context);
+		this.context.restore();
 
-		context.save();
-		context.shadowColor = "black";
-		context.shadowBlur = 2;
-		context.shadowOffsetX = 1;
-		context.shadowOffsetY = 1;
-		context.strokeStyle = "black";
-		context.fillStyle = "black";
-
-		context.font = "8px";
-		var txt = Math.round(1 / this.delta) + " fps";
-		context.fillText(txt, 460 - context.measureText(txt).width / 2, 380);
-
-		context.translate(460, 350);
-		context.rotate(this.drawCount * 2 * Math.PI / 64);
-		context.strokeRect(-10, -10, 20, 20);
-		context.restore();
+		this.context.save();
+		this.graphics.drawDebugInfo(1 / this.delta, this.drawCount);
+		this.context.restore();
 	},
 
 	setStateEngine: function(stateEngineClass, options)
@@ -330,23 +312,10 @@ var Game = new Class({
 			this.currentStateEngine = null;
 	},
 
-	setTimer: function(interval)
-	{
-		if (this.timer)
-			clearInterval(this.timer);
-
-		this.lastTimerEventTime = Date.now() / 1000;
-
-		if (interval == 0)
-			this.timer = null;
-		else
-			this.timer = this.onTimer.periodical(interval, this);
-	},
-
 	onTimer: function()
 	{
-		this.delta = Date.now() / 1000 - this.lastTimerEventTime;
-		this.lastTimerEventTime += this.delta;
+		this.parent();
+
 		this.currentStateEngine.timerEvent(this.delta);
 	},
 
@@ -367,5 +336,5 @@ var Game = new Class({
 });
 
 window.addEvent("domready", function() {
-	new Game();
+	new Input($("game"));
 });

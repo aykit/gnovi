@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <title>Jupi</title>
     <script type="text/javascript" src="mootools.js"></script>
+    <script type="text/javascript" src="game.js"></script>
     <script type="text/javascript" src="input.js"></script>
+    <script type="text/javascript" src="graphics.js"></script>
     <link rel="stylesheet" type="text/css" href="input.css">
   </head>
   <body>

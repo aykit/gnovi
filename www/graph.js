@@ -17,15 +17,7 @@ var Graph = new Class({
 
     initialize: function(canvas, scaling)
     {
-    	this.parent(canvas, new Graphics(), 1);
-
-		console.log(this.canvas);
-
-		this.realWidth = this.canvasWidth;
-		this.realHeight = this.canvasHeight;
-
-		this.nominalWidth = 500;
-		this.nominalHeight = 400;
+    	this.parent(canvas, new GraphGraphics(), 1);
 
 		this.currentData = null;
 		this.currentNodes = null;
@@ -129,7 +121,7 @@ var Graph = new Class({
 			if (this.currentNodes[id])
 				currentVisData = this.currentNodes[id].visData;
 
-			var hiddenDistance = Math.max(this.nominalWidth, this.nominalHeight) * 0.7;
+			var hiddenDistance = this.graphics.getNodeStartDistance();
 			if (!prevVisData)
 			{
 				prevVisData = Object.clone(currentVisData);
@@ -177,30 +169,24 @@ var Graph = new Class({
 		this.parent();
 
 		this.context.save();
+		this.graphics.drawBackground();
+		this.context.restore();
 
-		this.context.fillStyle = "white";
-		this.context.fillRect(0, 0, this.nominalWidth, this.nominalHeight);
+		this.context.save();
 
-		this.context.translate(this.nominalWidth / 2, this.nominalHeight / 2);
-
-		this.context.textBaseline = "middle";
+		var graphCenter = this.graphics.getGraphCenter();
 
 		for (var i = 0; i < this.connections.length; i++)
 		{
 			var connection = this.connections[i];
 
-			var posX0 = connection[0].position.r * Math.cos(connection[0].position.phi);
-			var posY0 = connection[0].position.r * Math.sin(connection[0].position.phi);
+			var posX0 = connection[0].position.r * Math.cos(connection[0].position.phi) + graphCenter.x;
+			var posY0 = connection[0].position.r * Math.sin(connection[0].position.phi) + graphCenter.y;
 
-			var posX1 = connection[1].position.r * Math.cos(connection[1].position.phi);
-			var posY1 = connection[1].position.r * Math.sin(connection[1].position.phi);
+			var posX1 = connection[1].position.r * Math.cos(connection[1].position.phi) + graphCenter.x;
+			var posY1 = connection[1].position.r * Math.sin(connection[1].position.phi) + graphCenter.y;
 
-			this.context.beginPath();
-			this.context.moveTo(posX0, posY0);
-			this.context.lineTo(posX1, posY1);
-
-			this.context.strokeStyle = "black";
-			this.context.stroke();
+			this.graphics.drawConnection(posX0, posY0, posX1, posY1, 1);
 		}
 
 		for (var i = 0; i < this.nodesToDraw.length; i++)
@@ -210,28 +196,14 @@ var Graph = new Class({
 			var r = node.visData.position.r;
 			var phi = node.visData.position.phi;
 
-			var posX = r * Math.cos(phi);
-			var posY = r * Math.sin(phi);
+			var posX = r * Math.cos(phi) + graphCenter.x;
+			var posY = r * Math.sin(phi) + graphCenter.y;
 
-			var dx = posX - this.mouseX + this.nominalWidth / 2;
-			var dy = posY - this.mouseY + this.nominalHeight / 2;
-			var glow = dx*dx + dy*dy < 15*15;
-			//console.log(dy);
+			var dx = posX - this.mouseX;
+			var dy = posY - this.mouseY;
+			var mouseOver = dx*dx + dy*dy < 15*15; // TODO: determine size
 
-			if (false) // is root
-			{
-				this.context.font = "bold 14px Verdana";
-				this.graphics.drawGnoviIcon(0, 0, 50, true);
-				this.context.fillStyle = "red";
-				this.graphics.drawCenteredText(this.data.root.label, 0, 40);
-			}
-			else
-			{
-				this.context.font = "bold 10px Verdana";
-				this.graphics.drawGnoviIcon(posX, posY, 30, glow);
-				this.context.fillStyle = "black";
-				this.graphics.drawCenteredText(node.label, posX, posY + 25);
-			}
+			this.graphics.drawNode(node, posX, posY, false, mouseOver);
 		}
 
 		this.context.restore();

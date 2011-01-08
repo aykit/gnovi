@@ -51,3 +51,59 @@ var Graphics = new Class({
 		this.context.strokeRect(-10, -10, 20, 20);
 	},
 });
+
+var InputGraphics = new Class({
+	Extends: Graphics,
+
+});
+
+var GraphGraphics = new Class({
+	Extends: Graphics,
+
+	DRAW_WIDTH: 500,
+	DRAW_HEIGHT: 400,
+
+	drawBackground: function()
+	{	
+		this.context.fillStyle = "white";
+		this.context.fillRect(0, 0, this.DRAW_WIDTH, this.DRAW_HEIGHT);
+	},
+
+	drawNode: function(node, posX, posY, isRoot, mouseOver)
+	{
+		this.context.textBaseline = "middle";
+
+		if (isRoot)
+		{
+			this.context.font = "bold 14px Verdana";
+			this.drawGnoviIcon(0, 0, 50, true);
+			this.context.fillStyle = "red";
+			this.drawCenteredText(this.data.root.label, 0, 40);
+		}
+		else
+		{
+			this.context.font = "bold 10px Verdana";
+			this.drawGnoviIcon(posX, posY, 30, mouseOver);
+			this.context.fillStyle = "black";
+			this.drawCenteredText(node.label, posX, posY + 25);
+		}
+	},
+
+	drawConnection: function(x1, y1, x2, y2, strength)
+	{
+		this.context.beginPath();
+		this.context.moveTo(x1, y1);
+		this.context.lineTo(x2, y2);
+
+		this.context.strokeStyle = "black";
+		this.context.lineWidth = strength;
+		this.context.stroke();
+	},
+
+	getGraphCenter: function()
+	{
+		return {x: this.DRAW_WIDTH / 2, y: this.DRAW_HEIGHT / 2 };
+	},
+
+	getNodeStartDistance: function() { return 350; },
+});

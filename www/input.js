@@ -8,29 +8,13 @@ var StateEngine = new Class({
 	end: function() {},
 	drawGame: function(context) {},
 	timerEvent: function(delta) {},
-	keypressEvent: function(event) { },
-	clickEvent: function(event) { },
-});
-
-var StateEngineWait = new Class({
-	Extends: StateEngine,
-
-	clickEvent: function(event)
-	{
-		this.continueEvent();
-	},
-
-	keypressEvent: function(event)
-	{
-		if (event.event.keyCode == 13)
-			this.continueEvent();
-	},
-
-	continueEvent: function() { },
+	keypressEvent: function(event) {},
+	clickEvent: function(event) {},
+	continueEvent: function() {},
 });
 
 var StateEngineStart = new Class({
-	Extends: StateEngineWait,
+	Extends: StateEngine,
 
 	drawGame: function(context)
 	{
@@ -42,7 +26,10 @@ var StateEngineStart = new Class({
 		context.fillText("click to start", 100, 20);
 	},
 
-	continueEvent: function() { this.game.setStateEngine(StateEngineWordCollecting); },
+	continueEvent: function()
+	{
+		this.game.setStateEngine(StateEngineWordCollecting);
+	},
 });
 
 function fillTextRect(context, wordList, x, y, width, spacing, lineHeight)
@@ -67,7 +54,7 @@ function fillTextRect(context, wordList, x, y, width, spacing, lineHeight)
 }
 
 var StateEngineWordsFinished = new Class({
-	Extends: StateEngineWait,
+	Extends: StateEngine,
 
 	start: function(options)
 	{
@@ -168,7 +155,7 @@ var StateEngineWordCollecting = new Class({
 
 	start: function()
 	{
-		this.timeLeft = 3;
+		this.timeLeft = 30;
 		this.currentInputText = "";
 		this.inputList = [];
 		this.inputListAnimation = [];
@@ -249,6 +236,9 @@ var StateEngineWordCollecting = new Class({
 			return;
 		}
 
+		if (event.event.keyCode <= 32)
+			return;
+
 		this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
 		this.game.draw();
 	},
@@ -302,11 +292,6 @@ var Game = new Class({
 
 		var context = this.gameCanvas.getContext('2d');
 		context.save();
-		context.shadowColor = "#aac";
-		context.shadowBlur = 4;
-		context.shadowOffsetX = 2;
-		context.shadowOffsetY = 2;
-
 		this.currentStateEngine.drawGame(context);
 		context.restore();
 
@@ -368,12 +353,16 @@ var Game = new Class({
 	onKeypress: function(event)
 	{
 		this.currentStateEngine.keypressEvent(event);
+		if (event.event.keyCode == 13)
+			this.currentStateEngine.continueEvent();
+
 		return event.event.keyCode != 8 && event.event.keyCode != 32;
 	},
 
 	onClick: function(event)
 	{
 		this.currentStateEngine.clickEvent(event);
+		this.currentStateEngine.continueEvent();
 	},
 });
 

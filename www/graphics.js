@@ -67,6 +67,8 @@ var Graphics = new Class({
 
 	drawDebugInfo: function(fps, drawCount)
 	{
+		this.context.translate(this.context.canvas.width - 40, this.context.canvas.height - 50);
+
 		this.context.shadowColor = "black";
 		this.context.shadowBlur = 2;
 		this.context.shadowOffsetX = 1;
@@ -76,20 +78,21 @@ var Graphics = new Class({
 
 		this.context.font = "8px";
 		var txt = Math.round(fps) + " fps";
-		this._fillCenteredText(txt, 460, 380);
+		this._fillCenteredText(txt, 0, 30);
 
-		this.context.translate(460, 350);
 		this.context.rotate(drawCount * 2 * Math.PI / 64);
 		this.context.strokeRect(-10, -10, 20, 20);
 	},
 
 	drawLoadingIndicator: function(loadTime)
 	{
+	   loadTime -= 0.2;
+        if (loadTime < 0)
+            return;
+
 		alpha = loadTime;
 		if (alpha > 1)
 			alpha = 1;
-
-		this.context.strokeStyle = "rgba(0, 0, 0," + alpha + ")";
 
 		scale1 = loadTime * 10;
 		if (scale1 > 5)
@@ -98,6 +101,8 @@ var Graphics = new Class({
 		scale2 = 10 - loadTime * 10;
 		if (scale2 < 3)
 			scale2 = 3;
+
+		this.context.strokeStyle = "rgba(0, 0, 0," + alpha + ")";
 
 		this.context.save();
 		this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2);
@@ -138,7 +143,7 @@ var InputGraphics = new Class({
 		this.context.fillText("click to start", 100, 20);
 	},
 
-	drawWordsFinishedScreen: function(wordList, alpha, drawContinueNotice)
+	drawWordsFinishedScreen: function(wordList, inputTime, alpha, drawContinueNotice)
 	{
 		this._clearCanvas();
 
@@ -146,7 +151,7 @@ var InputGraphics = new Class({
 
 		this.context.font = "bold 20px Courier New";
 
-		this.context.fillText("Words entered:", 20, 20);
+		this.context.fillText(wordList.length + " words entered in " + inputTime + " seconds", 20, 20);
 
 		this._fillTextRect(wordList, 40, 50, 300, 10, 25);
 
@@ -155,6 +160,11 @@ var InputGraphics = new Class({
 
 		this.context.font = "bold 14px Courier New";
 		this.context.fillText("press Enter to continue", 20, 300);
+	},
+
+	drawLocationWordsFinishedScreen: function(wordList, inputTime, alpha, drawContinueNotice)
+	{
+		this.drawWordsFinishedScreen(wordList, inputTime, alpha, drawContinueNotice);
 	},
 
 	drawInputLocationScreen: function(inputText)
@@ -191,7 +201,16 @@ var InputGraphics = new Class({
 			var b = 1 - a;
 			this.context.fillText(inputList[i], 20, (i * 20 + 50) * a + 300 * b );
 		}
-	}
+	},
+
+    drawWordRatingScreen: function(word)
+    {
+		this.context.font = "bold 20px Courier New";
+        this.context.fillText(word, 10, 30);
+
+		this.context.font = "bold 30px Courier New";
+        this.context.fillText("+ -", 10, 60);
+    },
 });
 
 var GraphGraphics = new Class({

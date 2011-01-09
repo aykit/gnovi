@@ -276,7 +276,7 @@ var Graph = new Class({
 
 		if (!this.interpolationRunning)
 		{
-			if (this.currentData.root.id == 4)
+			if (this.currentData && this.currentData.root.id == 4)
 				this.loadData(0);
 			else
 				this.loadData(4);

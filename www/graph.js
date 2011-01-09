@@ -10,49 +10,46 @@ var Graph = new Class({
 	interpolationProgress: 1,
 	interpolationRunning: false,
 
+	loadingRequest: null,
+	loadingTime: 0,
+
     initialize: function(canvas, scaling)
     {
     	this.parent(canvas, new GraphGraphics(), 1);
 
-		this.sampleA =
-		{
-			root: {id: 1, label: "root"},
-			nodes:
-			[
-				{id: 32, label: "du"},
-				{id: 3, label: "ich"},
-				{id: 4, label: "bla"},
-				{id: 15, label: "blub"},
-				{id: 6, label: "genau"},
-			],
-			relations:
-			[
-				{id2: 2, id2: 3, strength: 9},
-			],
-		}
-
-		this.sampleB =
-		{
-			root: {id: 4, label: "bla"},
-			nodes:
-			[
-				{id: 3, label: "ich"},
-				{id: 1, label: "root"},
-				{id: 11, label: "warum"},
-				{id: 32, label: "du"},
-				{id: 7, label: "nix"},
-				{id: 8, label: "jap"},
-			],
-			relations:
-			[
-				{id2: 2, id2: 3, strength: 9},
-			],
-		}
-
-		this.buildVisualizationData(this.sampleA);
+		this.loadData(0);
 
 		this.setTimer(30);
     },
+
+	loadData: function(rootId)
+	{
+		if (this.loadingRequest)
+			this.loadingRequest.cancel();
+
+		this.loadingRequest = new Request.JSON({
+			url: "data.php",
+			onSuccess: this.onLoadDataSuccess.bind(this),
+			onFailure: this.onLoadDataFailure.bind(this)
+		});
+
+		this.loadingRequest.get("cmd=getgraph&id=" + rootId);
+		this.loadingTime = 0;
+	},
+
+	onLoadDataSuccess: function(data, text)
+	{
+		this.loadingRequest = null;
+
+		this.buildVisualizationData(data);
+	},
+
+	onLoadDataFailure: function()
+	{
+		this.loadingRequest = null;
+
+		console.log("failure");
+	},
 
 	buildVisualizationData: function(newData)
 	{
@@ -72,6 +69,7 @@ var Graph = new Class({
 		var visData = {};
 		visData.position = {r: 0, phi: 0};
 		visData.alpha = 1;
+		visData.isRoot = 1;
 		this.currentNodesVisData[node.id] = visData;
 
 		// other nodes
@@ -84,13 +82,14 @@ var Graph = new Class({
 			var visData = {};
 			visData.position = {r: 100, phi: i / numNodes * 2 * Math.PI}; // nur diskrete abstände möglich
 			visData.alpha = 1;
+			visData.isRoot = 0;
 			this.currentNodesVisData[node.id] = visData;
 		}
 
 		this.interpolationProgress = 0;
 		this.interpolationRunning = true;
 
-		//console.log(JSON.encode(this.currentNodes));
+		//console.log(this.currentNodes);
 	},
 
 	calculateNodesToDraw: function()
@@ -136,6 +135,7 @@ var Graph = new Class({
 				phi: prevVisData.position.phi * prev + currentVisData.position.phi * current,
 			};
 			visData.alpha = prevVisData.alpha * prev + currentVisData.alpha * current;
+			visData.isRoot = prevVisData.isRoot * prev + currentVisData.isRoot * current;
 
 			this.interpolatedNodesVisData[node.id] = visData;
 		}
@@ -222,10 +222,25 @@ var Graph = new Class({
 			var dy = posY - this.mouseY;
 			var mouseOver = dx*dx + dy*dy < 15*15; // TODO: determine size
 
-			this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
+			if (visData.isRoot == 0)
+				this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
+			else if (visData.isRoot == 1)
+				this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha);
+			else
+			{
+				this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha * (1 - visData.isRoot));
+				this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha * visData.isRoot);
+			}
 		}
 
 		this.context.restore();
+
+		if (this.loadingRequest)
+		{
+			this.context.save();
+			this.graphics.drawLoadingIndicator(this.loadingTime);
+			this.context.restore();
+		}
 
 		this.context.save();
 		this.graphics.drawDebugInfo(1 / this.delta, this.drawCount);
@@ -249,6 +264,9 @@ var Graph = new Class({
 			this.calculateConnections();
 		}
 
+		if (this.loadingRequest)
+			this.loadingTime += this.delta;
+
 		this.draw();
 	},
 
@@ -258,10 +276,10 @@ var Graph = new Class({
 
 		if (!this.interpolationRunning)
 		{
-			if (this.uahh = !this.uahh)
-				this.buildVisualizationData(this.sampleB);
+			if (this.currentData.root.id == 4)
+				this.loadData(0);
 			else
-				this.buildVisualizationData(this.sampleA);
+				this.loadData(4);
 		}
 	},
 });

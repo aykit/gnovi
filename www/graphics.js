@@ -6,9 +6,14 @@
 var Graphics = new Class({
 	setContext: function(context) { this.context = context; },
 
-	_drawCenteredText: function(text, posX, posY)
+	_fillCenteredText: function(text, posX, posY)
 	{
 		this.context.fillText(text, posX - this.context.measureText(text).width / 2, posY)
+	},
+
+	_strokeCenteredText: function(text, posX, posY)
+	{
+		this.context.strokeText(text, posX - this.context.measureText(text).width / 2, posY)
 	},
 
 	_fillCircle: function(x, y, r)
@@ -71,11 +76,52 @@ var Graphics = new Class({
 
 		this.context.font = "8px";
 		var txt = Math.round(fps) + " fps";
-		this._drawCenteredText(txt, 460, 380);
+		this._fillCenteredText(txt, 460, 380);
 
 		this.context.translate(460, 350);
 		this.context.rotate(drawCount * 2 * Math.PI / 64);
 		this.context.strokeRect(-10, -10, 20, 20);
+	},
+
+	drawLoadingIndicator: function(loadTime)
+	{
+		alpha = loadTime;
+		if (alpha > 1)
+			alpha = 1;
+
+		this.context.strokeStyle = "rgba(0, 0, 0," + alpha + ")";
+
+		scale1 = loadTime * 10;
+		if (scale1 > 5)
+			scale1 = 5;
+
+		scale2 = 10 - loadTime * 10;
+		if (scale2 < 3)
+			scale2 = 3;
+
+		this.context.save();
+		this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2);
+		this.context.rotate(loadTime * 2 * Math.PI / 4);
+		this.context.scale(scale1, scale1);
+		this.context.strokeRect(-10, -10, 20, 20);
+		this.context.restore();
+
+		this.context.save();
+		this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2);
+		this.context.rotate(- loadTime * 2 * Math.PI / 4);
+		this.context.scale(scale2, scale2);
+		this.context.strokeRect(-10, -10, 20, 20);
+		this.context.restore();
+
+		this.context.textBaseline = "middle";
+		this.context.font = "bold 12px Verdana";
+
+		this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
+		this.context.lineWidth = 5;
+		this._strokeCenteredText("loading . . .", 0, 200)
+
+		this.context.fillStyle = "rgba(0, 0, 0," + alpha + ")";
+		this._fillCenteredText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 30)
 	},
 });
 
@@ -163,16 +209,16 @@ var GraphGraphics = new Class({
 		if (isRoot)
 		{
 			this.context.font = "bold 14px Verdana";
-			this._drawGnoviIcon(0, 0, 50, true, alpha);
+			this._drawGnoviIcon(posX, posY, 50, true, alpha);
 			this.context.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
-			this._drawCenteredText(this.data.root.label, 0, 40);
+			this._fillCenteredText(node.label, posX, posY + 40);
 		}
 		else
 		{
 			this.context.font = "bold 10px Verdana";
 			this._drawGnoviIcon(posX, posY, 30, mouseOver, alpha);
 			this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
-			this._drawCenteredText(node.label, posX, posY + 25);
+			this._fillCenteredText(node.label, posX, posY + 25);
 		}
 	},
 

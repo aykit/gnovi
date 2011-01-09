@@ -18,17 +18,17 @@ var Graphics = new Class({
 		this.context.fill();	
 	},
 
-	_drawGnoviIcon: function(posX, posY, size, glow)
+	_drawGnoviIcon: function(posX, posY, size, glow, alpha)
 	{
 		var gradient = this.context.createRadialGradient(posX, posY, 0, posX, posY, size / 2);
-		gradient.addColorStop(0.3, "rgba(255, 255, 255, 255)");
-		gradient.addColorStop(0.5, "black");
-		gradient.addColorStop(0.6, "green");
+		gradient.addColorStop(0.3, "rgba(255, 255, 255, " + alpha + ")");
+		gradient.addColorStop(0.5, "rgba(0, 0, 0, " + alpha + ")");
+		gradient.addColorStop(0.6, "rgba(0, 255, 0, " + alpha + ")");
 
 		if (glow)
-			gradient.addColorStop(1, "red");
+			gradient.addColorStop(1, "rgba(255, 0, 0, " + alpha + ")");
 		else
-			gradient.addColorStop(1, "blue");
+			gradient.addColorStop(1, "rgba(0, 0, 255, " + alpha + ")");
 
 		this.context.fillStyle = gradient;
 		this._fillCircle(posX, posY, size / 2);
@@ -156,34 +156,34 @@ var GraphGraphics = new Class({
 		this._clearCanvas();
 	},
 
-	drawNode: function(node, posX, posY, isRoot, mouseOver)
+	drawNode: function(node, posX, posY, isRoot, mouseOver, alpha)
 	{
 		this.context.textBaseline = "middle";
 
 		if (isRoot)
 		{
 			this.context.font = "bold 14px Verdana";
-			this._drawGnoviIcon(0, 0, 50, true);
-			this.context.fillStyle = "red";
+			this._drawGnoviIcon(0, 0, 50, true, alpha);
+			this.context.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
 			this._drawCenteredText(this.data.root.label, 0, 40);
 		}
 		else
 		{
 			this.context.font = "bold 10px Verdana";
-			this._drawGnoviIcon(posX, posY, 30, mouseOver);
-			this.context.fillStyle = "black";
+			this._drawGnoviIcon(posX, posY, 30, mouseOver, alpha);
+			this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
 			this._drawCenteredText(node.label, posX, posY + 25);
 		}
 	},
 
-	drawConnection: function(x1, y1, x2, y2, strength)
+	drawConnection: function(x1, y1, x2, y2, alpha)
 	{
 		this.context.beginPath();
 		this.context.moveTo(x1, y1);
 		this.context.lineTo(x2, y2);
 
-		this.context.strokeStyle = "black";
-		this.context.lineWidth = strength;
+		this.context.strokeStyle = "rgba(0, 0, 0, " + alpha + ")";
+		this.context.lineWidth = 1.5;
 		this.context.stroke();
 	},
 
@@ -193,4 +193,6 @@ var GraphGraphics = new Class({
 	},
 
 	getNodeStartDistance: function() { return 350; },
+
+	getInterpolationTime: function() { return 0.8; },
 });

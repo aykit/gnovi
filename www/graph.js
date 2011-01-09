@@ -1,12 +1,18 @@
 var Graph = new Class({
 	Extends: Game,
 
+	currentNodesVisData: null,
+	currentData: null,
+	currentNodes: null,
+	connections: [],
+	nodesToDraw: [],
+
+	interpolationProgress: 1,
+	interpolationRunning: false,
+
     initialize: function(canvas, scaling)
     {
     	this.parent(canvas, new GraphGraphics(), 1);
-
-		this.currentData = null;
-		this.currentNodes = null;
 
 		this.sampleA =
 		{
@@ -56,56 +62,55 @@ var Graph = new Class({
 		this.prevNodes = this.currentNodes;
 		this.currentNodes = {};
 
-		// root node
-		var node = Object.clone(this.currentData.root);
-		node.visData = {};
-		node.visData.position = {r: 0, phi: 0};
+		this.prevNodesVisData = this.currentNodesVisData;
+		this.currentNodesVisData = {};
 
+		// root node
+		var node = this.currentData.root;
 		this.currentNodes[node.id] = node;
+
+		var visData = {};
+		visData.position = {r: 0, phi: 0};
+		visData.alpha = 1;
+		this.currentNodesVisData[node.id] = visData;
 
 		// other nodes
 		var numNodes = this.currentData.nodes.length;
 		for (var i = 0; i < numNodes; i++)
 		{
-			var node = Object.clone(this.currentData.nodes[i]);
-			node.visData = {};
-			node.visData.position = {r: 100, phi: i / numNodes * 2 * Math.PI}; // nur diskrete abstände möglich
-
+			var node = this.currentData.nodes[i];
 			this.currentNodes[node.id] = node;
 
-			// connection
-			var connection = {};
+			var visData = {};
+			visData.position = {r: 100, phi: i / numNodes * 2 * Math.PI}; // nur diskrete abstände möglich
+			visData.alpha = 1;
+			this.currentNodesVisData[node.id] = visData;
 		}
 
 		this.interpolationProgress = 0;
 		this.interpolationRunning = true;
 
-		console.log(JSON.encode(this.currentNodes));
+		//console.log(JSON.encode(this.currentNodes));
 	},
 
-	calulateNodesToDraw: function()
+	calculateNodesToDraw: function()
 	{
 		if (!this.interpolationRunning)
 		{
 			this.nodesToDraw = Object.values(this.currentNodes);
+			this.interpolatedNodesVisData = this.currentNodesVisData;
 			return;
 		}
 
-		var nodeIds = Object.keys(this.prevNodes).combine(Object.keys(this.currentNodes));
+		this.nodesToDraw = Object.values(this.prevNodes).concat(Object.values(this.currentNodes));
+		this.interpolatedNodesVisData = {};
 
-		this.nodesToDraw = [];
-
-		for (var i = 0; i < nodeIds.length; i++)
+		for (var i = 0; i < this.nodesToDraw.length; i++)
 		{
-			var id = nodeIds[i];
+			var node = this.nodesToDraw[i];
 
-			var prevVisData = null;
-			if (this.prevNodes[id])
-				prevVisData = this.prevNodes[id].visData;
-
-			var currentVisData = null;
-			if (this.currentNodes[id])
-				currentVisData = this.currentNodes[id].visData;
+			var prevVisData = this.prevNodesVisData[node.id];
+			var currentVisData = this.currentNodesVisData[node.id];
 
 			var hiddenDistance = this.graphics.getNodeStartDistance();
 			if (!prevVisData)
@@ -120,34 +125,58 @@ var Graph = new Class({
 				currentVisData.position.r = hiddenDistance;
 			}
 
-			var a = this.interpolationProgress;
-			a = -2*a*a*a + 3*a*a;
-			//a = (1 - Math.cos(a * Math.PI)) / 2; // ca das gleiche wie oben
-			//a = (Math.exp(-8/2) + 1) / (Math.exp(8*(0.5-a)) + 1); // FALSCH
-			var b = 1 - a;
+			var current = this.interpolationProgress;
+			current = -2*current*current*current + 3*current*current;
+			var prev = 1 - current;
 
 			var visData = {};
 			visData.position =
 			{
-				r: prevVisData.position.r * b + currentVisData.position.r * a,
-				phi: prevVisData.position.phi * b + currentVisData.position.phi * a,
+				r: prevVisData.position.r * prev + currentVisData.position.r * current,
+				phi: prevVisData.position.phi * prev + currentVisData.position.phi * current,
 			};
+			visData.alpha = prevVisData.alpha * prev + currentVisData.alpha * current;
 
-			var node = Object.clone(this.currentNodes[id] || this.prevNodes[id]);
-			node.visData = visData;
-			this.nodesToDraw.push(node);
+			this.interpolatedNodesVisData[node.id] = visData;
 		}
 	},
 
-	calulateConnections: function()
+	calculateConnections: function()
 	{
+		this.connections = [];
+
+		var rootNode = this.currentNodes[this.currentData.root.id];
+
+		var current = 1 / (Math.exp(-20 * (this.interpolationProgress - 0.6)) + 1);
+		var prev = 1 / (Math.exp(20 * (this.interpolationProgress - 0.4)) + 1);
+
+		var numNodes = this.currentData.nodes.length;
+		for (var i = 0; i < numNodes; i++)
+		{
+			var node = this.currentNodes[this.currentData.nodes[i].id];
+			var connection = {node1: rootNode, node2: node, alpha: current};
+			this.connections.push(connection);
+		}
+
+		if (this.interpolationRunning)
+		{
+			var rootNode = this.prevNodes[this.prevData.root.id];
+
+			var numNodes = this.prevData.nodes.length;
+			for (var i = 0; i < numNodes; i++)
+			{
+				var node = this.prevNodes[this.prevData.nodes[i].id];
+				var connection = {node1: rootNode, node2: node, alpha: prev};
+				this.connections.push(connection);
+			}
+		}
+
 		for (var i = 0; i < this.nodesToDraw.length; i++)
 		{
 		
 		}
 
 		//var relations = Object.merge();
-		this.connections = [];
 	},
 
 	draw: function()
@@ -166,21 +195,25 @@ var Graph = new Class({
 		{
 			var connection = this.connections[i];
 
-			var posX0 = connection[0].position.r * Math.cos(connection[0].position.phi) + graphCenter.x;
-			var posY0 = connection[0].position.r * Math.sin(connection[0].position.phi) + graphCenter.y;
+			var visData1 = this.interpolatedNodesVisData[connection.node1.id];
+			var visData2 = this.interpolatedNodesVisData[connection.node2.id];
 
-			var posX1 = connection[1].position.r * Math.cos(connection[1].position.phi) + graphCenter.x;
-			var posY1 = connection[1].position.r * Math.sin(connection[1].position.phi) + graphCenter.y;
+			var posX1 = visData1.position.r * Math.cos(visData1.position.phi) + graphCenter.x;
+			var posY1 = visData1.position.r * Math.sin(visData1.position.phi) + graphCenter.y;
 
-			this.graphics.drawConnection(posX0, posY0, posX1, posY1, 1);
+			var posX2 = visData2.position.r * Math.cos(visData2.position.phi) + graphCenter.x;
+			var posY2 = visData2.position.r * Math.sin(visData2.position.phi) + graphCenter.y;
+
+			this.graphics.drawConnection(posX1, posY1, posX2, posY2, connection.alpha);
 		}
 
 		for (var i = 0; i < this.nodesToDraw.length; i++)
 		{
 			var node = this.nodesToDraw[i];
+			var visData = this.interpolatedNodesVisData[node.id];
 
-			var r = node.visData.position.r;
-			var phi = node.visData.position.phi;
+			var r = visData.position.r;
+			var phi = visData.position.phi;
 
 			var posX = r * Math.cos(phi) + graphCenter.x;
 			var posY = r * Math.sin(phi) + graphCenter.y;
@@ -189,7 +222,7 @@ var Graph = new Class({
 			var dy = posY - this.mouseY;
 			var mouseOver = dx*dx + dy*dy < 15*15; // TODO: determine size
 
-			this.graphics.drawNode(node, posX, posY, false, mouseOver);
+			this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
 		}
 
 		this.context.restore();
@@ -205,12 +238,15 @@ var Graph = new Class({
 
 		if (this.interpolationRunning)
 		{
-			this.interpolationProgress += this.delta * 2;
+			this.interpolationProgress += this.delta / this.graphics.getInterpolationTime();
 			if (this.prevNodes == null || this.interpolationProgress >= 1)
+			{
 				this.interpolationRunning = false;
+				this.interpolationProgress = 1;
+			}
 
-			this.calulateNodesToDraw();
-			this.calulateConnections();
+			this.calculateNodesToDraw();
+			this.calculateConnections();
 		}
 
 		this.draw();
@@ -220,12 +256,13 @@ var Graph = new Class({
 	{
 		this.parent();
 
-		if (this.uahh = !this.uahh)
-			this.buildVisualizationData(this.sampleB);
-		else
-			this.buildVisualizationData(this.sampleA);
-
-		this.transformProgress = 0;
+		if (!this.interpolationRunning)
+		{
+			if (this.uahh = !this.uahh)
+				this.buildVisualizationData(this.sampleB);
+			else
+				this.buildVisualizationData(this.sampleA);
+		}
 	},
 });
 

@@ -36,7 +36,7 @@ var Graph = new Class({
 			this.loadingDataRequest.cancel();
 
 		this.loadingDataRequest = new Request.JSON({
-			url: "data.php",
+			url: "php/data.php",
 			onSuccess: this.onLoadDataSuccess.bind(this),
 			onFailure: this.onLoadDataFailure.bind(this)
 		});

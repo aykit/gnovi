@@ -1,9 +1,8 @@
 <?php
 
 chdir("..");
-
-require_once "page.php";
-require_once "is_email.php";
+require_once "php/page.php";
+require_once "php/is_email.php";
 
 class RegisterPage extends Page
 {

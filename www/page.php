@@ -2,6 +2,8 @@
 
 error_reporting(E_ALL);
 
+require_once "page_urls.php";
+
 class Page
 {
     protected $db = null;

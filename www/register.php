@@ -16,23 +16,22 @@ class RegisterPage extends Page
         $password1 = (string)@$_POST['p1'];
         $password2 = (string)@$_POST['p2'];
 
-        if ($password1 == $password2 && $password1 != "")
+        if ($password1 == (string)@$_SESSION['registerPasswdSafe1'] &&
+            $password2 == (string)@$_SESSION['registerPasswdSafe2'])
         {
-            if ($password1 == (string)@$_SESSION['registerPasswdSafe'])
-                $passwordHash = (string)@$_SESSION['registerPasswdHash'];
-            else
-                $passwordHash = sha1($password1);
-
-            $passwordSafe = sha1(uniqid());
+            $passwordHash = (string)@$_SESSION['registerPasswdHash'];
+            $passwordMismatch = false;
+        }
+        else if ($password1 == $password2 && $password1 != "")
+        {
+            $passwordHash = sha1($password1);
+            $passwordMismatch = false;
         }
         else
         {
             $passwordHash = "";
-            $passwordSafe = "";
+            $passwordMismatch = true;
         }
-
-        $_SESSION['registerPasswdHash'] = $passwordHash;
-        $_SESSION['registerPasswdSafe'] = $passwordSafe;
 
         $emailValid = is_email($email);
         $emailExists = false;
@@ -43,14 +42,31 @@ class RegisterPage extends Page
 
             if (!$emailExists)
             {
-                header("Location: user.php");
+                unset($_SESSION['registerPasswdHash']);
+                unset($_SESSION['registerPasswdSafe1']);
+                unset($_SESSION['registerPasswdSafe2']);
+
+                header("Location: " . rawurlencode(PageUrls::PROFILE));
                 die();
             }
         }
 
-        $this->drawHeader("Register",
-            array("mootools.js"),
-            array());
+        if ($passwordHash != "")
+        {
+            $passwordSafe1 = sha1(uniqid());
+            $passwordSafe2 = sha1(uniqid());
+        }
+        else
+        {
+            $passwordSafe1 = "";
+            $passwordSafe2 = "";
+        }
+
+        $_SESSION['registerPasswdHash'] = $passwordHash;
+        $_SESSION['registerPasswdSafe1'] = $passwordSafe1;
+        $_SESSION['registerPasswdSafe2'] = $passwordSafe2;
+
+        $this->drawHeader("Register", array(), array());
 
         include "html/register.php";
 

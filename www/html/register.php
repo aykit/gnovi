@@ -9,18 +9,18 @@
       </p>
       <p>
         <label>Passwort:</label>
-        <input id="password1" type="password" value="<?=htmlspecialchars($passwordSafe)?>" required name="p1">
+        <input id="password1" type="password" value="<?=htmlspecialchars($passwordSafe1)?>" required name="p1">
       </p>
       <p>
         <label>Passwort wiederholen:</label>
-        <input id="password2" type="password" value="<?=htmlspecialchars($passwordSafe)?>" required onforminput="setCustomValidity(value != password1.value ? 'Passwörter sind nicht gleich.' : '')" name="p2">
+        <input id="password2" type="password" value="<?=htmlspecialchars($passwordSafe2)?>" required onforminput="setCustomValidity(value != password1.value ? 'Passwörter sind nicht gleich.' : '')" name="p2">
       </p>
       <input type="submit" value="Registrieren">
     </form>
 <?php if ($posted) { ?>
 <?php if ($password1 == "" || $password2 == "") { ?>
     <p>Passwort eingeben!</p>
-<?php } else if ($password1 != $password2) { ?>
+<?php } else if ($passwordMismatch) { ?>
     <p>Passwörter sind nicht gleich.</p>
 <?php } ?>
 <?php if ($username == "") { ?>

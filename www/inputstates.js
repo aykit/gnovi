@@ -1,4 +1,4 @@
-var AUTOINPUT = true;
+var AUTOINPUT = false;
 
 /*
  *  START SCREEN
@@ -52,7 +52,7 @@ var StateEngineWordCollecting = new Class({
 
     timerEvent: function(delta)
     {
-        var timeDisplayed = Math.ceil(this.timeLeft);
+        var timeDisplayed = Math.ceil(this.timeLeft * 30);
 
         this.timeLeft -= delta;
         if (this.timeLeft < 0)
@@ -73,7 +73,7 @@ var StateEngineWordCollecting = new Class({
             }
         }
 
-        if (timeDisplayed != Math.ceil(this.timeLeft))
+        if (timeDisplayed != Math.ceil(this.timeLeft * 30))
             updateScreen = true;
 
         if (updateScreen)

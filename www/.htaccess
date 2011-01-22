@@ -4,8 +4,5 @@ RewriteBase /gnovi/www
 
 RewriteEngine on
 
-RewriteRule ^registrieren$ register.php [L]
-RewriteRule ^einloggen$ login.php [L]
-
 RewriteCond %{REQUEST_URI} !\.php$
-RewriteRule ^(.*)$ $1.php
+RewriteRule ^(.*)$ pages/$1.php

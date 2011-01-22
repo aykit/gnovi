@@ -1,5 +1,7 @@
 <?php
 
+chdir("..");
+
 require_once "page.php";
 require_once "is_email.php";
 

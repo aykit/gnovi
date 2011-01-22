@@ -9,6 +9,6 @@
     <script type="text/javascript" src="graph.js"></script>
   </head>
   <body>
-    <canvas id="graph" width="500" height="400"></canvas>
+    <canvas id="graph" width="640" height="480"></canvas>
   </body>
 </html>

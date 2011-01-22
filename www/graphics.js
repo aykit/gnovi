@@ -37,6 +37,7 @@ var Graphics = new Class({
 
 		this.context.fillStyle = gradient;
 		this._fillCircle(posX, posY, size / 2);
+		//this.context.putImageData(this.getImage("google"), posX, posY);
 	},
 
 	_fillTextRect: function(wordList, x, y, width, spacing, lineHeight)
@@ -192,6 +193,8 @@ var InputGraphics = new Class({
 		this.context.font = "bold 20px Courier New";
 		this.context.fillText(Math.ceil(timeLeft), 400, 20);
 
+        this.context.fillRect(0, 0, timeLeft / totalTime * 640, 2);
+
 		this.context.font = "bold 15px Courier New";
 		this.context.fillText(currentInputText, 20, 300);
 
@@ -254,10 +257,10 @@ var GraphGraphics = new Class({
 
 	getGraphCenter: function()
 	{
-		return {x: 250, y: 200 };
+		return {x: 320, y: 240};
 	},
 
 	getNodeStartDistance: function() { return 350; },
 
-	getInterpolationTime: function() { return 0.8; },
+	getInterpolationTime: function() { return 1.8; },
 });

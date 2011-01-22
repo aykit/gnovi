@@ -1,6 +1,7 @@
 <?php
 
-require_once "page.php";
+chdir("..");
+require_once "php/page.php";
 
 class InputPage extends Page
 {

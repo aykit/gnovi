@@ -30,7 +30,7 @@ function getGraph($id)
 			{"id2": 2, "id2": 3, "strength": 9},
 		],
 	}';
-	
+
 	$sampleB = '{
 		"root": {"id": 4, "label": "bla"},
 		"nodes":
@@ -48,7 +48,7 @@ function getGraph($id)
 		],
 	}';
 
-	sleep(1);
+	//sleep(1);
 
 	if ($id == 4)
 		print($sampleB);

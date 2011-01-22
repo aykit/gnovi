@@ -5,6 +5,8 @@ var Game = new Class({
 	drawCount: 0,
 	mouseX: 0,
 	mouseY: 0,
+    images: {},
+    isLoadingImages: false,
 
 	initialize: function(canvas, graphics, scaling)
 	{
@@ -25,6 +27,37 @@ var Game = new Class({
 		this.canvas.addEvent("mousemove", this.onMouseMove.bind(this));
 	},
 
+    loadImages: function(imgList)
+    {
+        if (imgList.length == 0)
+        {
+            if (!this.isLoadingImages)
+                this.imageLoadingFinished();
+            return;
+        }
+
+        this.isLoadingImages = true;
+
+        for (var name in imgList)
+        {
+            var path = imgList[name];
+
+            var img = new Image();
+            img.onload = this.onImageLoaded.bind(this);
+            img.onerror = this.onImageLoadingError.bind(this);
+            img.src = path;
+            img.gameName = name;
+            img.gameStatus = "loading";
+
+            this.images[name] = img;
+        }
+    },
+
+    getImage: function(name)
+    {
+        return this.images[name];
+    },
+
 	draw: function()
 	{
 		this.drawCount++;
@@ -42,6 +75,35 @@ var Game = new Class({
 		else
 			this.timer = this.onTimer.periodical(interval, this);
 	},
+
+    onImageLoaded: function(e)
+    {
+        e.target.gameStatus = "loaded";
+
+        for (var name in this.images)
+        {
+            if (this.images[name].gameStatus == "loading")
+                return;
+        }
+
+        this.isLoadingImages = false;
+        this.imageLoadingFinished();
+    },
+
+    onImageLoadingError: function(e)
+    {
+        e.target.gameStatus = "error";
+
+        for (var name in this.images)
+        {
+            if (this.images[name].gameStatus == "loading")
+                return;
+        }
+
+        this.imageLoadingFinished();
+    },
+
+    imageLoadingFinished: function() { },
 
 	onTimer: function()
 	{

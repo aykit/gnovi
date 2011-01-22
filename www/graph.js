@@ -10,43 +10,50 @@ var Graph = new Class({
 	interpolationProgress: 1,
 	interpolationRunning: false,
 
-	loadingRequest: null,
+	loadingDataRequest: null,
 	loadingTime: 0,
 
     initialize: function(canvas, scaling)
     {
     	this.parent(canvas, new GraphGraphics(), 1);
 
-		this.loadData(0);
-
 		this.setTimer(30);
+
+        this.loadImages({
+            "google": "http://www.google.com/images/srpr/nav_logo27.png",
+            //"earth": "http://www.nersc.gov/news/science/Earth_from_Space.jpg",
+        });
+    },
+
+    imageLoadingFinished: function()
+    {
+		this.loadData(0);
     },
 
 	loadData: function(rootId)
-	{
-		if (this.loadingRequest)
-			this.loadingRequest.cancel();
+    { 
+		if (this.loadingDataRequest)
+			this.loadingDataRequest.cancel();
 
-		this.loadingRequest = new Request.JSON({
+		this.loadingDataRequest = new Request.JSON({
 			url: "data.php",
 			onSuccess: this.onLoadDataSuccess.bind(this),
 			onFailure: this.onLoadDataFailure.bind(this)
 		});
 
-		this.loadingRequest.get("cmd=getgraph&id=" + rootId);
-		this.loadingTime = 0;
+		this.loadingDataRequest.get("cmd=getgraph&id=" + rootId);
 	},
 
 	onLoadDataSuccess: function(data, text)
 	{
-		this.loadingRequest = null;
+		this.loadingDataRequest = null;
 
 		this.buildVisualizationData(data);
 	},
 
 	onLoadDataFailure: function()
 	{
-		this.loadingRequest = null;
+		this.loadingDataRequest = null;
 
 		console.log("failure");
 	},
@@ -235,7 +242,7 @@ var Graph = new Class({
 
 		this.context.restore();
 
-		if (this.loadingRequest)
+		if (this.loadingDataRequest || this.isLoadingImages)
 		{
 			this.context.save();
 			this.graphics.drawLoadingIndicator(this.loadingTime);
@@ -264,8 +271,10 @@ var Graph = new Class({
 			this.calculateConnections();
 		}
 
-		if (this.loadingRequest)
-			this.loadingTime += this.delta;
+        if (this.loadingDataRequest || this.isLoadingImages)
+    		this.loadingTime += this.delta;
+        else
+            this.loadingTime = 0;
 
 		this.draw();
 	},

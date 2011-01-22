@@ -1,0 +1,7 @@
+Options FollowSymLinks
+
+RewriteBase /gnovi/www
+
+RewriteEngine on
+RewriteCond %{REQUEST_URI} !\.php$
+RewriteRule ^(.*)$ $1.php

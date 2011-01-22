@@ -8,8 +8,10 @@ class Page
     protected $dbError = "";
     protected $sessionStarted = false;
 
-    public function __construct()
+    protected function displayDatabaseError($error)
     {
+        include "html/dberror.php";
+        die();
     }
 
     protected function connectDb()
@@ -19,14 +21,14 @@ class Page
 
         $this->db = new mysqli();
 
-        if (!$this->db->real_connect("localhost", "gnovi", "2suKWnLxLBfBCZnh", "gnovi"))
+        if (!@$this->db->real_connect("localhost", "gnovi", "2suKWnLxLBfBCZnh", "gnovi"))
         {
             $this->dbError = $this->db->connect_error;
             $this->db = null;
             return false;
         }
 
-        if (!$this->db->set_charset("utf8"))
+        if (!@$this->db->set_charset("utf8"))
         {
             $this->db->close();
             $this->dbError = $this->db->error;
@@ -55,7 +57,13 @@ class Page
     {
         $this->logout();
 
-        $email = $this->db->real_escape_string($email);
+        if (!$this->connectDb())
+        {
+            $this->displayDatabaseError($this->dbError);
+            return false;
+        }
+
+        $email = $this->db->escape_string($email);
 
         $result = $this->db->query("SELECT `ID`, `Name`, `Email`, `Password` FROM `Users` WHERE `Email` = '$email'");
         $row = $result->fetch_assoc();

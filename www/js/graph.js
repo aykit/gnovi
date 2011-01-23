@@ -10,8 +10,6 @@ var Graph = new Class({
     interpolationProgress: 1,
     interpolationRunning: false,
 
-    loadingDataRequest: null,
-
     initialize: function(canvas, scaling)
     {
         this.parent(canvas, new GraphGraphics(), 1);
@@ -19,7 +17,7 @@ var Graph = new Class({
         this.setTimer(30);
 
         this.loadImages({
-            "google": "http://www.google.com/images/srpr/nav_logo27.png",
+            //"google": "http://www.google.com/images/srpr/nav_logo27.png",
             //"earth": "http://www.nersc.gov/news/science/Earth_from_Space.jpg",
         });
     },
@@ -31,30 +29,12 @@ var Graph = new Class({
 
     loadData: function(rootId)
     {
-        if (this.loadingDataRequest)
-            this.loadingDataRequest.cancel();
-
-        this.loadingDataRequest = new Request.JSON({
-            url: "php/data.php",
-            onSuccess: this.onLoadDataSuccess.bind(this),
-            onFailure: this.onLoadDataFailure.bind(this)
-        });
-
-        this.loadingDataRequest.get("cmd=getgraph&id=" + rootId);
+        this.transmitData("cmd=getgraph&id=" + rootId);
     },
 
-    onLoadDataSuccess: function(data, text)
+    transmitDataSuccess: function(data)
     {
-        this.loadingDataRequest = null;
-
         this.buildVisualizationData(data);
-    },
-
-    onLoadDataFailure: function()
-    {
-        this.loadingDataRequest = null;
-
-        console.log("failure");
     },
 
     buildVisualizationData: function(newData)
@@ -241,7 +221,7 @@ var Graph = new Class({
 
         this.context.restore();
 
-        if (this.isLoadingSomething())
+        if (this.loadingSomething())
         {
             this.context.save();
             this.graphics.drawLoadingIndicator(this.loadingSomethingTime);
@@ -251,11 +231,6 @@ var Graph = new Class({
         this.context.save();
         this.graphics.drawDebugInfo(1 / this.delta, this.drawCount);
         this.context.restore();
-    },
-
-    isLoadingSomething: function()
-    {
-        return this.parent() || this.loadingDataRequest;
     },
 
     onTimer: function()
@@ -279,7 +254,7 @@ var Graph = new Class({
             updateScreen = true;
         }
 
-        if (this.isLoadingSomething())
+        if (this.loadingSomething())
             updateScreen = true;
 
         if (updateScreen)

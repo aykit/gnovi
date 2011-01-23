@@ -55,10 +55,12 @@ function getGraph($id)
         ],
     }';
 
+    print('{"status":"success", "data":');
     if ($id == 4)
         print($sampleB);
     else
         print($sampleA);
+    print('}');
 }
 
 function getDb()
@@ -73,7 +75,7 @@ function exitWithError($error)
 {
     exit(json_encode(array(
         "status" => "error",
-        "error" => $error,
+        "error" => (string)$error,
     )));
 }
 

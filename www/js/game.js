@@ -7,7 +7,8 @@ var Game = new Class({
     mouseY: 0,
     images: {},
     loadingImages: false,
-//    requestPending: false,
+    dataRequest: null,
+    loadingSomethingTime: 0,
 
     initialize: function(canvas, graphics, scaling)
     {
@@ -26,11 +27,17 @@ var Game = new Class({
         document.addEvent("keypress", this.onKeypress.bind(this));
         this.canvas.addEvent("click", this.onClick.bind(this));
         this.canvas.addEvent("mousemove", this.onMouseMove.bind(this));
+
+        this.dataRequest = new Request.JSON({
+            url: "php/data.php",
+            onSuccess: this.onDataRequestSuccess.bind(this),
+            onFailure: this.onDataRequestFailure.bind(this),
+        });
     },
 
     loadImages: function(imgList)
     {
-        if (imgList.length == 0)
+        if (Object.getLength(imgList) == 0)
         {
             if (!this.loadingImages)
                 this.imageLoadingFinished();
@@ -106,9 +113,41 @@ var Game = new Class({
 
     imageLoadingFinished: function() { },
 
-    isLoadingSomething: function()
+    loadingSomething: function()
     {
-        return this.isLoadingImages;
+        return this.loadingImages || this.transmittingData();
+    },
+
+    transmittingData: function()
+    {
+        return this.dataRequest.isRunning();
+    },
+
+    transmitData: function(data)
+    {
+        this.dataRequest.cancel();
+        this.dataRequest.get(data);
+    },
+
+    onDataRequestSuccess: function(response, text)
+    {
+        if (response.status == "success")
+            this.transmitDataSuccess(response.data);
+        else
+            this.transmitDataFailure(response.error);
+    },
+
+    onDataRequestFailure: function()
+    {
+        this.transmitDataFailure("transfer error");
+    },
+
+    transmitDataSuccess: function(data) { },
+
+    transmitDataFailure: function(error)
+    {
+        console.log("error: " + error);
+        console.log("response: " + this.dataRequest.response.text);
     },
 
     onTimer: function()
@@ -116,7 +155,7 @@ var Game = new Class({
         this.delta = Date.now() / 1000 - this.lastTimerEventTime;
         this.lastTimerEventTime += this.delta;
 
-        if (this.isLoadingSomething())
+        if (this.loadingSomething())
         {
             this.loadingSomethingTime += this.delta;
             updateScreen = true;

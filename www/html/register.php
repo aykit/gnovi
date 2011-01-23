@@ -13,7 +13,8 @@
       </p>
       <p>
         <label>Passwort wiederholen:</label>
-        <input id="password2" type="password" value="<?=htmlspecialchars($passwordSafe2)?>" required onforminput="setCustomValidity(value != password1.value ? 'Passwörter sind nicht gleich.' : '')" name="p2">
+        <input id="password2" type="password" value="<?=htmlspecialchars($passwordSafe2)?>" required
+          onforminput="setCustomValidity(value != password1.value ? 'Passwörter sind nicht gleich.' : '')" name="p2">
       </p>
       <input type="submit" value="Registrieren">
     </form>

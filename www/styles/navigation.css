@@ -4,7 +4,7 @@ nav {
   margin-top: 20px;
   margin-left: 20px;
 }
- 
+
 #nav li:first-child  {
   float:left;
   margin-top: -3px;
@@ -25,7 +25,7 @@ nav {
   border-radius: 8px;
   -moz-border-radius: 8px;
   -webkit-border-radius: 8px; }
-  
+
 #navbar {
   margin-top: 12px;
   margin-left: 63px;
@@ -33,5 +33,5 @@ nav {
   height: 2px;
   border: 3px;
   background-color: #0C0B0B;
-  
+
 }

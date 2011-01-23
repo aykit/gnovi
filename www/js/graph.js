@@ -1,23 +1,23 @@
 var Graph = new Class({
-	Extends: Game,
+    Extends: Game,
 
-	currentNodesVisData: null,
-	currentData: null,
-	currentNodes: null,
-	connections: [],
-	nodesToDraw: [],
+    currentNodesVisData: null,
+    currentData: null,
+    currentNodes: null,
+    connections: [],
+    nodesToDraw: [],
 
-	interpolationProgress: 1,
-	interpolationRunning: false,
+    interpolationProgress: 1,
+    interpolationRunning: false,
 
-	loadingDataRequest: null,
-	loadingTime: 0,
+    loadingDataRequest: null,
+    loadingTime: 0,
 
     initialize: function(canvas, scaling)
     {
-    	this.parent(canvas, new GraphGraphics(), 1);
+        this.parent(canvas, new GraphGraphics(), 1);
 
-		this.setTimer(30);
+        this.setTimer(30);
 
         this.loadImages({
             "google": "http://www.google.com/images/srpr/nav_logo27.png",
@@ -27,272 +27,272 @@ var Graph = new Class({
 
     imageLoadingFinished: function()
     {
-		this.loadData(0);
+        this.loadData(0);
     },
 
-	loadData: function(rootId)
-    { 
-		if (this.loadingDataRequest)
-			this.loadingDataRequest.cancel();
+    loadData: function(rootId)
+    {
+        if (this.loadingDataRequest)
+            this.loadingDataRequest.cancel();
 
-		this.loadingDataRequest = new Request.JSON({
-			url: "php/data.php",
-			onSuccess: this.onLoadDataSuccess.bind(this),
-			onFailure: this.onLoadDataFailure.bind(this)
-		});
+        this.loadingDataRequest = new Request.JSON({
+            url: "php/data.php",
+            onSuccess: this.onLoadDataSuccess.bind(this),
+            onFailure: this.onLoadDataFailure.bind(this)
+        });
 
-		this.loadingDataRequest.get("cmd=getgraph&id=" + rootId);
-	},
+        this.loadingDataRequest.get("cmd=getgraph&id=" + rootId);
+    },
 
-	onLoadDataSuccess: function(data, text)
-	{
-		this.loadingDataRequest = null;
+    onLoadDataSuccess: function(data, text)
+    {
+        this.loadingDataRequest = null;
 
-		this.buildVisualizationData(data);
-	},
+        this.buildVisualizationData(data);
+    },
 
-	onLoadDataFailure: function()
-	{
-		this.loadingDataRequest = null;
+    onLoadDataFailure: function()
+    {
+        this.loadingDataRequest = null;
 
-		console.log("failure");
-	},
+        console.log("failure");
+    },
 
-	buildVisualizationData: function(newData)
-	{
-		this.prevData = this.currentData;
-		this.currentData = newData;
+    buildVisualizationData: function(newData)
+    {
+        this.prevData = this.currentData;
+        this.currentData = newData;
 
-		this.prevNodes = this.currentNodes;
-		this.currentNodes = {};
+        this.prevNodes = this.currentNodes;
+        this.currentNodes = {};
 
-		this.prevNodesVisData = this.currentNodesVisData;
-		this.currentNodesVisData = {};
+        this.prevNodesVisData = this.currentNodesVisData;
+        this.currentNodesVisData = {};
 
-		// root node
-		var node = this.currentData.root;
-		this.currentNodes[node.id] = node;
+        // root node
+        var node = this.currentData.root;
+        this.currentNodes[node.id] = node;
 
-		var visData = {};
-		visData.position = {r: 0, phi: 0};
-		visData.alpha = 1;
-		visData.isRoot = 1;
-		this.currentNodesVisData[node.id] = visData;
+        var visData = {};
+        visData.position = {r: 0, phi: 0};
+        visData.alpha = 1;
+        visData.isRoot = 1;
+        this.currentNodesVisData[node.id] = visData;
 
-		// other nodes
-		var numNodes = this.currentData.nodes.length;
-		for (var i = 0; i < numNodes; i++)
-		{
-			var node = this.currentData.nodes[i];
-			this.currentNodes[node.id] = node;
+        // other nodes
+        var numNodes = this.currentData.nodes.length;
+        for (var i = 0; i < numNodes; i++)
+        {
+            var node = this.currentData.nodes[i];
+            this.currentNodes[node.id] = node;
 
-			var visData = {};
-			visData.position = {r: 100, phi: i / numNodes * 2 * Math.PI}; // nur diskrete abstände möglich
-			visData.alpha = 1;
-			visData.isRoot = 0;
-			this.currentNodesVisData[node.id] = visData;
-		}
+            var visData = {};
+            visData.position = {r: 100, phi: i / numNodes * 2 * Math.PI}; // nur diskrete abstände möglich
+            visData.alpha = 1;
+            visData.isRoot = 0;
+            this.currentNodesVisData[node.id] = visData;
+        }
 
-		this.interpolationProgress = 0;
-		this.interpolationRunning = true;
+        this.interpolationProgress = 0;
+        this.interpolationRunning = true;
 
-		//console.log(this.currentNodes);
-	},
+        //console.log(this.currentNodes);
+    },
 
-	calculateNodesToDraw: function()
-	{
-		if (!this.interpolationRunning)
-		{
-			this.nodesToDraw = Object.values(this.currentNodes);
-			this.interpolatedNodesVisData = this.currentNodesVisData;
-			return;
-		}
+    calculateNodesToDraw: function()
+    {
+        if (!this.interpolationRunning)
+        {
+            this.nodesToDraw = Object.values(this.currentNodes);
+            this.interpolatedNodesVisData = this.currentNodesVisData;
+            return;
+        }
 
-		this.nodesToDraw = Object.values(this.prevNodes).concat(Object.values(this.currentNodes));
-		this.interpolatedNodesVisData = {};
+        this.nodesToDraw = Object.values(this.prevNodes).concat(Object.values(this.currentNodes));
+        this.interpolatedNodesVisData = {};
 
-		for (var i = 0; i < this.nodesToDraw.length; i++)
-		{
-			var node = this.nodesToDraw[i];
+        for (var i = 0; i < this.nodesToDraw.length; i++)
+        {
+            var node = this.nodesToDraw[i];
 
-			var prevVisData = this.prevNodesVisData[node.id];
-			var currentVisData = this.currentNodesVisData[node.id];
+            var prevVisData = this.prevNodesVisData[node.id];
+            var currentVisData = this.currentNodesVisData[node.id];
 
-			var hiddenDistance = this.graphics.getNodeStartDistance();
-			if (!prevVisData)
-			{
-				prevVisData = Object.clone(currentVisData);
-				prevVisData.position.r = hiddenDistance;
-			}
+            var hiddenDistance = this.graphics.getNodeStartDistance();
+            if (!prevVisData)
+            {
+                prevVisData = Object.clone(currentVisData);
+                prevVisData.position.r = hiddenDistance;
+            }
 
-			if (!currentVisData)
-			{
-				currentVisData = Object.clone(prevVisData);
-				currentVisData.position.r = hiddenDistance;
-			}
+            if (!currentVisData)
+            {
+                currentVisData = Object.clone(prevVisData);
+                currentVisData.position.r = hiddenDistance;
+            }
 
-			var current = this.interpolationProgress;
-			current = -2*current*current*current + 3*current*current;
-			var prev = 1 - current;
+            var current = this.interpolationProgress;
+            current = -2*current*current*current + 3*current*current;
+            var prev = 1 - current;
 
-			var visData = {};
-			visData.position =
-			{
-				r: prevVisData.position.r * prev + currentVisData.position.r * current,
-				phi: prevVisData.position.phi * prev + currentVisData.position.phi * current,
-			};
-			visData.alpha = prevVisData.alpha * prev + currentVisData.alpha * current;
-			visData.isRoot = prevVisData.isRoot * prev + currentVisData.isRoot * current;
+            var visData = {};
+            visData.position =
+            {
+                r: prevVisData.position.r * prev + currentVisData.position.r * current,
+                phi: prevVisData.position.phi * prev + currentVisData.position.phi * current,
+            };
+            visData.alpha = prevVisData.alpha * prev + currentVisData.alpha * current;
+            visData.isRoot = prevVisData.isRoot * prev + currentVisData.isRoot * current;
 
-			this.interpolatedNodesVisData[node.id] = visData;
-		}
-	},
+            this.interpolatedNodesVisData[node.id] = visData;
+        }
+    },
 
-	calculateConnections: function()
-	{
-		this.connections = [];
+    calculateConnections: function()
+    {
+        this.connections = [];
 
-		var rootNode = this.currentNodes[this.currentData.root.id];
+        var rootNode = this.currentNodes[this.currentData.root.id];
 
-		var current = 1 / (Math.exp(-20 * (this.interpolationProgress - 0.6)) + 1);
-		var prev = 1 / (Math.exp(20 * (this.interpolationProgress - 0.4)) + 1);
+        var current = 1 / (Math.exp(-20 * (this.interpolationProgress - 0.6)) + 1);
+        var prev = 1 / (Math.exp(20 * (this.interpolationProgress - 0.4)) + 1);
 
-		var numNodes = this.currentData.nodes.length;
-		for (var i = 0; i < numNodes; i++)
-		{
-			var node = this.currentNodes[this.currentData.nodes[i].id];
-			var connection = {node1: rootNode, node2: node, alpha: current};
-			this.connections.push(connection);
-		}
+        var numNodes = this.currentData.nodes.length;
+        for (var i = 0; i < numNodes; i++)
+        {
+            var node = this.currentNodes[this.currentData.nodes[i].id];
+            var connection = {node1: rootNode, node2: node, alpha: current};
+            this.connections.push(connection);
+        }
 
-		if (this.interpolationRunning)
-		{
-			var rootNode = this.prevNodes[this.prevData.root.id];
+        if (this.interpolationRunning)
+        {
+            var rootNode = this.prevNodes[this.prevData.root.id];
 
-			var numNodes = this.prevData.nodes.length;
-			for (var i = 0; i < numNodes; i++)
-			{
-				var node = this.prevNodes[this.prevData.nodes[i].id];
-				var connection = {node1: rootNode, node2: node, alpha: prev};
-				this.connections.push(connection);
-			}
-		}
+            var numNodes = this.prevData.nodes.length;
+            for (var i = 0; i < numNodes; i++)
+            {
+                var node = this.prevNodes[this.prevData.nodes[i].id];
+                var connection = {node1: rootNode, node2: node, alpha: prev};
+                this.connections.push(connection);
+            }
+        }
 
-		for (var i = 0; i < this.nodesToDraw.length; i++)
-		{
-		
-		}
+        for (var i = 0; i < this.nodesToDraw.length; i++)
+        {
 
-		//var relations = Object.merge();
-	},
+        }
 
-	draw: function()
-	{
-		this.parent();
+        //var relations = Object.merge();
+    },
 
-		this.context.save();
-		this.graphics.drawBackground();
-		this.context.restore();
+    draw: function()
+    {
+        this.parent();
 
-		this.context.save();
+        this.context.save();
+        this.graphics.drawBackground();
+        this.context.restore();
 
-		var graphCenter = this.graphics.getGraphCenter();
+        this.context.save();
 
-		for (var i = 0; i < this.connections.length; i++)
-		{
-			var connection = this.connections[i];
+        var graphCenter = this.graphics.getGraphCenter();
 
-			var visData1 = this.interpolatedNodesVisData[connection.node1.id];
-			var visData2 = this.interpolatedNodesVisData[connection.node2.id];
+        for (var i = 0; i < this.connections.length; i++)
+        {
+            var connection = this.connections[i];
 
-			var posX1 = visData1.position.r * Math.cos(visData1.position.phi) + graphCenter.x;
-			var posY1 = visData1.position.r * Math.sin(visData1.position.phi) + graphCenter.y;
+            var visData1 = this.interpolatedNodesVisData[connection.node1.id];
+            var visData2 = this.interpolatedNodesVisData[connection.node2.id];
 
-			var posX2 = visData2.position.r * Math.cos(visData2.position.phi) + graphCenter.x;
-			var posY2 = visData2.position.r * Math.sin(visData2.position.phi) + graphCenter.y;
+            var posX1 = visData1.position.r * Math.cos(visData1.position.phi) + graphCenter.x;
+            var posY1 = visData1.position.r * Math.sin(visData1.position.phi) + graphCenter.y;
 
-			this.graphics.drawConnection(posX1, posY1, posX2, posY2, connection.alpha);
-		}
+            var posX2 = visData2.position.r * Math.cos(visData2.position.phi) + graphCenter.x;
+            var posY2 = visData2.position.r * Math.sin(visData2.position.phi) + graphCenter.y;
 
-		for (var i = 0; i < this.nodesToDraw.length; i++)
-		{
-			var node = this.nodesToDraw[i];
-			var visData = this.interpolatedNodesVisData[node.id];
+            this.graphics.drawConnection(posX1, posY1, posX2, posY2, connection.alpha);
+        }
 
-			var r = visData.position.r;
-			var phi = visData.position.phi;
+        for (var i = 0; i < this.nodesToDraw.length; i++)
+        {
+            var node = this.nodesToDraw[i];
+            var visData = this.interpolatedNodesVisData[node.id];
 
-			var posX = r * Math.cos(phi) + graphCenter.x;
-			var posY = r * Math.sin(phi) + graphCenter.y;
+            var r = visData.position.r;
+            var phi = visData.position.phi;
 
-			var dx = posX - this.mouseX;
-			var dy = posY - this.mouseY;
-			var mouseOver = dx*dx + dy*dy < 15*15; // TODO: determine size
+            var posX = r * Math.cos(phi) + graphCenter.x;
+            var posY = r * Math.sin(phi) + graphCenter.y;
 
-			if (visData.isRoot == 0)
-				this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
-			else if (visData.isRoot == 1)
-				this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha);
-			else
-			{
-				this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha * (1 - visData.isRoot));
-				this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha * visData.isRoot);
-			}
-		}
+            var dx = posX - this.mouseX;
+            var dy = posY - this.mouseY;
+            var mouseOver = dx*dx + dy*dy < 15*15; // TODO: determine size
 
-		this.context.restore();
+            if (visData.isRoot == 0)
+                this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
+            else if (visData.isRoot == 1)
+                this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha);
+            else
+            {
+                this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha * (1 - visData.isRoot));
+                this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha * visData.isRoot);
+            }
+        }
 
-		if (this.loadingDataRequest || this.isLoadingImages)
-		{
-			this.context.save();
-			this.graphics.drawLoadingIndicator(this.loadingTime);
-			this.context.restore();
-		}
-
-		this.context.save();
-		this.graphics.drawDebugInfo(1 / this.delta, this.drawCount);
-		this.context.restore();
-	},
-
-	onTimer: function()
-	{
-		this.parent();
-
-		if (this.interpolationRunning)
-		{
-			this.interpolationProgress += this.delta / this.graphics.getInterpolationTime();
-			if (this.prevNodes == null || this.interpolationProgress >= 1)
-			{
-				this.interpolationRunning = false;
-				this.interpolationProgress = 1;
-			}
-
-			this.calculateNodesToDraw();
-			this.calculateConnections();
-		}
+        this.context.restore();
 
         if (this.loadingDataRequest || this.isLoadingImages)
-    		this.loadingTime += this.delta;
+        {
+            this.context.save();
+            this.graphics.drawLoadingIndicator(this.loadingTime);
+            this.context.restore();
+        }
+
+        this.context.save();
+        this.graphics.drawDebugInfo(1 / this.delta, this.drawCount);
+        this.context.restore();
+    },
+
+    onTimer: function()
+    {
+        this.parent();
+
+        if (this.interpolationRunning)
+        {
+            this.interpolationProgress += this.delta / this.graphics.getInterpolationTime();
+            if (this.prevNodes == null || this.interpolationProgress >= 1)
+            {
+                this.interpolationRunning = false;
+                this.interpolationProgress = 1;
+            }
+
+            this.calculateNodesToDraw();
+            this.calculateConnections();
+        }
+
+        if (this.loadingDataRequest || this.isLoadingImages)
+            this.loadingTime += this.delta;
         else
             this.loadingTime = 0;
 
-		this.draw();
-	},
+        this.draw();
+    },
 
-	onClick: function(event)
-	{
-		this.parent();
+    onClick: function(event)
+    {
+        this.parent();
 
-		if (!this.interpolationRunning)
-		{
-			if (this.currentData && this.currentData.root.id == 4)
-				this.loadData(0);
-			else
-				this.loadData(4);
-		}
-	},
+        if (!this.interpolationRunning)
+        {
+            if (this.currentData && this.currentData.root.id == 4)
+                this.loadData(0);
+            else
+                this.loadData(4);
+        }
+    },
 });
 
 window.addEvent("domready", function() {
-	new Graph($("graph"));
+    new Graph($("graph"));
 });

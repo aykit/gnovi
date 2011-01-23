@@ -3,42 +3,33 @@
 error_reporting(E_ALL);
 
 require_once "page_urls.php";
+require_once "database.php";
 
 class Page
 {
     protected $db = null;
-    protected $dbError = "";
     protected $sessionStarted = false;
 
-    protected function displayDatabaseError($error)
+    protected function exitWithDatabaseError()
+    {
+        $this->exitWithCustomDatabaseError($this->db->error);
+    }
+
+    protected function exitWithCustomDatabaseError($error)
     {
         include "html/dberror.php";
-        die();
+        exit();
     }
 
     protected function connectDb()
     {
         if ($this->db)
-            return true;
+            return;
 
-        $this->db = new mysqli();
+        $this->db = new Database();
 
-        if (!@$this->db->real_connect("localhost", "gnovi", "2suKWnLxLBfBCZnh", "gnovi"))
-        {
-            $this->dbError = $this->db->connect_error;
-            $this->db = null;
-            return false;
-        }
-
-        if (!@$this->db->set_charset("utf8"))
-        {
-            $this->db->close();
-            $this->dbError = $this->db->error;
-            $this->db = null;
-            return false;
-        }
-
-        return true;
+        if (!$this->db->connect())
+            $this->exitWithCustomDatabaseError($this->db->connectError);
     }
 
     protected function startSession()
@@ -48,6 +39,17 @@ class Page
 
         session_start();
         $this->sessionStarted = true;
+    }
+
+    protected function requireLogin()
+    {
+        $this->startSession();
+
+        if ($this->isLoggedIn())
+            return;
+
+        header("Location: " . PageUrls::START);
+        die();
     }
 
     protected function isLoggedIn()
@@ -68,31 +70,19 @@ class Page
     protected function login($email, $password, $alreadyHashed = false)
     {
         $this->logout();
+        $this->connectDb();
 
-        if (!$this->connectDb())
-        {
-            $this->displayDatabaseError($this->dbError);
-            return false;
-        }
+        $userInfo = $this->db->checkLogin($email, $password, $alreadyHashed);
 
-        $email = $this->db->escape_string($email);
+        if ($this->db->errno != 0)
+            $this->exitWithDatabaseError();
 
-        $result = $this->db->query("SELECT `ID`, `Name`, `Email`, `PasswordHash`, `Salt` " .
-            "FROM `Users` WHERE `Email` = '$email'");
-        $row = $result->fetch_assoc();
-
-        if (!$row)
+        if (!$userInfo)
             return false;
 
-        $passwordHash = $alreadyHashed ? $password : sha1($password . $row['Salt']);
-
-        if ($row['PasswordHash'] != $passwordHash)
-            return false;
-
-        $_SESSION['ID'] = $row['ID'];
-        $_SESSION['Username'] = $row['Name'];
-        $_SESSION['Email'] = $row['Email'];
-
+        $_SESSION['ID'] = $userInfo['ID'];
+        $_SESSION['Username'] = $userInfo['Name'];
+        $_SESSION['Email'] = $userInfo['Email'];
         return true;
     }
 

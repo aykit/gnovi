@@ -5,9 +5,15 @@ require_once "php/page.php";
 
 class LoginPage extends Page
 {
-    public function draw()
+    public function __construct()
     {
-        $this->logout();
+        $this->startSession();
+
+        if ($this->isLoggedIn())
+        {
+            header("Location: " . PageUrls::PROFILE);
+            die();
+        }
 
         $posted = $_SERVER["REQUEST_METHOD"] == "POST";
 
@@ -23,8 +29,7 @@ class LoginPage extends Page
             }
         }
 
-        $this->drawHeader("Einloggen", array(),
-            array("styles/input.css", "styles/font.css", "styles/navigation.css", "styles/reset.css"));
+        $this->drawHeader("Einloggen", array(), array());
 
         include "html/login.php";
 
@@ -32,7 +37,6 @@ class LoginPage extends Page
     }
 }
 
-$page = new LoginPage();
-$page->draw();
+new LoginPage();
 
 ?>

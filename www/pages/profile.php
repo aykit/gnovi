@@ -5,18 +5,11 @@ require_once "php/page.php";
 
 class ProfilePage extends Page
 {
-    public function draw()
+    public function __construct()
     {
-        $this->startSession();
+        $this->requireLogin();
 
-        if (!$this->isLoggedIn())
-        {
-            header("Location: " . PageUrls::START);   
-            die();     
-        }
-
-        $this->drawHeader("Profil", array(),
-            array("styles/input.css", "styles/font.css", "styles/navigation.css", "styles/reset.css"));
+        $this->drawHeader("Profil", array(), array());
 
         $username = $this->getUsername();
         $email = $this->getEmail();
@@ -27,7 +20,6 @@ class ProfilePage extends Page
     }
 }
 
-$page = new ProfilePage();
-$page->draw();
+new ProfilePage();
 
 ?>

@@ -178,6 +178,8 @@ var Graphics = new Class({
 var InputGraphics = new Class({
     Extends: Graphics,
 
+    _collectingWordDisplayCount: 8,
+
     drawStartScreen: function(canStart)
     {
         this._clearCanvas();
@@ -251,11 +253,26 @@ var InputGraphics = new Class({
         this.context.font = "15px Hero";
         this.context.fillText(currentInputText, 320, 450);
 
+        var wordsInPlace = 0;
         for (var i = 0; i < inputList.length; i++)
+            wordsInPlace += inputListAnimation[i];
+
+        var wordsOffset = wordsInPlace - this._collectingWordDisplayCount;
+        if (wordsOffset < 0)
+            wordsOffset = 0;
+
+        var firstWordToDraw = Math.floor(wordsOffset);
+
+        this.context.fillStyle = "rgba(0, 0, 0, " + (1 + firstWordToDraw - wordsOffset) + ")";
+
+        for (var i = firstWordToDraw; i < inputList.length; i++)
         {
             var a = inputListAnimation[i];
             var b = 1 - a;
-            this.context.fillText(inputList[i], 320, (i * 20 + 200) * a + 450 * b);
+            this.context.fillText(inputList[i], 320, ((i - wordsOffset) * 20 + 200) * a + 450 * b);
+
+            if (i == firstWordToDraw)
+                this.context.fillStyle = "rgba(0, 0, 0, 1)";
         }
     },
 
@@ -305,6 +322,8 @@ var InputGraphics = new Class({
         this.context.fillStyle = "rgba(0, 0, 0," + alpha + ")";
         this._fillCenteredText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 30)
     },
+
+    getWordCollectingAnimationTime: function() { return 0.2; },
 });
 
 var GraphGraphics = new Class({

@@ -228,9 +228,13 @@ var InputGraphics = new Class({
     drawWordCollectingScreen: function(headWord, timeLeft, totalTime, currentInputText, inputList, inputListAnimation)
     {
         this._clearCanvas();
-        this._コード(270, 124, 100, 20, 12, "#231F20");
-        this.context.fillStyle = "white";
+
         this.context.font = "25px HeroRegular";
+
+        var rectWidth = Math.max(this.context.measureText(headWord).width + 20, 100);
+        this._コード(270 + 50 - rectWidth / 2, 124, rectWidth, 20, 12, "#231F20");
+
+        this.context.fillStyle = "white";
         this.context.textAlign = "center";
         this.context.fillText(headWord, 320, 154);
 

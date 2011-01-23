@@ -15,7 +15,8 @@ class ProfilePage extends Page
             die();     
         }
 
-        $this->drawHeader("Profil", array(), array());
+        $this->drawHeader("Profil", array(),
+            array("styles/input.css", "styles/font.css", "styles/navigation.css", "styles/reset.css"));
 
         $username = $this->getUsername();
         $email = $this->getEmail();

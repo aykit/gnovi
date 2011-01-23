@@ -23,7 +23,8 @@ class LoginPage extends Page
             }
         }
 
-        $this->drawHeader("Einloggen", array(), array());
+        $this->drawHeader("Einloggen", array(),
+            array("styles/input.css", "styles/font.css", "styles/navigation.css", "styles/reset.css"));
 
         include "html/login.php";
 

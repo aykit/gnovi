@@ -18,9 +18,9 @@
       <ul id="ulfront">
         <li>
           <ul id="nav">
-            <li><img src="images/gnovi_klein.png" alt="gnovi_klein" width="35" height="38"></li>
-            <li>Profil</li>
-            <li>Anlauf</li>
+            <li><a href="<?=htmlspecialchars(PageUrls::START)?>"><img src="images/gnovi_klein.png" alt="gnovi_klein" width="35" height="38"></a></li>
+            <li><a href="<?=htmlspecialchars(PageUrls::PROFILE)?>">Profil</a></li>
+            <li><a href="<?=htmlspecialchars(PageUrls::RUN)?>">Anlauf</a></li>
             <li>Ich</li>
             <li>Wir</li>
             <li>Hilfe</li>

@@ -65,7 +65,7 @@ class Page
         return isset($_SESSION['ID']) ? (string)$_SESSION['Email'] : false;
     }
 
-    protected function login($email, $password)
+    protected function login($email, $password, $alreadyHashed = false)
     {
         $this->logout();
 
@@ -77,10 +77,16 @@ class Page
 
         $email = $this->db->escape_string($email);
 
-        $result = $this->db->query("SELECT `ID`, `Name`, `Email`, `Password` FROM `Users` WHERE `Email` = '$email'");
+        $result = $this->db->query("SELECT `ID`, `Name`, `Email`, `PasswordHash`, `Salt` " .
+            "FROM `Users` WHERE `Email` = '$email'");
         $row = $result->fetch_assoc();
 
-        if (!$row || $row['Password'] != sha1($password))
+        if (!$row)
+            return false;
+
+        $passwordHash = $alreadyHashed ? $password : sha1($password . $row['Salt']);
+
+        if ($row['PasswordHash'] != $passwordHash)
             return false;
 
         $_SESSION['ID'] = $row['ID'];

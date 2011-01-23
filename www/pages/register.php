@@ -20,16 +20,19 @@ class RegisterPage extends Page
         if ($password1 == (string)@$_SESSION['registerPasswdSafe1'] &&
             $password2 == (string)@$_SESSION['registerPasswdSafe2'])
         {
+            $salt = (string)@$_SESSION['registerSalt'];
             $passwordHash = (string)@$_SESSION['registerPasswdHash'];
             $passwordMismatch = false;
         }
         else if ($password1 == $password2 && $password1 != "")
         {
-            $passwordHash = sha1($password1);
+            $salt = sha1(uniqid("", true));
+            $passwordHash = sha1($password1 . $salt);
             $passwordMismatch = false;
         }
         else
         {
+            $salt = "";
             $passwordHash = "";
             $passwordMismatch = true;
         }
@@ -39,13 +42,16 @@ class RegisterPage extends Page
 
         if ($username != "" && $passwordHash != "" && $emailValid)
         {
-            $emailExists = !$this->registerUser($username, $email, $passwordHash);
+            $emailExists = !$this->registerUser($username, $email, $passwordHash, $salt);
 
             if (!$emailExists)
             {
+                unset($_SESSION['registerSalt']);
                 unset($_SESSION['registerPasswdHash']);
                 unset($_SESSION['registerPasswdSafe1']);
                 unset($_SESSION['registerPasswdSafe2']);
+
+                $this->login($email, $passwordHash, true);
 
                 header("Location: " . PageUrls::PROFILE);
                 die();
@@ -63,6 +69,7 @@ class RegisterPage extends Page
             $passwordSafe2 = "";
         }
 
+        $_SESSION['registerSalt'] = $salt;
         $_SESSION['registerPasswdHash'] = $passwordHash;
         $_SESSION['registerPasswdSafe1'] = $passwordSafe1;
         $_SESSION['registerPasswdSafe2'] = $passwordSafe2;
@@ -75,7 +82,7 @@ class RegisterPage extends Page
         $this->drawFooter();
     }
 
-    protected function registerUser($name, $email, $passwordHash)
+    protected function registerUser($name, $email, $passwordHash, $salt)
     {
         if (!$this->connectDb())
         {
@@ -86,9 +93,10 @@ class RegisterPage extends Page
         $name = $this->db->escape_string($name);
         $email = $this->db->escape_string($email);
         $passwordHash = $this->db->escape_string($passwordHash);
+        $salt = $this->db->escape_string($salt);
 
-        if ($this->db->query("INSERT INTO `Users` (`Name`, `Email`, `Password`) " . 
-            "VALUES ('$name', '$email', '$passwordHash')"))
+        if ($this->db->query("INSERT INTO `Users` (`Name`, `Email`, `PasswordHash`, `Salt`) " . 
+            "VALUES ('$name', '$email', '$passwordHash', '$salt')"))
             return true;
 
         if ($this->db->errno != 1062) // ER_DUP_ENTRY

@@ -164,7 +164,7 @@ var Graphics = new Class({
         this.context.restore();
 
         this.context.textBaseline = "middle";
-        this.context.font = "bold 12px Verdana";
+        this.context.font = "12px Verdana";
 
         this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
         this.context.lineWidth = 5;
@@ -186,7 +186,7 @@ var InputGraphics = new Class({
 
         this.context.fillStyle = "black";
 
-        this.context.font = "bold 20px Courier New";
+        this.context.font = "20px HeroRegular";
         this.context.fillText("click to start", 100, 20);
     },
 
@@ -196,7 +196,7 @@ var InputGraphics = new Class({
 
         this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
 
-        this.context.font = "bold 20px Courier New";
+        this.context.font = "20px HeroRegular";
 
         this.context.fillText(wordList.length + " words entered in " + inputTime + " seconds", 20, 20);
 
@@ -205,7 +205,7 @@ var InputGraphics = new Class({
         if (!drawContinueNotice)
             return;
 
-        this.context.font = "bold 14px Courier New";
+        this.context.font = "14px HeroRegular";
         this.context.fillText("press Enter to continue", 20, 300);
     },
 
@@ -219,11 +219,11 @@ var InputGraphics = new Class({
         this._clearCanvas();
 
         this.context.fillStyle = "black";
-        this.context.font = "bold 20px Courier New";
+        this.context.font = "20px HeroRegular";
 
         this.context.fillText("Enter your location:", 20, 20);
 
-        this.context.font = "bold 15px Courier New";
+        this.context.font = "15px HeroRegular";
         this.context.fillText(inputText, 30, 50);
     },
 
@@ -232,12 +232,12 @@ var InputGraphics = new Class({
         this._clearCanvas();
         this._コード(270, 124, 100, 20, 12, "#231F20");
         this.context.fillStyle = "white";
-        this.context.font = "25px Hero";
+        this.context.font = "25px HeroRegular";
         this.context.textAlign = "center";
         this.context.fillText(headWord, 320, 154);
 
         /* DRAW COUNTERTEXT
-        this.context.font = "bold 20px Hero";
+        this.context.font = "20px HeroRegular";
         */
         this.context.fillText(Math.ceil(timeLeft), 400, 20);
 
@@ -250,7 +250,7 @@ var InputGraphics = new Class({
         this.context.strokeRect(0, 75.5, 640, 25);
 
         this.context.fillStyle = "black";
-        this.context.font = "15px Hero";
+        this.context.font = "15px HeroRegular";
         this.context.fillText(currentInputText, 320, 450);
 
         var wordsInPlace = 0;
@@ -278,10 +278,10 @@ var InputGraphics = new Class({
 
     drawWordRatingScreen: function(word)
     {
-        this.context.font = "bold 20px Courier New";
+        this.context.font = "20px HeroRegular";
         this.context.fillText(word, 10, 30);
 
-        this.context.font = "bold 30px Courier New";
+        this.context.font = "30px HeroRegular";
         this.context.fillText("+ -", 10, 60);
     },
 
@@ -313,7 +313,7 @@ var InputGraphics = new Class({
         this.context.restore();
 
         this.context.textBaseline = "middle";
-        this.context.font = "bold 12px Verdana";
+        this.context.font = "12px Verdana";
 
         this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
         this.context.lineWidth = 5;
@@ -340,14 +340,14 @@ var GraphGraphics = new Class({
 
         if (isRoot)
         {
-            this.context.font = "bold 14px Verdana";
+            this.context.font = "14px Verdana";
             this._drawGnoviIcon(posX, posY, 50, true, alpha);
             this.context.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
             this._fillCenteredText(node.label, posX, posY + 40);
         }
         else
         {
-            this.context.font = "bold 10px Verdana";
+            this.context.font = "10px Verdana";
             this._drawGnoviIcon(posX, posY, 30, mouseOver, alpha);
             this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
             this._fillCenteredText(node.label, posX, posY + 25);

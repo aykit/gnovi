@@ -6,16 +6,6 @@
 var Graphics = new Class({
     setContext: function(context) { this.context = context; },
 
-    _fillCenteredText: function(text, posX, posY)
-    {
-        this.context.fillText(text, posX - this.context.measureText(text).width / 2, posY)
-    },
-
-    _strokeCenteredText: function(text, posX, posY)
-    {
-        this.context.strokeText(text, posX - this.context.measureText(text).width / 2, posY)
-    },
-
     _fillCircle: function(x, y, r)
     {
         this.context.beginPath();
@@ -127,8 +117,9 @@ var Graphics = new Class({
         this.context.fillStyle = "black";
 
         this.context.font = "8px";
+        this.context.textAlign = "center";
         var txt = Math.round(fps) + " fps";
-        this._fillCenteredText(txt, 0, 30);
+        this.context.fillText(txt, 0, 30);
 
         this.context.rotate(drawCount * 2 * Math.PI / 64);
         this.context.strokeRect(-10, -10, 20, 20);
@@ -170,13 +161,14 @@ var Graphics = new Class({
 
         this.context.textBaseline = "middle";
         this.context.font = "12px Verdana";
+        this.context.textAlign = "center";
 
         this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
         this.context.lineWidth = 5;
-        this._strokeCenteredText("loading . . .", 0, 200)
+        this.context.strokeText("loading . . .", 0, 200)
 
         this.context.fillStyle = "rgba(0, 0, 0," + alpha + ")";
-        this._fillCenteredText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 30)
+        this.context.fillText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 30)
     },
 });
 
@@ -320,13 +312,14 @@ var InputGraphics = new Class({
 
         this.context.textBaseline = "middle";
         this.context.font = "12px Verdana";
+        this.context.textAlign = "center";
 
         this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
         this.context.lineWidth = 5;
-        this._strokeCenteredText("loading . . .", 0, 200)
+        this.context.strokeText("loading . . .", 0, 200)
 
         this.context.fillStyle = "rgba(0, 0, 0," + alpha + ")";
-        this._fillCenteredText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 30)
+        this.context.fillText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 30)
     },
 
     getWordCollectingAnimationTime: function() { return 0.2; },
@@ -343,20 +336,21 @@ var GraphGraphics = new Class({
     drawNode: function(node, posX, posY, isRoot, mouseOver, alpha)
     {
         this.context.textBaseline = "middle";
+        this.context.textAlign = "center";
 
         if (isRoot)
         {
             this.context.font = "14px Verdana";
             this._drawGnoviIcon(posX, posY, 50, true, alpha);
             this.context.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
-            this._fillCenteredText(node.label, posX, posY + 40);
+            this.context.fillText(node.label, posX, posY + 40);
         }
         else
         {
             this.context.font = "10px Verdana";
             this._drawGnoviIcon(posX, posY, 30, mouseOver, alpha);
             this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
-            this._fillCenteredText(node.label, posX, posY + 25);
+            this.context.fillText(node.label, posX, posY + 25);
         }
     },
 

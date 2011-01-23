@@ -23,6 +23,13 @@ var Graphics = new Class({
         this.context.fill();
     },
 
+    _strokeCircle: function(x, y, r)
+    {
+        this.context.beginPath();
+        this.context.arc(x, y, r, 0, 2 * Math.PI, false);
+        this.context.stroke();
+    },
+
     _drawGnoviIcon: function(posX, posY, size, glow, alpha)
     {
         var gradient = this.context.createRadialGradient(posX, posY, 0, posX, posY, size / 2);
@@ -214,6 +221,44 @@ var InputGraphics = new Class({
 
         this.context.font = "bold 30px Courier New";
         this.context.fillText("+ -", 10, 60);
+    },
+
+    drawLoadingIndicator: function(loadTime)
+    {
+       loadTime -= 0.2;
+        if (loadTime < 0)
+            return;
+
+        alpha = loadTime;
+        if (alpha > 1)
+            alpha = 1;
+
+        scale1 = (Math.cos(loadTime * 2 * Math.PI) + 2) * 2;
+        scale2 = (Math.cos(loadTime * 2 * Math.PI + Math.PI / 2) + 2) * 2;
+
+        this.context.strokeStyle = "rgba(0, 0, 0," + alpha + ")";
+
+        this.context.save();
+        this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2);
+        this.context.scale(scale1, scale1);
+        this._strokeCircle(0, 0, 20);
+        this.context.restore();
+
+        this.context.save();
+        this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2);
+        this.context.scale(scale2, scale2);
+        this._strokeCircle(0, 0, 20);
+        this.context.restore();
+
+        this.context.textBaseline = "middle";
+        this.context.font = "bold 12px Verdana";
+
+        this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
+        this.context.lineWidth = 5;
+        this._strokeCenteredText("loading . . .", 0, 200)
+
+        this.context.fillStyle = "rgba(0, 0, 0," + alpha + ")";
+        this._fillCenteredText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 30)
     },
 });
 

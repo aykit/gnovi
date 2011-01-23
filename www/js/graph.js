@@ -11,7 +11,6 @@ var Graph = new Class({
     interpolationRunning: false,
 
     loadingDataRequest: null,
-    loadingTime: 0,
 
     initialize: function(canvas, scaling)
     {
@@ -242,16 +241,21 @@ var Graph = new Class({
 
         this.context.restore();
 
-        if (this.loadingDataRequest || this.isLoadingImages)
+        if (this.isLoadingSomething())
         {
             this.context.save();
-            this.graphics.drawLoadingIndicator(this.loadingTime);
+            this.graphics.drawLoadingIndicator(this.loadingSomethingTime);
             this.context.restore();
         }
 
         this.context.save();
         this.graphics.drawDebugInfo(1 / this.delta, this.drawCount);
         this.context.restore();
+    },
+
+    isLoadingSomething: function()
+    {
+        return this.parent() || this.loadingDataRequest;
     },
 
     onTimer: function()
@@ -275,13 +279,8 @@ var Graph = new Class({
             updateScreen = true;
         }
 
-        if (this.loadingDataRequest || this.isLoadingImages)
-        {
-            this.loadingTime += this.delta;
+        if (this.isLoadingSomething())
             updateScreen = true;
-        }
-        else
-            this.loadingTime = 0;
 
         if (updateScreen)
             this.draw();

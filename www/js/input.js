@@ -11,6 +11,7 @@ var StateEngine = new Class({
     keypressEvent: function(event) {},
     clickEvent: function(event) {},
     continueEvent: function() {},
+    isLoading: function() { return false; },
 });
 
 var Input = new Class({
@@ -34,6 +35,13 @@ var Input = new Class({
         this.currentStateEngine.drawGame(this.graphics, this.context);
         this.context.restore();
 
+        if (this.isLoadingSomething())
+        {
+            this.context.save();
+            this.graphics.drawLoadingIndicator(this.loadingSomethingTime);
+            this.context.restore();
+        }
+
         this.context.save();
         this.graphics.drawDebugInfo(1 / this.delta, this.drawCount);
         this.context.restore();
@@ -54,6 +62,11 @@ var Input = new Class({
         }
         else
             this.currentStateEngine = null;
+    },
+
+    isLoadingSomething: function()
+    {
+        return this.parent() || (this.currentStateEngine && this.currentStateEngine.isLoading());
     },
 
     onTimer: function()

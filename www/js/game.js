@@ -6,7 +6,8 @@ var Game = new Class({
     mouseX: 0,
     mouseY: 0,
     images: {},
-    isLoadingImages: false,
+    loadingImages: false,
+//    requestPending: false,
 
     initialize: function(canvas, graphics, scaling)
     {
@@ -31,12 +32,12 @@ var Game = new Class({
     {
         if (imgList.length == 0)
         {
-            if (!this.isLoadingImages)
+            if (!this.loadingImages)
                 this.imageLoadingFinished();
             return;
         }
 
-        this.isLoadingImages = true;
+        this.loadingImages = true;
 
         for (var name in imgList)
         {
@@ -86,7 +87,7 @@ var Game = new Class({
                 return;
         }
 
-        this.isLoadingImages = false;
+        this.loadingImages = false;
         this.imageLoadingFinished();
     },
 
@@ -105,10 +106,23 @@ var Game = new Class({
 
     imageLoadingFinished: function() { },
 
+    isLoadingSomething: function()
+    {
+        return this.isLoadingImages;
+    },
+
     onTimer: function()
     {
         this.delta = Date.now() / 1000 - this.lastTimerEventTime;
         this.lastTimerEventTime += this.delta;
+
+        if (this.isLoadingSomething())
+        {
+            this.loadingSomethingTime += this.delta;
+            updateScreen = true;
+        }
+        else
+            this.loadingSomethingTime = 0;
     },
 
     onMouseMove: function(e)

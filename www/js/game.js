@@ -1,31 +1,31 @@
 var Game = new Class({
 
-	timer: null,
-	delta: 0,
-	drawCount: 0,
-	mouseX: 0,
-	mouseY: 0,
+    timer: null,
+    delta: 0,
+    drawCount: 0,
+    mouseX: 0,
+    mouseY: 0,
     images: {},
     isLoadingImages: false,
 
-	initialize: function(canvas, graphics, scaling)
-	{
-		this.canvas = canvas;
-		this.graphics = graphics;
-		this.scaling = scaling;
+    initialize: function(canvas, graphics, scaling)
+    {
+        this.canvas = canvas;
+        this.graphics = graphics;
+        this.scaling = scaling;
 
-		var canvasPos = this.canvas.getPosition();
-		this.clientX = canvasPos.x + this.canvas.clientLeft;
-		this.clientY = canvasPos.y + this.canvas.clientTop;
+        var canvasPos = this.canvas.getPosition();
+        this.clientX = canvasPos.x + this.canvas.clientLeft;
+        this.clientY = canvasPos.y + this.canvas.clientTop;
 
-		this.context = this.canvas.getContext('2d');
-		this.context.scale(this.scaling, this.scaling);
-		this.graphics.setContext(this.context);
+        this.context = this.canvas.getContext('2d');
+        this.context.scale(this.scaling, this.scaling);
+        this.graphics.setContext(this.context);
 
-		document.addEvent("keypress", this.onKeypress.bind(this));
-		this.canvas.addEvent("click", this.onClick.bind(this));
-		this.canvas.addEvent("mousemove", this.onMouseMove.bind(this));
-	},
+        document.addEvent("keypress", this.onKeypress.bind(this));
+        this.canvas.addEvent("click", this.onClick.bind(this));
+        this.canvas.addEvent("mousemove", this.onMouseMove.bind(this));
+    },
 
     loadImages: function(imgList)
     {
@@ -58,23 +58,23 @@ var Game = new Class({
         return this.images[name];
     },
 
-	draw: function()
-	{
-		this.drawCount++;
-	},
+    draw: function()
+    {
+        this.drawCount++;
+    },
 
-	setTimer: function(interval)
-	{
-		if (this.timer)
-			clearInterval(this.timer);
+    setTimer: function(interval)
+    {
+        if (this.timer)
+            clearInterval(this.timer);
 
-		this.lastTimerEventTime = Date.now() / 1000;
+        this.lastTimerEventTime = Date.now() / 1000;
 
-		if (interval == 0)
-			this.timer = null;
-		else
-			this.timer = this.onTimer.periodical(interval, this);
-	},
+        if (interval == 0)
+            this.timer = null;
+        else
+            this.timer = this.onTimer.periodical(interval, this);
+    },
 
     onImageLoaded: function(e)
     {
@@ -105,19 +105,19 @@ var Game = new Class({
 
     imageLoadingFinished: function() { },
 
-	onTimer: function()
-	{
-		this.delta = Date.now() / 1000 - this.lastTimerEventTime;
-		this.lastTimerEventTime += this.delta;
-	},
+    onTimer: function()
+    {
+        this.delta = Date.now() / 1000 - this.lastTimerEventTime;
+        this.lastTimerEventTime += this.delta;
+    },
 
-	onMouseMove: function(e)
-	{
-		this.mouseX = (e.event.pageX - this.clientX) / this.scaling;
-		this.mouseY = (e.event.pageY - this.clientY) / this.scaling;
-	},
+    onMouseMove: function(e)
+    {
+        this.mouseX = (e.event.pageX - this.clientX) / this.scaling;
+        this.mouseY = (e.event.pageY - this.clientY) / this.scaling;
+    },
 
-	onKeypress: function(event) { },
+    onKeypress: function(event) { },
 
-	onClick: function(event){ },
+    onClick: function(event){ },
 });

@@ -1,0 +1,24 @@
+nav {
+
+	font-size: 14px;
+	color: white;
+}
+ 
+#nav li:first-child	{
+	float:left;
+}
+
+#nav li:nth-last-child(-n+6) {
+	font-family: "HeroRegular";
+	list-style: none;
+	float: left;
+	text-align: center;
+	border: 1px solid #7F7F7F;
+	background-color: #0C0B0B;
+	height: 22px;
+	width: 96px;
+	padding-top: 6px;
+	margin-left: 2px;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px; }

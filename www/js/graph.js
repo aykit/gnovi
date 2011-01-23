@@ -258,6 +258,8 @@ var Graph = new Class({
     {
         this.parent();
 
+        var updateScreen = false;
+
         if (this.interpolationRunning)
         {
             this.interpolationProgress += this.delta / this.graphics.getInterpolationTime();
@@ -269,14 +271,20 @@ var Graph = new Class({
 
             this.calculateNodesToDraw();
             this.calculateConnections();
+
+            updateScreen = true;
         }
 
         if (this.loadingDataRequest || this.isLoadingImages)
+        {
             this.loadingTime += this.delta;
+            updateScreen = true;
+        }
         else
             this.loadingTime = 0;
 
-        this.draw();
+        if (updateScreen)
+            this.draw();
     },
 
     onClick: function(event)

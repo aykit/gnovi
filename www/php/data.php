@@ -1,20 +1,27 @@
 <?php
 
-//error_reporting(E_ERROR);
-error_reporting(E_ALL);
+require_once "database.php";
 
-$cmd = $_GET["cmd"];
-
-switch ($cmd)
+switch (@$_GET["cmd"])
 {
+case "getword":
+    getWord();
+    break;
 case "getgraph":
-	$id = (int)$_GET["id"];
-	getGraph($id);
+	getGraph((int)@$_GET["id"]);
 	break;
+}
+
+function getWord()
+{
+    $db = getDb();
+    exitWithData("Haus");
 }
 
 function getGraph($id)
 {
+    $db = getDb();
+
 	$sampleA = '{
 		"root": {"id": 1, "label": "root"},
 		"nodes":
@@ -48,12 +55,34 @@ function getGraph($id)
 		],
 	}';
 
-	//sleep(1);
-
 	if ($id == 4)
 		print($sampleB);
 	else
 		print($sampleA);
+}
+
+function getDb()
+{
+    $db = new Database();
+    if (!$db->connect())
+        exitWithError($db->connectError);
+    return $db;
+}
+
+function exitWithError($error)
+{
+    exit(json_encode(array(
+        "status" => "error",
+        "error" => $error,
+    )));
+}
+
+function exitWithData($data)
+{
+    exit(json_encode(array(
+        "status" => "success",
+        "data" => $data,
+    )));
 }
 
 ?>

@@ -3,20 +3,12 @@ nav {
 	font-size: 14px;
 	color: white;
 }
-/*
-#ulfront {	display: block;}
-#ulfront li{
-	list-style-image: url("http://gnovi.org/test/images/gnovi_klein.png");
-
-}
-
-
-*/ 
+ 
 #nav li:first-child	{
 	float:left;
 }
 
-#nav li {
+#nav li:nth-last-child(-n+6) {
 	font-family: "HeroRegular";
 	list-style: none;
 	float: left;

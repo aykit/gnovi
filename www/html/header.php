@@ -25,6 +25,7 @@
             <li>Wir</li>
             <li>Hilfe</li>
             <li>Über gnovi</li>
+            <li>eingeloggt als <?=htmlspecialchars($username)?> </li>
           </ul>
         </li>
       </ul>

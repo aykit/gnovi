@@ -15,7 +15,7 @@
       <ul id="ulfront">
         <li>
           <ul id="nav">
-            <li><img src="http://gnovi.org/test/images/gnovi_klein.png" alt="gnovi_klein" width="35" height="38"></li>
+            <li><img src="images/gnovi_klein.png" alt="gnovi_klein" width="35" height="38"></li>
             <li>Profil</li>
             <li>Anlauf</li>
             <li>Ich</li>

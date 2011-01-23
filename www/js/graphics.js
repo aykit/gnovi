@@ -193,7 +193,8 @@ var InputGraphics = new Class({
 		this.context.font = "bold 20px Courier New";
 		this.context.fillText(Math.ceil(timeLeft), 400, 20);
 
-        this.context.fillRect(0, 0, timeLeft / totalTime * 640, 2);
+        /* TIME */
+        this.context.fillRect(10, 20, timeLeft / totalTime * 640, 2);
 
 		this.context.font = "bold 15px Courier New";
 		this.context.fillText(currentInputText, 20, 300);

@@ -23,7 +23,7 @@ var Graphics = new Class({
     this.context.fill();
   },
   
-  _コード: function(x,y)
+  _コード: function(x,y,fillcolor)
   {
     this.context.beginPath();
     this.context.strokeStyle = "#7F7F7F";
@@ -37,7 +37,7 @@ var Graphics = new Class({
     this.context.lineTo(x-12, y+12);
     this.context.quadraticCurveTo(x-12, y, x, y);
     this.context.stroke();
-    this.context.fillStyle = "#231F20";
+    this.context.fillStyle = fillcolor;
     this.context.fill();
     this.context.stroke();
 
@@ -204,12 +204,12 @@ var InputGraphics = new Class({
   drawWordCollectingScreen: function(headWord, timeLeft, totalTime, currentInputText, inputList, inputListAnimation)
   {
   this._clearCanvas();
-
-  this.context.fillStyle = "white";
+  this._コード(320-50, 111, "#231F20");
+  this.context.fillStyle = "white";  
   this.context.font = "25px Hero";
   this.context.textAlign = "center";
-  this.context.fillText(headWord, 320, 135);
-  this._コード(100, 150);
+  this.context.fillText(headWord, 320, 140);
+
 
   this.context.font = "bold 20px Courier New";
   this.context.fillText(Math.ceil(timeLeft), 400, 20);

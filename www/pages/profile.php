@@ -11,7 +11,7 @@ class ProfilePage extends Page
 
         if (!$this->isLoggedIn())
         {
-            header("Location: " . PageUrls::LOGIN);   
+            header("Location: " . PageUrls::START);   
             die();     
         }
 

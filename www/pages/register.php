@@ -6,7 +6,7 @@ require_once "php/is_email.php";
 
 class RegisterPage extends Page
 {
-    public function draw()
+    public function __construct()
     {
         $this->logout();
 
@@ -42,7 +42,14 @@ class RegisterPage extends Page
 
         if ($username != "" && $passwordHash != "" && $emailValid)
         {
-            $emailExists = !$this->registerUser($username, $email, $passwordHash, $salt);
+            $this->connectDb();
+            if (!$this->db->registerUser($username, $email, $passwordHash, $salt))
+            {
+                if ($this->db->errno != 1062) // ER_DUP_ENTRY
+                    $this->exitWithDatabaseError();
+
+                $emailExists = true;
+            }
 
             if (!$emailExists)
             {
@@ -74,39 +81,14 @@ class RegisterPage extends Page
         $_SESSION['registerPasswdSafe1'] = $passwordSafe1;
         $_SESSION['registerPasswdSafe2'] = $passwordSafe2;
 
-        $this->drawHeader("Registrieren", array(),
-            array("styles/input.css", "styles/font.css", "styles/navigation.css", "styles/reset.css"));
+        $this->drawHeader("Registrieren", array(), array());
 
         include "html/register.php";
 
         $this->drawFooter();
     }
-
-    protected function registerUser($name, $email, $passwordHash, $salt)
-    {
-        if (!$this->connectDb())
-        {
-            $this->displayDatabaseError($this->dbError);
-            return false;
-        }
-
-        $name = $this->db->escape_string($name);
-        $email = $this->db->escape_string($email);
-        $passwordHash = $this->db->escape_string($passwordHash);
-        $salt = $this->db->escape_string($salt);
-
-        if ($this->db->query("INSERT INTO `Users` (`Name`, `Email`, `PasswordHash`, `Salt`) " . 
-            "VALUES ('$name', '$email', '$passwordHash', '$salt')"))
-            return true;
-
-        if ($this->db->errno != 1062) // ER_DUP_ENTRY
-            $this->displayDatabaseError($this->db->error);
-
-        return false;
-    }
 }
 
-$page = new RegisterPage();
-$page->draw();
+new RegisterPage();
 
 ?>

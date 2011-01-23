@@ -5,7 +5,7 @@ require_once "php/page.php";
 
 class LoginPage extends Page
 {
-    public function draw()
+    public function __construct()
     {
         $this->logout();
         header("Location: " . PageUrls::START);
@@ -13,7 +13,6 @@ class LoginPage extends Page
     }
 }
 
-$page = new LoginPage();
-$page->draw();
+new LoginPage();
 
 ?>

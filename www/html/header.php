@@ -6,6 +6,9 @@
 <?php foreach ($javaScripts as $script) { ?>
   <script type="text/javascript" src="<?=htmlspecialchars($script)?>"></script>
 <?php } ?>
+  <link rel="stylesheet" type="text/css" href="styles/reset.css">
+  <link rel="stylesheet" type="text/css" href="styles/font.css">
+  <link rel="stylesheet" type="text/css" href="styles/navigation.css">
 <?php foreach ($styleSheets as $sheet) { ?>
   <link rel="stylesheet" type="text/css" href="<?=htmlspecialchars($sheet)?>">
 <?php } ?>
@@ -21,7 +24,7 @@
             <li>Ich</li>
             <li>Wir</li>
             <li>Hilfe</li>
-            <li>&uuml;ber gnovi</li>
+            <li>Über gnovi</li>
           </ul>
         </li>
       </ul>

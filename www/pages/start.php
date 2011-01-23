@@ -5,12 +5,11 @@ require_once "php/page.php";
 
 class StartPage extends Page
 {
-    public function draw()
+    public function __construct()
     {
         $this->startSession();
 
-        $this->drawHeader("Hallo", array(),
-            array("styles/input.css", "styles/font.css", "styles/navigation.css", "styles/reset.css"));
+        $this->drawHeader("Hallo", array(), array());
 
         $username = $this->getUsername();
         $email = $this->getEmail();
@@ -21,7 +20,6 @@ class StartPage extends Page
     }
 }
 
-$page = new StartPage();
-$page->draw();
+new StartPage();
 
 ?>

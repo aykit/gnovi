@@ -7,6 +7,8 @@ class InputPage extends Page
 {
     public function draw()
     {
+        $this->startSession();
+
         $this->drawHeader("Input",
             array("js/mootools.js", "js/game.js", "js/input.js", "js/inputstates.js", "js/graphics.js"),
             array("input.css"));

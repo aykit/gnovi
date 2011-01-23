@@ -4,5 +4,9 @@ RewriteBase /gnovi/www
 
 RewriteEngine on
 
-#RewriteCond %{REQUEST_URI} !\.php$
+RewriteRule ^$ pages/index.php
+RewriteRule ^einloggen$ pages/login.php
+RewriteRule ^registrieren$ pages/register.php
+RewriteRule ^profil$ pages/profile.php
+
 RewriteRule ^([^/]+)$ pages/$1.php

@@ -110,6 +110,11 @@ var Graphics = new Class({
         this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
     },
 
+    _suffixNumber: function(number, singular, plural)
+    {
+        return number + (number == 1 ? singular : plural);
+    },
+
     drawDebugInfo: function(fps, drawCount)
     {
         this.context.translate(this.context.canvas.width - 40, this.context.canvas.height - 50);
@@ -198,7 +203,8 @@ var InputGraphics = new Class({
 
         this.context.font = "20px HeroRegular";
 
-        this.context.fillText(wordList.length + " words entered in " + inputTime + " seconds", 20, 20);
+        this.context.fillText(this._suffixNumber(wordList.length, " Wort", " Wörter") +
+            " eingegeben in " + inputTime + " Sekunden", 20, 20);
 
         this._fillTextRect(wordList, 40, 50, 300, 10, 25);
 

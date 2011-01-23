@@ -4,13 +4,14 @@ var StateEngine = new Class({
         this.game = game;
     },
 
-    start: function(options) {},
-    end: function() {},
-    drawGame: function(context) {},
     timerEvent: function(delta)
     {
         this.game.draw();
     },
+
+    start: function(options) {},
+    end: function() {},
+    drawGame: function(context) {},
     keypressEvent: function(event) {},
     clickEvent: function(event) {},
     continueEvent: function() {},

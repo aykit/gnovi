@@ -23,9 +23,27 @@ var Graphics = new Class({
     this.context.fill();
   },
   
-  _コード: function(x,y,fillcolor)
+  _コード: function(x,y,w,h,cpm,fillcolor)
   {
     this.context.beginPath();
+    this.context.strokeStyle = "#7F7F7F";
+    this.context.moveTo(x, y);
+    this.context.lineTo(x+w, y);
+    this.context.quadraticCurveTo(x+w+cpm, y, x+w+cpm, y+cpm);
+    this.context.lineTo(x+w+cpm, y+cpm+h);
+    this.context.quadraticCurveTo(x+w+cpm, y+2*cpm+h, x+w, y+2*cpm+h);
+    this.context.lineTo(x, y+2*cpm+h);
+    this.context.quadraticCurveTo(x-cpm, y+2*cpm+h, x-cpm, y+cpm+h);
+    this.context.lineTo(x-cpm, y+cpm);
+    this.context.quadraticCurveTo(x-cpm, y, x, y);
+    this.context.stroke();
+    this.context.fillStyle = fillcolor;
+    this.context.fill();
+    this.context.stroke();
+    
+
+    
+/*    this.context.beginPath();
     this.context.strokeStyle = "#7F7F7F";
     this.context.moveTo(x, y);
     this.context.lineTo(x+100, y);
@@ -39,7 +57,7 @@ var Graphics = new Class({
     this.context.stroke();
     this.context.fillStyle = fillcolor;
     this.context.fill();
-    this.context.stroke();
+    this.context.stroke();*/
 
   },
 
@@ -154,7 +172,7 @@ var Graphics = new Class({
 var InputGraphics = new Class({
   Extends: Graphics,
 
-  drawStartScreen: function()
+  drawStartScreen: function(canStart)
   {
   this._clearCanvas();
 
@@ -204,17 +222,17 @@ var InputGraphics = new Class({
   drawWordCollectingScreen: function(headWord, timeLeft, totalTime, currentInputText, inputList, inputListAnimation)
   {
   this._clearCanvas();
-  this._コード(320-50, 111, "#231F20");
+  this._コード(270, 124, 100, 20, 12, "#231F20");
   this.context.fillStyle = "white";  
   this.context.font = "25px Hero";
   this.context.textAlign = "center";
-  this.context.fillText(headWord, 320, 140);
+  this.context.fillText(headWord, 320, 154);
 
-
-  this.context.font = "bold 20px Courier New";
+/* DRAW COUNTERTEXT
+  this.context.font = "bold 20px Hero";
+*/
   this.context.fillText(Math.ceil(timeLeft), 400, 20);
 
-  /* TIME */
   this.context.fillStyle = "#A7CF4A";
   this.context.strokeStyle = "#7F7F7F";
   this.context.lineCap = "round";
@@ -223,15 +241,15 @@ var InputGraphics = new Class({
   this.context.fillRect(0, 76, timeLeft / totalTime * 640, 24);
   this.context.strokeRect(0, 75.5, 640, 25);  
 
-
-  this.context.font = "bold 15px Courier New";
-  this.context.fillText(currentInputText, 20, 300);
+  this.context.fillStyle = "black";  
+  this.context.font = "15px Hero";
+  this.context.fillText(currentInputText, 320, 450);
 
   for (var i = 0; i < inputList.length; i++)
   {
     var a = inputListAnimation[i];
     var b = 1 - a;
-    this.context.fillText(inputList[i], 20, (i * 20 + 50) * a + 300 * b );
+    this.context.fillText(inputList[i], 320, (i * 20 + 200) * a + 450 * b );
   }
   },
 

@@ -55,6 +55,16 @@ class Page
         return isset($_SESSION['ID']);
     }
 
+    protected function getUsername()
+    {
+        return isset($_SESSION['ID']) ? (string)$_SESSION['Username'] : false;
+    }
+
+    protected function getEmail()
+    {
+        return isset($_SESSION['ID']) ? (string)$_SESSION['Email'] : false;
+    }
+
     protected function login($email, $password)
     {
         $this->logout();
@@ -74,7 +84,8 @@ class Page
             return false;
 
         $_SESSION['ID'] = $row['ID'];
-        $_SESSION['Username'] = $row['Username'];
+        $_SESSION['Username'] = $row['Name'];
+        $_SESSION['Email'] = $row['Email'];
 
         return true;
     }
@@ -85,10 +96,15 @@ class Page
 
         unset($_SESSION['ID']);
         unset($_SESSION['Username']);
+        unset($_SESSION['Email']);
     }
 
     protected function drawHeader($title, $javaScripts, $styleSheets)
     {
+        $loggedin = $this->isLoggedIn();
+        $username = $this->getUsername();
+        $email = $this->getEmail();
+
         include "html/header.php";
     }
 

@@ -7,11 +7,14 @@ var StateEngine = new Class({
     start: function(options) {},
     end: function() {},
     drawGame: function(context) {},
-    timerEvent: function(delta) {},
+    timerEvent: function(delta)
+    {
+        this.game.draw();
+    },
     keypressEvent: function(event) {},
     clickEvent: function(event) {},
     continueEvent: function() {},
-    isLoading: function() { return false; },
+    dataTransmitted: function(data) {},
 });
 
 var Input = new Class({
@@ -35,7 +38,7 @@ var Input = new Class({
         this.currentStateEngine.drawGame(this.graphics, this.context);
         this.context.restore();
 
-        if (this.isLoadingSomething())
+        if (this.loadingSomething())
         {
             this.context.save();
             this.graphics.drawLoadingIndicator(this.loadingSomethingTime);
@@ -52,7 +55,10 @@ var Input = new Class({
         this.setTimer(0);
 
         if (this.currentStateEngine)
+        {
             this.currentStateEngine.end();
+            console.log(JSON.encode(this.data));
+        }
 
         if (stateEngineClass)
         {
@@ -64,9 +70,17 @@ var Input = new Class({
             this.currentStateEngine = null;
     },
 
-    isLoadingSomething: function()
+    transmitDataSuccess: function(data)
     {
-        return this.parent() || (this.currentStateEngine && this.currentStateEngine.isLoading());
+        if (this.currentStateEngine)
+            this.currentStateEngine.dataTransmitted(data);
+    },
+
+    transmitDataFailure: function(error)
+    {
+        this.parent(error);
+        if (confirm("Fehler bei der Datenübertragung. Nochmal versuchen?"))
+            this.retransmitData();
     },
 
     onTimer: function()

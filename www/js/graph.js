@@ -14,7 +14,7 @@ var Graph = new Class({
     {
         this.parent(canvas, new GraphGraphics(), 1);
 
-        this.setTimer(30);
+        this.setTimer("normalfps");
 
         this.loadImages({
             //"google": "http://www.google.com/images/srpr/nav_logo27.png",

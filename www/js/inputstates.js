@@ -7,14 +7,29 @@ var AUTOINPUT = false;
 var StateEngineStart = new Class({
     Extends: StateEngine,
 
+    canStart: false,
+
+    start: function()
+    {
+        this.game.transmitData("cmd=getword");
+        this.game.setTimer("normalfps");
+    },
+
+    dataTransmitted: function(data)
+    {
+        this.canStart = true;
+        this.game.data.word = String(data);
+    },
+
     drawGame: function(graphics, context)
     {
-        graphics.drawStartScreen();
+        graphics.drawStartScreen(this.canStart);
     },
 
     continueEvent: function()
     {
-        this.game.setStateEngine(StateEngineWordCollecting);
+        if (this.canStart)
+            this.game.setStateEngine(StateEngineWordCollecting);
     },
 });
 
@@ -41,7 +56,7 @@ var StateEngineWordCollecting = new Class({
             this.inputListAnimation = [1, 0];
         }
 
-        this.game.setTimer(10);
+        this.game.setTimer("highfps");
     },
 
     drawGame: function(graphics, context)
@@ -122,7 +137,7 @@ var StateEngineWordsFinished = new Class({
 
     start: function(options)
     {
-        this.game.setTimer(30);
+        this.game.setTimer("normalfps");
         this.fadeEffect = 0;
         this.inputTime = options.inputTime;
 

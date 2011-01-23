@@ -9,6 +9,7 @@ var Game = new Class({
     loadingImages: false,
     dataRequest: null,
     loadingSomethingTime: 0,
+    retransmitCount: 0,
 
     initialize: function(canvas, graphics, scaling)
     {
@@ -32,6 +33,8 @@ var Game = new Class({
             url: "php/data.php",
             onSuccess: this.onDataRequestSuccess.bind(this),
             onFailure: this.onDataRequestFailure.bind(this),
+            onTimeout: this.onDataRequestTimeout.bind(this),
+            timeout: 60000,
         });
     },
 
@@ -73,6 +76,16 @@ var Game = new Class({
 
     setTimer: function(interval)
     {
+        switch (interval)
+        {
+        case "normalfps":
+            interval = 30;
+            break;
+        case "highfps":
+            interval = 10;
+            break;
+        }
+
         if (this.timer)
             clearInterval(this.timer);
 
@@ -126,7 +139,16 @@ var Game = new Class({
     transmitData: function(data)
     {
         this.dataRequest.cancel();
-        this.dataRequest.get(data);
+        this.dataRequest.setOptions({data: data});
+        this.dataRequest.send({method: "get"});
+        this.retransmitCount = 0;
+    },
+
+    retransmitData: function()
+    {
+        this.dataRequest.cancel();
+        this.dataRequest.send({method: "get"});
+        this.retransmitCount++;
     },
 
     onDataRequestSuccess: function(response, text)
@@ -142,12 +164,19 @@ var Game = new Class({
         this.transmitDataFailure("transfer error");
     },
 
+    onDataRequestTimeout: function()
+    {
+        this.dataRequest.cancel();
+        this.transmitDataFailure("timeout");
+    },
+
     transmitDataSuccess: function(data) { },
 
     transmitDataFailure: function(error)
     {
         console.log("error: " + error);
-        console.log("response: " + this.dataRequest.response.text);
+        if (this.dataRequest.response)
+            console.log("response: " + this.dataRequest.response.text);
     },
 
     onTimer: function()

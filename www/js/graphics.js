@@ -20,7 +20,7 @@ var Graphics = new Class({
     {
         this.context.beginPath();
         this.context.arc(x, y, r, 0, 2 * Math.PI, false);
-        this.context.fill();    
+        this.context.fill();
     },
 
     _drawGnoviIcon: function(posX, posY, size, glow, alpha)
@@ -48,15 +48,15 @@ var Graphics = new Class({
         for (var i = 0; i < wordList.length; i++)
         {
             var textWidth = this.context.measureText(wordList[i]).width;
-    
+
             if (wordOffsetX != 0 && wordOffsetX + textWidth > width)
             {
                 wordOffsetX = 0;
                 wordOffsetY += lineHeight;
             }
-    
+
             this.context.fillText(wordList[i], x + wordOffsetX, y + wordOffsetY);
-    
+
             wordOffsetX += textWidth + spacing;
         }
     },

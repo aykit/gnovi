@@ -52,7 +52,7 @@ class Database extends mysqli
         $passwordHash = $this->escape_string($passwordHash);
         $salt = $this->escape_string($salt);
 
-        return $this->query("INSERT INTO `Users` (`Name`, `Email`, `PasswordHash`, `Salt`) " . 
+        return $this->query("INSERT INTO `Users` (`Name`, `Email`, `PasswordHash`, `Salt`) " .
             "VALUES ('$name', '$email', '$passwordHash', '$salt')");
     }
 }

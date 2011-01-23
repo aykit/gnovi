@@ -31,7 +31,7 @@ var Graph = new Class({
     },
 
     loadData: function(rootId)
-    { 
+    {
         if (this.loadingDataRequest)
             this.loadingDataRequest.cancel();
 
@@ -180,7 +180,7 @@ var Graph = new Class({
 
         for (var i = 0; i < this.nodesToDraw.length; i++)
         {
-        
+
         }
 
         //var relations = Object.merge();

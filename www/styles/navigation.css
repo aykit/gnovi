@@ -16,7 +16,7 @@ nav {
 	float:left;
 }
 
-#nav li:nth-last-child(-n+5) {
+#nav li {
 	font-family: "HeroRegular";
 	list-style: none;
 	float: left;

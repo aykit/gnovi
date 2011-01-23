@@ -18,7 +18,7 @@ var StateEngineStart = new Class({
     dataTransmitted: function(data)
     {
         this.canStart = true;
-        this.game.data.word = String(data);
+        this.game.data.headWord = String(data);
     },
 
     drawGame: function(graphics, context)
@@ -47,7 +47,7 @@ var StateEngineWordCollecting = new Class({
         this.currentInputText = "";
         this.inputList = [];
         this.inputListAnimation = [];
-        this.headWord = "Berg";
+        this.headWord = this.game.data.headWord;
 
         if (AUTOINPUT)
         {
@@ -81,7 +81,7 @@ var StateEngineWordCollecting = new Class({
         {
             if (this.inputListAnimation[i] < 1)
             {
-                this.inputListAnimation[i] += delta * 10;
+                this.inputListAnimation[i] += delta / this.game.graphics.getWordCollectingAnimationTime();
                 if (this.inputListAnimation[i] > 1)
                     this.inputListAnimation[i] = 1;
                 updateScreen = true;

@@ -104,7 +104,7 @@ var StateEngineWordCollecting = new Class({
             return;
         }
 
-        if (event.event.keyCode == 13)
+        if (event.event.keyCode == 13 && this.currentInputText != "")
         {
             this.inputList.push(this.currentInputText);
             this.inputListAnimation.push(0);
@@ -209,9 +209,10 @@ var StateEngineInputLocation = new Class({
 
         if (event.event.keyCode == 13)
         {
-            if (this.currentInputText.trim() != "")
+            var text = this.currentInputText.trim();
+            if (text != "")
             {
-                this.game.data.location = this.currentInputText;
+                this.game.data.location = text;
                 this.game.setStateEngine(StateEngineLocationWordCollecting);
             }
             return;

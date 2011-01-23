@@ -18,7 +18,7 @@ class LoginPage extends Page
         {
             if ($this->login($email, $password))
             {
-                header("Location: " . rawurlencode(PageUrls::PROFILE));
+                header("Location: " . PageUrls::PROFILE);
                 die();
             }
         }

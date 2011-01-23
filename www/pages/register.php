@@ -47,7 +47,7 @@ class RegisterPage extends Page
                 unset($_SESSION['registerPasswdSafe1']);
                 unset($_SESSION['registerPasswdSafe2']);
 
-                header("Location: " . rawurlencode(PageUrls::PROFILE));
+                header("Location: " . PageUrls::PROFILE);
                 die();
             }
         }

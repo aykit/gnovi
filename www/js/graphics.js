@@ -187,14 +187,20 @@ var InputGraphics = new Class({
 
         this.context.fillStyle = "black";
 
-        this.context.font = "bold 25px Courier New";
+        this.context.font = "bold 25px Hero";
         this.context.fillText(headWord, 20, 20);
 
         this.context.font = "bold 20px Courier New";
         this.context.fillText(Math.ceil(timeLeft), 400, 20);
 
         /* TIME */
-        this.context.fillRect(10, 20, timeLeft / totalTime * 640, 2);
+        this.context.fillStyle = "#A7CF4A";
+        this.context.strokeStyle = "#7F7F7F";
+        this.context.lineCap = "round";
+        this.context.lineJoin = "round";
+        this.context.fillRect(0, 76, timeLeft / totalTime * 640, 24);
+        this.context.strokeRect(0, 75, 640, 25);
+        
 
         this.context.font = "bold 15px Courier New";
         this.context.fillText(currentInputText, 20, 300);

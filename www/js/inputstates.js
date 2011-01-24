@@ -1,5 +1,16 @@
 var AUTOINPUT = false;
 
+var InputStatesUtils = new Class({});
+
+InputStatesUtils.uniqueArray = function(array)
+{
+    var a = [];
+    for (var i = 0; i < array.length; i++)
+        if (a.indexOf(array[i]) == -1)
+            a.push(array[i]);
+    return a;
+};
+
 /*
  *  START SCREEN
  */
@@ -18,7 +29,7 @@ var StateEngineStart = new Class({
     dataTransmitted: function(data)
     {
         this.canStart = true;
-        this.game.data.headWord = String(data);
+        this.game.data.randomWord = String(data);
     },
 
     drawGame: function(graphics, context)
@@ -42,18 +53,18 @@ var StateEngineWordCollecting = new Class({
 
     start: function()
     {
-        this.totalTime = 30;
+        this.totalTime = 3;
         this.timeLeft = this.totalTime;
         this.currentInputText = "";
         this.inputList = [];
         this.inputListAnimation = [];
-        this.headWord = this.game.data.headWord;
+        this.headWord = this.game.data.randomWord;
 
         if (AUTOINPUT)
         {
             this.timeLeft = 0.5;
-            this.inputList = ["hallo", "du"];
-            this.inputListAnimation = [1, 0];
+            this.inputList = ["hallo", "du", "hallo", "nix"];
+            this.inputListAnimation = [1, 1, 0.5, 0];
         }
 
         this.game.setTimer("highfps");
@@ -104,7 +115,7 @@ var StateEngineWordCollecting = new Class({
             return;
         }
 
-        if (event.event.keyCode == 13)
+        if (event.event.keyCode == 13 && this.currentInputText != "")
         {
             this.inputList.push(this.currentInputText);
             this.inputListAnimation.push(0);
@@ -123,7 +134,7 @@ var StateEngineWordCollecting = new Class({
 
     finishInput: function()
     {
-        this.game.data.inputList = this.inputList;
+        this.game.data.inputList = InputStatesUtils.uniqueArray(this.inputList);
         this.game.setStateEngine(StateEngineWordsFinished, {inputTime: this.totalTime});
     },
 });
@@ -150,7 +161,8 @@ var StateEngineWordsFinished = new Class({
 
     drawGame: function(graphics, context)
     {
-        graphics.drawWordsFinishedScreen(this.game.data.inputList, this.inputTime, this.fadeEffect, this.fadeEffect >= 1);
+        graphics.drawWordsFinishedScreen(this.game.data.randomWord, this.game.data.inputList,
+            this.inputTime, this.fadeEffect, this.fadeEffect >= 1);
     },
 
     timerEvent: function(delta)
@@ -209,9 +221,10 @@ var StateEngineInputLocation = new Class({
 
         if (event.event.keyCode == 13)
         {
-            if (this.currentInputText.trim() != "")
+            var text = this.currentInputText.trim();
+            if (text != "")
             {
-                this.game.data.location = this.currentInputText;
+                this.game.data.location = text;
                 this.game.setStateEngine(StateEngineLocationWordCollecting);
             }
             return;
@@ -238,7 +251,10 @@ var StateEngineLocationWordCollecting = new Class({
         this.headWord = this.game.data.location;
 
         if (AUTOINPUT)
+        {
             this.inputList = ["ich", "du"];
+            this.inputListAnimation = [1, 0];
+        }
     },
 
     finishInput: function()
@@ -257,7 +273,8 @@ var StateEngineLocationWordsFinished = new Class({
 
     drawGame: function(graphics, context)
     {
-        graphics.drawLocationWordsFinishedScreen(this.game.data.locationInputList, this.inputTime, this.fadeEffect, this.fadeEffect >= 1);
+        graphics.drawLocationWordsFinishedScreen(this.game.data.location, this.game.data.locationInputList,
+            this.inputTime, this.fadeEffect, this.fadeEffect >= 1);
     },
 
     continueEvent: function()

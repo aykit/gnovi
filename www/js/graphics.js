@@ -175,7 +175,7 @@ var InputGraphics = new Class({
         this.context.fillText("click to start", 100, 20);
     },
 
-    drawWordsFinishedScreen: function(wordList, inputTime, alpha, drawContinueNotice)
+    drawWordsFinishedScreen: function(randomWord, wordList, inputTime, alpha, drawContinueNotice)
     {
         this._clearCanvas();
 
@@ -194,9 +194,9 @@ var InputGraphics = new Class({
         this.context.fillText("press Enter to continue", 20, 300);
     },
 
-    drawLocationWordsFinishedScreen: function(wordList, inputTime, alpha, drawContinueNotice)
+    drawLocationWordsFinishedScreen: function(location, wordList, inputTime, alpha, drawContinueNotice)
     {
-        this.drawWordsFinishedScreen(wordList, inputTime, alpha, drawContinueNotice);
+        this.drawWordsFinishedScreen(location, wordList, inputTime, alpha, drawContinueNotice);
     },
 
     drawInputLocationScreen: function(inputText)

@@ -20,41 +20,26 @@ var Graphics = new Class({
         this.context.stroke();
     },
 
-    _コード: function(x,y,w,h,cpm,fillcolor)
+    _コード: function(x, y, width, height, cornerRadius)
     {
         this.context.beginPath();
-        this.context.strokeStyle = "#7F7F7F";
-        this.context.moveTo(x, y);
-        this.context.lineTo(x+w, y);
-        this.context.quadraticCurveTo(x+w+cpm, y, x+w+cpm, y+cpm);
-        this.context.lineTo(x+w+cpm, y+cpm+h);
-        this.context.quadraticCurveTo(x+w+cpm, y+2*cpm+h, x+w, y+2*cpm+h);
-        this.context.lineTo(x, y+2*cpm+h);
-        this.context.quadraticCurveTo(x-cpm, y+2*cpm+h, x-cpm, y+cpm+h);
-        this.context.lineTo(x-cpm, y+cpm);
-        this.context.quadraticCurveTo(x-cpm, y, x, y);
+        this.context.moveTo(x+cornerRadius, y);
+        this.context.lineTo(x+cornerRadius+(width-2*cornerRadius), y);
+        this.context.quadraticCurveTo(x+2*cornerRadius+(width-2*cornerRadius), y, 
+            x+2*cornerRadius+(width-2*cornerRadius), y+cornerRadius);
+        this.context.lineTo(x+2*cornerRadius+(width-2*cornerRadius), y+cornerRadius+(height-2*cornerRadius));
+        this.context.quadraticCurveTo(x+2*cornerRadius+(width-2*cornerRadius), 
+            y+2*cornerRadius+(height-2*cornerRadius),
+            x+cornerRadius+(width-2*cornerRadius), y+2*cornerRadius+(height-2*cornerRadius));
+        this.context.lineTo(x+cornerRadius, y+2*cornerRadius+(height-2*cornerRadius));
+        this.context.quadraticCurveTo(x, y+2*cornerRadius+(height-2*cornerRadius), x, 
+            y+cornerRadius+(height-2*cornerRadius));
+        this.context.lineTo(x, y+cornerRadius);
+        this.context.quadraticCurveTo(x, y, x+cornerRadius, y);
         this.context.stroke();
-        this.context.fillStyle = fillcolor;
         this.context.fill();
         this.context.stroke();
-
-
-
-        /*    this.context.beginPath();
-        this.context.strokeStyle = "#7F7F7F";
-        this.context.moveTo(x, y);
-        this.context.lineTo(x+100, y);
-        this.context.quadraticCurveTo(x+112, y, x+112, y+12);
-        this.context.lineTo(x+112, y+32);
-        this.context.quadraticCurveTo(x+112, y+44, x+100, y+44);
-        this.context.lineTo(x, y+44);
-        this.context.quadraticCurveTo(x-12, y+44, x-12, y+32);
-        this.context.lineTo(x-12, y+12);
-        this.context.quadraticCurveTo(x-12, y, x, y);
-        this.context.stroke();
-        this.context.fillStyle = fillcolor;
-        this.context.fill();
-        this.context.stroke();*/
+        
     },
 
     _drawGnoviIcon: function(posX, posY, size, glow, alpha)
@@ -230,17 +215,19 @@ var InputGraphics = new Class({
         this._clearCanvas();
 
         this.context.font = "25px HeroRegular";
+        var rectWidth = Math.max(this.context.measureText(headWord).width + 30, 136);
 
-        var rectWidth = Math.max(this.context.measureText(headWord).width + 20, 100);
-        this._コード(270 + 50 - rectWidth / 2, 124, rectWidth, 20, 12, "#231F20");
+        this.context.strokeStyle = "#7F7F7F";
+        this.context.fillStyle = "#231F20";
+        this._コード(320 - rectWidth / 2, 85, rectWidth, 44, 12);
 
         this.context.fillStyle = "white";
         this.context.textAlign = "center";
-        this.context.fillText(headWord, 320, 154);
+        this.context.fillText(headWord, 320, 115);
 
-        /* DRAW COUNTERTEXT
-        this.context.font = "20px HeroRegular";
-        */
+            /* DRAW COUNTERTEXT
+            this.context.font = "20px HeroRegular"; */
+        
         this.context.fillText(Math.ceil(timeLeft), 400, 20);
 
         this.context.fillStyle = "#A7CF4A";
@@ -248,12 +235,12 @@ var InputGraphics = new Class({
         this.context.lineCap = "round";
         this.context.lineJoin = "round";
         this.context.lineWidth = "1.5";
-        this.context.fillRect(0, 76, timeLeft / totalTime * 640, 24);
-        this.context.strokeRect(0, 75.5, 640, 25);
+        this.context.fillRect(0, 37, timeLeft / totalTime * 640, 24);
+        this.context.strokeRect(0, 37.5, 640, 25);
 
         this.context.fillStyle = "black";
         this.context.font = "15px HeroRegular";
-        this.context.fillText(currentInputText, 320, 450);
+        this.context.fillText(currentInputText, 320, 400);
 
         var wordsInPlace = 0;
         for (var i = 0; i < inputList.length; i++)
@@ -271,7 +258,7 @@ var InputGraphics = new Class({
         {
             var a = inputListAnimation[i];
             var b = 1 - a;
-            this.context.fillText(inputList[i], 320, ((i - wordsOffset) * 20 + 200) * a + 450 * b);
+            this.context.fillText(inputList[i], 320, ((i - wordsOffset) * 20 + 150) * a + 400 * b);
 
             if (i == firstWordToDraw)
                 this.context.fillStyle = "rgba(0, 0, 0, 1)";

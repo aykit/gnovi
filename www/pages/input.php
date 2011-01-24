@@ -11,7 +11,7 @@ class InputPage extends Page
 
         $this->drawHeader("Input",
             array("js/mootools.js", "js/game.js", "js/input.js", "js/inputstates.js", "js/graphics.js"), 
-            array("styles/reset.css", "styles/main.css", "styles/navigation.css"));
+            array("styles/reset.css", "styles/main.css"));
 
         print('    <canvas id="game" width="640" height="480"></canvas>' . "\n");
 

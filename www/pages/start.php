@@ -14,7 +14,7 @@ class StartPage extends Page
         $username = $this->getUsername();
         $email = $this->getEmail();
 
-        print("<p>Hallo</p>");
+        include "html/start.php";
 
         $this->drawFooter();
     }

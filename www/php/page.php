@@ -48,7 +48,7 @@ class Page
         if ($this->isLoggedIn())
             return;
 
-        header("Location: " . PageUrls::START);
+        header("Location: " . PageUrls::LOGIN);
         die();
     }
 

@@ -217,15 +217,15 @@ var InputGraphics = new Class({
         this._clearCanvas();
         this.context.strokeStyle = "#7F7F7F";
         this.context.fillStyle = "#231F20";
-        this._コード(252, 124, 136, 44, 12);
+        this._コード(252, 85, 136, 44, 12);
         this.context.fillStyle = "white";
         this.context.font = "25px HeroRegular";
         this.context.textAlign = "center";
-        this.context.fillText(headWord, 320, 154);
+        this.context.fillText(headWord, 320, 115);
 
-        /* DRAW COUNTERTEXT
-        this.context.font = "20px HeroRegular";
-        */
+            /* DRAW COUNTERTEXT
+            this.context.font = "20px HeroRegular"; */
+        
         this.context.fillText(Math.ceil(timeLeft), 400, 20);
 
         this.context.fillStyle = "#A7CF4A";
@@ -233,12 +233,12 @@ var InputGraphics = new Class({
         this.context.lineCap = "round";
         this.context.lineJoin = "round";
         this.context.lineWidth = "1.5";
-        this.context.fillRect(0, 76, timeLeft / totalTime * 640, 24);
-        this.context.strokeRect(0, 75.5, 640, 25);
+        this.context.fillRect(0, 37, timeLeft / totalTime * 640, 24);
+        this.context.strokeRect(0, 37.5, 640, 25);
 
         this.context.fillStyle = "black";
         this.context.font = "15px HeroRegular";
-        this.context.fillText(currentInputText, 320, 450);
+        this.context.fillText(currentInputText, 320, 400);
 
         var wordsInPlace = 0;
         for (var i = 0; i < inputList.length; i++)
@@ -256,7 +256,7 @@ var InputGraphics = new Class({
         {
             var a = inputListAnimation[i];
             var b = 1 - a;
-            this.context.fillText(inputList[i], 320, ((i - wordsOffset) * 20 + 200) * a + 450 * b);
+            this.context.fillText(inputList[i], 320, ((i - wordsOffset) * 20 + 150) * a + 400 * b);
 
             if (i == firstWordToDraw)
                 this.context.fillStyle = "rgba(0, 0, 0, 1)";

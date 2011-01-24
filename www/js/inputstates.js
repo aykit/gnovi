@@ -53,7 +53,7 @@ var StateEngineWordCollecting = new Class({
 
     start: function()
     {
-        this.totalTime = 3;
+        this.totalTime = 10;
         this.timeLeft = this.totalTime;
         this.currentInputText = "";
         this.inputList = [];

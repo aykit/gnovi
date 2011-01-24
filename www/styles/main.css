@@ -1,6 +1,27 @@
+p {
+    margin-top: 10px;
+    margin-left: 4px;
+}
+
 #game {
    /* UNCOMMENT TO CENTER 
     display: block;
     margin-left: auto;
     margin-right: auto;*/
+    margin-left: 20px;
 }
+
+
+#profile {
+    font-family: "HeroRegular";
+    color: white;
+    border: 2px solid #666666;
+    background-color: #666666;
+    height: 64px;
+    width: 450px;
+    padding: 8px;
+    margin-top: 12px;
+    margin-left: 64px;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px; }

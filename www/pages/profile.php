@@ -9,7 +9,7 @@ class ProfilePage extends Page
     {
         $this->requireLogin();
 
-        $this->drawHeader("Profil", array(), array());
+        $this->drawHeader("Profil", array(), array("styles/main.css"));
 
         $username = $this->getUsername();
         $email = $this->getEmail();

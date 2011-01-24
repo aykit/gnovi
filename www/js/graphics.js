@@ -268,8 +268,8 @@ var InputGraphics = new Class({
     drawWordRatingScreen: function(word)
     {
         this._clearCanvas();
-        this.context.font = "25px HeroRegular";
-        var rectWidth = Math.max(this.context.measureText(word).width + 90, 136);
+        this.context.font = "20px HeroRegular";
+        var rectWidth = Math.max(this.context.measureText(word).width + 120, 136);
 
         this.context.strokeStyle = "#7F7F7F";
         this.context.fillStyle = "#231F20";
@@ -301,7 +301,6 @@ var InputGraphics = new Class({
 
         this.context.fillStyle = "white";
         this.context.textAlign = "center";
-        this.context.font = "20px HeroRegular";
         this.context.fillText(word, 320, 115);
     
         this.context.fillStyle = "#231F20";

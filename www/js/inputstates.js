@@ -222,7 +222,9 @@ var StateEngineInputLocation = new Class({
             return;
         }
 
-        if (event.event.keyCode < 32 || event.event.keyCode == 47) // no slash because of url format
+        // no / because of url format
+        // no % because of buggy brower unescaping
+        if (event.event.keyCode < 32 || event.event.keyCode == 47 || event.event.keyCode == 37)
             return;
 
         this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
@@ -334,6 +336,7 @@ var StateEngineFinished = new Class({
 
     continueEvent: function()
     {
+        this.game.data.randomWord = "%32;?:@& =+$,ößюфド";
         window.location = $("graph_link").href + "/" + encodeURIComponent(this.game.data.randomWord);
     },
 });

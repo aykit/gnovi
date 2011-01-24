@@ -8,7 +8,7 @@ case "getword":
     getWord();
     break;
 case "getgraph":
-    getGraph((int)@$_GET["id"]);
+    getGraph((string)@$_GET["word"]);
     break;
 }
 
@@ -18,12 +18,14 @@ function getWord()
     exitWithData("Haus");
 }
 
-function getGraph($id)
+function getGraph($word)
 {
     $db = getDb();
 
+    $word = json_encode($word);
+
     $sampleA = '{
-        "root": {"id": 1, "label": "root"},
+        "root": {"id": 1, "label": ' . $word . '},
         "nodes":
         [
             {"id": 32, "label": "du"},
@@ -56,7 +58,7 @@ function getGraph($id)
     }';
 
     print('{"status":"success", "data":');
-    if ($id == 4)
+    if ($word == "bla")
         print($sampleB);
     else
         print($sampleA);

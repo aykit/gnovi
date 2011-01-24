@@ -25,16 +25,21 @@ var Graph = new Class({
 
     imageLoadingFinished: function()
     {
-        this.loadData(0);
+        // window.location.pathname: on some browsers encoded and on some not, so % forbidden
+        var wordRequested = decodeURIComponent(window.location.pathname);
+        wordRequested = wordRequested.substr(wordRequested.lastIndexOf("/") + 1);
+        this.loadData(wordRequested);
     },
 
-    loadData: function(rootId)
+    loadData: function(rootWord)
     {
-        this.transmitData("cmd=getgraph&id=" + rootId);
+        this.transmitData("cmd=getgraph&word=" + encodeURIComponent(rootWord));
     },
 
     transmitDataSuccess: function(data)
     {
+        console.log(data);
+        window.history.pushState(null, "Graph - " + data.root.label, encodeURIComponent(data.root.label));
         this.buildVisualizationData(data);
     },
 
@@ -300,7 +305,7 @@ var Graph = new Class({
             if (this.currentData && this.currentData.root.id == 4)
                 this.loadData(0);
             else
-                this.loadData(4);
+                this.loadData("bla");
         }
     },
 });

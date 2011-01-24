@@ -1,2 +1,4 @@
-    <p><?=htmlspecialchars($username)?></p>
-    <p><?=htmlspecialchars($email)?></p>
+    <section id="profile">
+      <p>Name:&ensp;<?=htmlspecialchars($username)?></p>
+      <p>E-Mail:&ensp;<?=htmlspecialchars($email)?></p>    
+    </section>

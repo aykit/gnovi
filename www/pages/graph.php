@@ -15,14 +15,34 @@ class GraphPage extends Page
 
         print('    <canvas id="graph" width="640" height="480"></canvas>' . "\n");
 
-        /*$str = "%32;?:@& =+$,ößюфド"; // no slash allowed!!!
-        $encoded = rawurlencode($str);
-
-        print("<p>test: " . htmlspecialchars($str) . "</p>");
-        print("<p>result: " . htmlspecialchars($_SERVER["QUERY_STRING"]) . "</p>");
-        print('<p>encoded: <a style="color: black;" href="/graph/' . htmlspecialchars($encoded) . '"> ' . htmlspecialchars($encoded) . '</a></p>');*/
-
         $this->drawFooter();
+    }
+
+    // test also for ".."
+    // $testStr = "/!%66; ?_:/.@&=+$,ößюфド\\%%\\\\1";
+    protected static function urlEncode($s)
+    {
+        $s = str_ireplace(
+            array("+", "%", "_", "/", "\\", ".", " "),
+            array("+0", "+1", "+2", "+3", "+4", "+5", "_"), $s);
+        $s = rawurlencode($s); // escapes all except: - _ . ~
+
+        // undo some escapings to make the url look nicer (optional)
+        $s = str_ireplace(
+            array("%3B", "%40", "%24", "%21", "%2A", "%28", "%29", "%2C", "%3A"),
+            array(";", "@", "$", "!", "*", "(", ")", ",", ":"), $s);
+
+        return $s;
+    }
+
+    // use $_SERVER["REQUEST_URI"]
+    protected static function urlDecode($s)
+    {
+        $s = rawurldecode($s);
+        $s = str_ireplace(
+            array("_", "+5", "+4", "+3", "+2", "+1", "+0"),
+            array(" ", ".", "\\", "/", "_", "%", "+"), $s);
+        return $s;
     }
 }
 

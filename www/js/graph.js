@@ -25,21 +25,20 @@ var Graph = new Class({
 
     imageLoadingFinished: function()
     {
-        // window.location.pathname: on some browsers encoded and on some not, so % forbidden
-        var wordRequested = decodeURIComponent(window.location.pathname);
+        var wordRequested = window.location.pathname;
         wordRequested = wordRequested.substr(wordRequested.lastIndexOf("/") + 1);
-        this.loadData(wordRequested);
+        this.loadData(this.urlDecode(wordRequested));
     },
 
     loadData: function(rootWord)
     {
-        this.transmitData("cmd=getgraph&word=" + encodeURIComponent(rootWord));
+        this.transmitData("cmd=getgraph&word=" + this.urlEncode(rootWord));
     },
 
     transmitDataSuccess: function(data)
     {
         console.log(data);
-        window.history.pushState(null, "Graph - " + data.root.label, encodeURIComponent(data.root.label));
+        window.history.pushState(null, "Graph - " + data.root.label, this.urlEncode(data.root.label));
         this.buildVisualizationData(data);
     },
 
@@ -307,6 +306,32 @@ var Graph = new Class({
             else
                 this.loadData("bla");
         }
+    },
+
+    urlEncode: function(s)
+    {
+        s = s.replace(/\+/g, "+0");
+        s = s.replace(/%/g, "+1");
+        s = s.replace(/_/g, "+2");
+        s = s.replace(/\//g, "+3");
+        s = s.replace(/\\/g, "+4");
+        s = s.replace(/\./g, "+5");
+        s = s.replace(/ /g, "_");
+        s = encodeURIComponent(s); // escapes all except: - _ . ! ~ * ' ( )
+        return s;
+    },
+
+    urlDecode: function(s)
+    {
+        s = decodeURIComponent(s);
+        s = s.replace(/_/g, " ");
+        s = s.replace(/\+5/g, ".");
+        s = s.replace(/\+4/g, "\\");
+        s = s.replace(/\+3/g, "/");
+        s = s.replace(/\+2/g, "_");
+        s = s.replace(/\+1/g, "%");
+        s = s.replace(/\+0/g, "+");
+        return s;
     },
 });
 

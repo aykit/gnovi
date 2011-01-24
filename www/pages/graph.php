@@ -1,14 +1,24 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Jupi</title>
-    <script type="text/javascript" src="js/mootools.js"></script>
-    <script type="text/javascript" src="js/graphics.js"></script>
-    <script type="text/javascript" src="js/game.js"></script>
-    <script type="text/javascript" src="js/graph.js"></script>
-  </head>
-  <body>
-    <canvas id="graph" width="640" height="480"></canvas>
-  </body>
-</html>
+<?php
+
+chdir("..");
+require_once "php/page.php";
+
+class GraphPage extends Page
+{
+    public function __construct()
+    {
+        $this->requireLogin();
+
+        $this->drawHeader("Graph",
+            array("/js/mootools.js", "/js/game.js", "/js/graph.js", "/js/graphics.js"), 
+            array("/styles/main.css"));
+
+        print('    <canvas id="graph" width="640" height="480"></canvas>' . "\n");
+
+        $this->drawFooter();
+    }
+}
+
+new GraphPage();
+
+?>

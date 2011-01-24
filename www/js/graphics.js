@@ -30,41 +30,26 @@ var Graphics = new Class({
         this.context.stroke();
     },
 
-    _コード: function(x,y,w,h,cpm,fillcolor)
+    _コード: function(x, y, width, height, cornerRadius)
     {
         this.context.beginPath();
-        this.context.strokeStyle = "#7F7F7F";
-        this.context.moveTo(x, y);
-        this.context.lineTo(x+w, y);
-        this.context.quadraticCurveTo(x+w+cpm, y, x+w+cpm, y+cpm);
-        this.context.lineTo(x+w+cpm, y+cpm+h);
-        this.context.quadraticCurveTo(x+w+cpm, y+2*cpm+h, x+w, y+2*cpm+h);
-        this.context.lineTo(x, y+2*cpm+h);
-        this.context.quadraticCurveTo(x-cpm, y+2*cpm+h, x-cpm, y+cpm+h);
-        this.context.lineTo(x-cpm, y+cpm);
-        this.context.quadraticCurveTo(x-cpm, y, x, y);
+        this.context.moveTo(x+cornerRadius, y);
+        this.context.lineTo(x+cornerRadius+(width-2*cornerRadius), y);
+        this.context.quadraticCurveTo(x+2*cornerRadius+(width-2*cornerRadius), y, 
+            x+2*cornerRadius+(width-2*cornerRadius), y+cornerRadius);
+        this.context.lineTo(x+2*cornerRadius+(width-2*cornerRadius), y+cornerRadius+(height-2*cornerRadius));
+        this.context.quadraticCurveTo(x+2*cornerRadius+(width-2*cornerRadius), 
+            y+2*cornerRadius+(height-2*cornerRadius),
+            x+cornerRadius+(width-2*cornerRadius), y+2*cornerRadius+(height-2*cornerRadius));
+        this.context.lineTo(x+cornerRadius, y+2*cornerRadius+(height-2*cornerRadius));
+        this.context.quadraticCurveTo(x, y+2*cornerRadius+(height-2*cornerRadius), x, 
+            y+cornerRadius+(height-2*cornerRadius));
+        this.context.lineTo(x, y+cornerRadius);
+        this.context.quadraticCurveTo(x, y, x+cornerRadius, y);
         this.context.stroke();
-        this.context.fillStyle = fillcolor;
         this.context.fill();
         this.context.stroke();
-
-
-
-        /*    this.context.beginPath();
-        this.context.strokeStyle = "#7F7F7F";
-        this.context.moveTo(x, y);
-        this.context.lineTo(x+100, y);
-        this.context.quadraticCurveTo(x+112, y, x+112, y+12);
-        this.context.lineTo(x+112, y+32);
-        this.context.quadraticCurveTo(x+112, y+44, x+100, y+44);
-        this.context.lineTo(x, y+44);
-        this.context.quadraticCurveTo(x-12, y+44, x-12, y+32);
-        this.context.lineTo(x-12, y+12);
-        this.context.quadraticCurveTo(x-12, y, x, y);
-        this.context.stroke();
-        this.context.fillStyle = fillcolor;
-        this.context.fill();
-        this.context.stroke();*/
+        
     },
 
     _drawGnoviIcon: function(posX, posY, size, glow, alpha)
@@ -230,7 +215,9 @@ var InputGraphics = new Class({
     drawWordCollectingScreen: function(headWord, timeLeft, totalTime, currentInputText, inputList, inputListAnimation)
     {
         this._clearCanvas();
-        this._コード(270, 124, 100, 20, 12, "#231F20");
+        this.context.strokeStyle = "#7F7F7F";
+        this.context.fillStyle = "#231F20";
+        this._コード(252, 124, 136, 44, 12);
         this.context.fillStyle = "white";
         this.context.font = "25px HeroRegular";
         this.context.textAlign = "center";

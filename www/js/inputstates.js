@@ -222,9 +222,7 @@ var StateEngineInputLocation = new Class({
             return;
         }
 
-        // no / because of url format
-        // no % because of buggy brower unescaping
-        if (event.event.keyCode < 32 || event.event.keyCode == 47 || event.event.keyCode == 37)
+        if (event.event.keyCode < 32)
             return;
 
         this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);

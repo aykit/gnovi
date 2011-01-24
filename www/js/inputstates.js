@@ -116,7 +116,7 @@ var StateEngineWordCollecting = new Class({
             return;
         }
 
-        if (event.event.keyCode <= 32)
+        if (event.event.keyCode < 65)
             return;
 
         this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
@@ -222,7 +222,7 @@ var StateEngineInputLocation = new Class({
             return;
         }
 
-        if (event.event.keyCode < 32)
+        if (event.event.keyCode < 32 || event.event.keyCode == 47) // no slash because of url format
             return;
 
         this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);

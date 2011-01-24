@@ -30,7 +30,7 @@ var Game = new Class({
         this.canvas.addEvent("mousemove", this.onMouseMove.bind(this));
 
         this.dataRequest = new Request.JSON({
-            url: "php/data.php",
+            url: "/php/data.php",
             onSuccess: this.onDataRequestSuccess.bind(this),
             onFailure: this.onDataRequestFailure.bind(this),
             onTimeout: this.onDataRequestTimeout.bind(this),

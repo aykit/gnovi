@@ -6,6 +6,7 @@ var Graph = new Class({
     currentNodes: null,
     connections: [],
     nodesToDraw: [],
+    mouseOverNodeId: -1,
 
     interpolationProgress: 1,
     interpolationRunning: false,
@@ -204,9 +205,7 @@ var Graph = new Class({
             var posX = r * Math.cos(phi) + graphCenter.x;
             var posY = r * Math.sin(phi) + graphCenter.y;
 
-            var dx = posX - this.mouseX;
-            var dy = posY - this.mouseY;
-            var mouseOver = dx*dx + dy*dy < 15*15; // TODO: determine size
+            var mouseOver = this.mouseOverNodeId == node.id;
 
             if (visData.isRoot == 0)
                 this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
@@ -256,6 +255,37 @@ var Graph = new Class({
 
         if (this.loadingSomething())
             updateScreen = true;
+
+        var graphCenter = this.graphics.getGraphCenter();
+        var newMouseOverNodeId = -1;
+
+        for (var i = 0; i < this.nodesToDraw.length; i++)
+        {
+            var node = this.nodesToDraw[i];
+            var visData = this.interpolatedNodesVisData[node.id];
+
+            var r = visData.position.r;
+            var phi = visData.position.phi;
+
+            var posX = r * Math.cos(phi) + graphCenter.x;
+            var posY = r * Math.sin(phi) + graphCenter.y;
+
+            var dx = posX - this.mouseX;
+            var dy = posY - this.mouseY;
+            var mouseOver = dx*dx + dy*dy < 15*15; // TODO: determine size
+
+            if (mouseOver)
+            {
+                newMouseOverNodeId = node.id;
+                break;
+            }
+        }
+
+        if (newMouseOverNodeId != this.mouseOverNodeId)
+        {
+            this.mouseOverNodeId = newMouseOverNodeId;
+            updateScreen = true;
+        }
 
         if (updateScreen)
             this.draw();

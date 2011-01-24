@@ -1,5 +1,7 @@
 Options FollowSymLinks
 
+AcceptPathInfo on
+
 RewriteEngine on
 RewriteBase /
 
@@ -11,9 +13,6 @@ RewriteRule ^ausloggen$ pages/logout.php
 RewriteRule ^registrieren$ pages/register.php
 RewriteRule ^profil$ pages/profile.php
 RewriteRule ^anlauf$ pages/input.php
-
-# This methods forbids passing a slash in encoded form (%2f) as a parameter
-# since it is forbidden in this part of the url
 RewriteRule ^graph/(.*)$ pages/graph.php?$1
 
 RewriteRule ^([^/]+)$ pages/$1.php

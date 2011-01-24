@@ -10,5 +10,6 @@ RewriteRule ^ausloggen$ pages/logout.php
 RewriteRule ^registrieren$ pages/register.php
 RewriteRule ^profil$ pages/profile.php
 RewriteRule ^anlauf$ pages/input.php
+RewriteRule ^graph(.*)$ pages/graph.php$1
 
 RewriteRule ^([^/]+)$ pages/$1.php

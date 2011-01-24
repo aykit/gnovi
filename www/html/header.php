@@ -21,7 +21,7 @@
             <li><a href="<?=htmlspecialchars(PageUrls::START)?>"><img src="images/gnovi_klein.png" alt="gnovi_klein" width="35" height="38"></a></li>
             <li><a href="<?=htmlspecialchars(PageUrls::PROFILE)?>">Profil</a></li>
             <li><a href="<?=htmlspecialchars(PageUrls::RUN)?>">Anlauf</a></li>
-            <li>Ich</li>
+            <li><a id="graph_link" href="graph">Ich</a></li>
             <li>Wir</li>
             <li>Hilfe</li>
             <li>Über gnovi</li>

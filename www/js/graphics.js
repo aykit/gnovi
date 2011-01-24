@@ -280,11 +280,21 @@ var InputGraphics = new Class({
 
     drawWordRatingScreen: function(word)
     {
+        this._clearCanvas();
+
         this.context.font = "20px HeroRegular";
         this.context.fillText(word, 10, 30);
 
         this.context.font = "30px HeroRegular";
         this.context.fillText("+ -", 10, 60);
+    },
+
+    drawFinishedScreen: function()
+    {
+        this._clearCanvas();
+
+        this.context.font = "20px HeroRegular";
+        this.context.fillText("Bammwamm fertig.", 10, 30);
     },
 
     drawLoadingIndicator: function(loadTime)

@@ -1,15 +1,6 @@
-var AUTOINPUT = false;
+var AUTOINPUT = true;
 
 var InputStatesUtils = new Class({});
-
-InputStatesUtils.uniqueArray = function(array)
-{
-    var a = [];
-    for (var i = 0; i < array.length; i++)
-        if (a.indexOf(array[i]) == -1)
-            a.push(array[i]);
-    return a;
-};
 
 /*
  *  START SCREEN
@@ -134,7 +125,8 @@ var StateEngineWordCollecting = new Class({
 
     finishInput: function()
     {
-        this.game.data.inputList = InputStatesUtils.uniqueArray(this.inputList);
+        this.game.data.inputList = [];
+        this.game.data.inputList.combine(this.inputList);
         this.game.setStateEngine(StateEngineWordsFinished, {inputTime: this.totalTime});
     },
 });
@@ -296,7 +288,7 @@ var StateEngineWordRating = new Class({
         this.words = Array.clone(this.game.data.inputList);
         this.words.combine(this.game.data.locationInputList);
 
-        this.connotations = [];
+        this.connotations = {};
 
         this.nextWord();
     },
@@ -310,27 +302,38 @@ var StateEngineWordRating = new Class({
 
     drawGame: function(graphics, context)
     {
-        graphics._clearCanvas();
-
-        if (this.dead)
-        {
-            context.fillText("bamwamm fertig", 10, 30);
-            return;
-        }
-
         graphics.drawWordRatingScreen(this.currentWord);
     },
 
     continueEvent: function()
     {
-        if (this.dead)
+        this.connotations[this.currentWord] = "+";
+
+        if (this.words.length == 0)
+        {
+            this.game.setStateEngine(StateEngineFinished);
             return;
+        }
 
-        if (this.words.length > 0)
-            this.nextWord();
-        else
-            this.dead = true;
-
+        this.nextWord();
         this.game.draw();
+    },
+});
+
+/*
+ *  FINISHED
+ */
+
+var StateEngineFinished = new Class({
+    Extends: StateEngine,
+
+    drawGame: function(graphics, context)
+    {
+        graphics.drawFinishedScreen();
+    },
+
+    continueEvent: function()
+    {
+        window.location = $("graph_link").href + "/" + this.game.data.randomWord;
     },
 });

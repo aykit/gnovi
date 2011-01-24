@@ -244,7 +244,7 @@ var StateEngineLocationWordCollecting = new Class({
 
         if (AUTOINPUT)
         {
-            this.inputList = ["ich", "du"];
+            this.inputList = ["deinemama", "du"];
             this.inputListAnimation = [1, 0];
         }
     },

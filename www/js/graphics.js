@@ -268,12 +268,45 @@ var InputGraphics = new Class({
     drawWordRatingScreen: function(word)
     {
         this._clearCanvas();
+        this.context.font = "25px HeroRegular";
+        var rectWidth = Math.max(this.context.measureText(word).width + 90, 136);
 
+        this.context.strokeStyle = "#7F7F7F";
+        this.context.fillStyle = "#231F20";
+        this._コード(320 - rectWidth / 2, 85, rectWidth, 44, 12);
+
+        this.context.strokeStyle = "";
+        this.context.lineWidth = "2";
+        this.context.fillStyle = "#666666";
+        this._コード(320 - rectWidth/2+1, 86, 40, 42, 12);
+        
+        this._コード(320 + rectWidth / 2 - 41, 86, 40, 42, 12);
+    
+        this.context.lineWidth = "10";
+        this.context.strokeStyle = "#333333";
+        this.context.fillStyle = "black";    
+            
+        this.context.beginPath();
+        this.context.moveTo(320 - rectWidth/2+21, 95);
+        this.context.lineTo(320 - rectWidth/2+21, 121);
+        this.context.moveTo(320 - rectWidth/2+8, 108);
+        this.context.lineTo(320 - rectWidth/2+34, 108);
+        this.context.stroke();
+        
+        this.context.beginPath();
+        this.context.moveTo(320 + rectWidth / 2 - 8 - 26, 108);
+        this.context.lineTo(320 + rectWidth / 2 - 8, 108);
+        this.context.stroke();
+
+
+        this.context.fillStyle = "white";
+        this.context.textAlign = "center";
         this.context.font = "20px HeroRegular";
-        this.context.fillText(word, 10, 30);
-
-        this.context.font = "30px HeroRegular";
-        this.context.fillText("+ -", 10, 60);
+        this.context.fillText(word, 320, 115);
+    
+        this.context.fillStyle = "#231F20";
+        this.context.font = "15px HeroRegular";
+        this.context.fillText("Empfindest du das Wort als negativ oder positiv?", 320, 170);
     },
 
     drawFinishedScreen: function()

@@ -7,6 +7,7 @@ class PageUrls
     const LOGIN = "/einloggen";
     const INPUT = "/anlauf";
     const GRAPH = "/graph";
+    const REGISTER = "/registrieren";
 }
 
 ?>

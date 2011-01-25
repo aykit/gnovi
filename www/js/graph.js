@@ -57,6 +57,14 @@ var Graph = new Class({
 
     buildVisualizationData: function(newData)
     {
+        /*if (this.interpolationRunning)
+        {
+            this.interpolationRunning = false;
+            this.currentData = null;
+            Object.append(this.currentNodes, this.prevNodes);
+            this.currentNodesVisData = this.interpolatedNodesVisData;
+        }*/
+
         this.prevData = this.currentData;
         this.currentData = newData;
 
@@ -73,6 +81,7 @@ var Graph = new Class({
         var visData = {};
         visData.position = {r: 0, phi: 0};
         visData.alpha = 1;
+        visData.isDisplayed = 1;
         visData.isRoot = 1;
         this.currentNodesVisData[node.id] = visData;
 
@@ -86,6 +95,7 @@ var Graph = new Class({
             var visData = {};
             visData.position = {r: 100, phi: i / numNodes * 2 * Math.PI}; // nur diskrete abstände möglich
             visData.alpha = 1;
+            visData.isDisplayed = 1;
             visData.isRoot = 0;
             this.currentNodesVisData[node.id] = visData;
         }
@@ -104,7 +114,10 @@ var Graph = new Class({
             return;
         }
 
-        this.nodesToDraw = Object.values(this.prevNodes).concat(Object.values(this.currentNodes));
+        var allNodes = Object.clone(this.prevNodes);
+        Object.append(allNodes, this.currentNodes);
+        this.nodesToDraw = Object.values(allNodes);
+
         this.interpolatedNodesVisData = {};
 
         for (var i = 0; i < this.nodesToDraw.length; i++)
@@ -119,12 +132,16 @@ var Graph = new Class({
             {
                 prevVisData = Object.clone(currentVisData);
                 prevVisData.position.r = hiddenDistance;
+                prevVisData.isDisplayed = 0;
+                prevVisData.isRoot = 0;
             }
 
             if (!currentVisData)
             {
                 currentVisData = Object.clone(prevVisData);
                 currentVisData.position.r = hiddenDistance;
+                currentVisData.isDisplayed = 0;
+                currentVisData.isRoot = 0;
             }
 
             var current = this.interpolationProgress;
@@ -139,6 +156,7 @@ var Graph = new Class({
             };
             visData.alpha = prevVisData.alpha * prev + currentVisData.alpha * current;
             visData.isRoot = prevVisData.isRoot * prev + currentVisData.isRoot * current;
+            visData.isDisplayed = prevVisData.isDisplayed * prev + currentVisData.isDisplayed * current;
 
             this.interpolatedNodesVisData[node.id] = visData;
         }

@@ -1,6 +1,7 @@
 <?php
 
 require_once "database.php";
+require_once "utilities.php";
 
 switch (@$_GET["cmd"])
 {
@@ -8,7 +9,7 @@ case "getword":
     getWord();
     break;
 case "getgraph":
-    getGraph((string)@$_GET["word"]);
+    getGraph(Utilities::urlDecode((string)@$_GET["word"]));
     break;
 }
 

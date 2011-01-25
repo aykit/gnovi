@@ -278,7 +278,7 @@ var InputGraphics = new Class({
         }
     },
 
-    drawWordRatingScreen: function(word)
+    drawWordRatingScreen: function(word, selectedButton)
     {
         this._clearCanvas();
         this.context.font = "20px HeroRegular";
@@ -290,9 +290,11 @@ var InputGraphics = new Class({
 
         this.context.strokeStyle = "";
         this.context.lineWidth = "2";
-        this.context.fillStyle = "#666666";
+
+        this.context.fillStyle = selectedButton == "+" ? "#FF6666" : "#666666";
         this._コード(320 - rectWidth/2+1, 86, 40, 42, 12);
         
+        this.context.fillStyle = selectedButton == "-" ? "#FF6666" : "#666666";
         this._コード(320 + rectWidth / 2 - 41, 86, 40, 42, 12);
     
         this.context.lineWidth = "10";

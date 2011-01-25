@@ -103,7 +103,7 @@ var StateEngineWordCollecting = new Class({
         {
             this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
             this.game.draw();
-            return false;
+            return;
         }
 
         if (event.event.keyCode == 13 && this.currentInputText != "")
@@ -113,15 +113,14 @@ var StateEngineWordCollecting = new Class({
 
             this.currentInputText = "";
             this.game.draw();
-            return false;
+            return;
         }
 
         if (event.event.keyCode < 65)
-            return false;
+            return;
 
         this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
         this.game.draw();
-        return false;
     },
 
     finishInput: function()
@@ -209,7 +208,7 @@ var StateEngineInputLocation = new Class({
         {
             this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
             this.game.draw();
-            return false;
+            return;
         }
 
         if (event.event.keyCode == 13)
@@ -220,15 +219,14 @@ var StateEngineInputLocation = new Class({
                 this.game.data.location = text;
                 this.game.setStateEngine(StateEngineLocationWordCollecting);
             }
-            return false;
+            return;
         }
 
         if (event.event.keyCode < 32)
-            return false;
+            return;
 
         this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
         this.game.draw();
-        return false;
     },
 });
 
@@ -296,6 +294,8 @@ var StateEngineWordRating = new Class({
         this.connotations = {};
 
         this.nextWord();
+
+        this.game.setTimer("normalfps");
     },
 
     nextWord: function()
@@ -327,26 +327,31 @@ var StateEngineWordRating = new Class({
 
     drawGame: function(graphics, context)
     {
-        graphics.drawWordRatingScreen(this.currentWord);
+        graphics.drawWordRatingScreen(this.currentWord, this.selectedButton);
     },
 
-    mouseMoveEvent: function()
+    timerEvent: function()
     {
         if (this.game.mouseInsideRect(this.buttonPositions["+"]))
-            this.selectedButton = "+";
+            newSelectedButton = "+";
         else if (this.game.mouseInsideRect(this.buttonPositions["-"]))
-            this.selectedButton = "-";
+            newSelectedButton = "-";
         else
-            this.selectedButton = "";
+            newSelectedButton = "";
+
+        if (this.selectedButton != newSelectedButton)
+        {
+            this.selectedButton = newSelectedButton;
+            this.game.draw();
+        }
     },
 
     clickEvent: function()
     {
         if (this.selectedButton != "+" && this.selectedButton != "-")
-            return false;
+            return;
 
         this.setConnotation(this.selectedButton);
-        return false;
     },
 
     keydownEvent: function(event)
@@ -381,6 +386,8 @@ var StateEngineFinished = new Class({
     dataTransmitted: function(data)
     {
         this.dataIsTransmitted = true;
+        this.game.setTimer(0);
+        this.game.draw();
     },
 
     drawGame: function(graphics, context)

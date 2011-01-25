@@ -9,7 +9,7 @@ var InputStatesUtils = new Class({});
 var StateEngineStart = new Class({
     Extends: StateEngine,
 
-    canStart: false,
+    loading: true,
 
     start: function()
     {
@@ -19,18 +19,25 @@ var StateEngineStart = new Class({
 
     dataTransmitted: function(data)
     {
-        this.canStart = true;
+        this.loading = false;
         this.game.data.randomWord = String(data);
+        this.game.draw();
     },
 
     drawGame: function(graphics, context)
     {
-        graphics.drawStartScreen(this.canStart);
+        graphics.drawStartScreen(!this.loading);
+    },
+
+    timerEvent: function()
+    {
+        if (this.loading)
+            this.game.draw();
     },
 
     continueEvent: function()
     {
-        if (this.canStart)
+        if (!this.loading)
             this.game.setStateEngine(StateEngineWordCollecting);
     },
 });

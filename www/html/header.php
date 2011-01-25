@@ -12,6 +12,7 @@
 <?php foreach ($styleSheets as $sheet) { ?>
   <link rel="stylesheet" type="text/css" href="<?=htmlspecialchars($sheet)?>">
 <?php } ?>
+  <link rel="icon" href="/images/gnovi_klein.png">
   </head>
   <body>
     <nav>

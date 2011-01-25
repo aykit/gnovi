@@ -21,7 +21,7 @@ class Page
         exit();
     }
 
-    protected function connectDb()
+    protected function requireDb()
     {
         if ($this->db)
             return;
@@ -70,7 +70,7 @@ class Page
     protected function login($email, $password, $alreadyHashed = false)
     {
         $this->logout();
-        $this->connectDb();
+        $this->requireDb();
 
         $userInfo = $this->db->checkLogin($email, $password, $alreadyHashed);
 

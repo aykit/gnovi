@@ -41,7 +41,7 @@ class RegisterPage extends Page
 
         if ($username != "" && $passwordHash != "" && $emailValid)
         {
-            $this->connectDb();
+            $this->requireDb();
             if (!$this->db->registerUser($username, $email, $passwordHash, $salt))
             {
                 if ($this->db->errno != 1062) // ER_DUP_ENTRY

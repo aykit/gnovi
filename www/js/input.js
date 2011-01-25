@@ -12,8 +12,10 @@ var StateEngine = new Class({
     start: function(options) {},
     end: function() {},
     drawGame: function(context) {},
-    keypressEvent: function(event) {},
-    clickEvent: function(event) {},
+    keypressEvent: function(event) { return true; },
+    keydownEvent: function(event) { return true; },
+    clickEvent: function(event) { return true; },
+    mouseMoveEvent: function(event) {},
     continueEvent: function() {},
     dataTransmitted: function(data) {},
 });
@@ -93,17 +95,27 @@ var Input = new Class({
 
     onKeypress: function(event)
     {
-        this.currentStateEngine.keypressEvent(event);
-        if (event.event.keyCode == 13)
+        if (this.currentStateEngine.keypressEvent(event) && event.event.keyCode == 13)
             this.currentStateEngine.continueEvent();
 
         return event.event.keyCode != 8 && event.event.keyCode != 32;
     },
 
+    onKeydown: function(event)
+    {
+        this.currentStateEngine.keydownEvent(event);
+    },
+
     onClick: function(event)
     {
-        this.currentStateEngine.clickEvent(event);
-        this.currentStateEngine.continueEvent();
+        if (this.currentStateEngine.clickEvent(event))
+            this.currentStateEngine.continueEvent();
+    },
+
+    onMouseMove: function(event)
+    {
+        this.parent(event);
+        this.currentStateEngine.mouseMoveEvent(event);
     },
 });
 

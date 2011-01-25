@@ -6,6 +6,19 @@
 var Graphics = new Class({
     setContext: function(context) { this.context = context; },
 
+    _makeColor: function(r, g, b, a)
+    {
+        if (r < 0) r = 0;
+        if (g < 0) g = 0;
+        if (b < 0) b = 0;
+        if (a < 0) a = 0;
+        if (r > 255) r = 255;
+        if (g > 255) g = 255;
+        if (b > 255) b = 255;
+        if (a > 1) a = 1;
+        return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+    },
+
     _fillCircle: function(x, y, r)
     {
         this.context.beginPath();
@@ -308,9 +321,23 @@ var InputGraphics = new Class({
         this.context.fillText("Empfindest du das Wort als negativ oder positiv?", 320, 170);
     },
 
-    drawFinishedScreen: function()
+    getWordRatingButtonPositions: function(word)
+    {
+        this.context.font = "20px HeroRegular";
+        var rectWidth = Math.max(this.context.measureText(word).width + 120, 136);
+
+        return {
+            "+": {x: 320 - rectWidth/2+1, y: 86, width: 40, height: 42},
+            "-": {x: 320 + rectWidth / 2 - 41, y: 86, width: 40, height: 42},
+        };
+    },
+
+    drawFinishedScreen: function(dataTransmitted)
     {
         this._clearCanvas();
+
+        if (!dataTransmitted)
+            return;
 
         this.context.font = "20px HeroRegular";
         this.context.fillText("Bammwamm fertig.", 10, 30);

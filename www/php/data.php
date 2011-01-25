@@ -13,10 +13,14 @@ class DataExchanger
             $this->returnRandomWord();
             break;
         case "getgraph":
-            $this->returnGraphData(Utilities::urlDecode((string)@$request["word"]));
+            $this->returnGraphData(@$request["word"]);
+            break;
+        case "storerun":
+            sleep(1);
+            $this->setResponseData(@$request["data"]);
             break;
         default:
-            $this->setResponseError("Unknown command");
+            $this->setResponseError("Unknown command: " . @$request["cmd"]);
         }
 
         print(json_encode($this->response));
@@ -28,6 +32,7 @@ class DataExchanger
             return;
 
         $this->setResponseData("Haus");
+        //$this->setResponseData("/!%66; ?_:/.@&=+$,ößюфド\\%%\\\\1");
     }
 
     protected function returnGraphData($word)

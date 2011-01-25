@@ -31,7 +31,7 @@ var Graph = new Class({
     {
         var wordRequested = window.location.pathname;
         wordRequested = wordRequested.substr(wordRequested.lastIndexOf("/") + 1);
-        this.loadData(Game.urlDecode(wordRequested), false);
+        this.loadData(Game.urlPathDecode(wordRequested), false);
     },
 
     imageLoadingFinished: function()
@@ -42,16 +42,19 @@ var Graph = new Class({
     loadData: function(rootWord, addWordToBrowserHistory)
     {
         this.addWordToBrowserHistory = addWordToBrowserHistory;
-        this.transmitData("cmd=getgraph&word=" + Game.urlEncode(rootWord));
+        this.transmitData("cmd=getgraph&word=" + encodeURIComponent(rootWord));
     },
 
     transmitDataSuccess: function(data)
     {
         console.log(data);
-        if (this.addWordToBrowserHistory)
-            window.history.pushState(null, "Graph - " + data.root.label, Game.urlEncode(data.root.label));
-        else
-            window.history.replaceState(null, "Graph - " + data.root.label, Game.urlEncode(data.root.label));
+        if (window.history.pushState)
+        {
+            if (this.addWordToBrowserHistory)
+                window.history.pushState(null, "Graph - " + data.root.label, Game.urlPathEncode(data.root.label));
+            else
+                window.history.replaceState(null, "Graph - " + data.root.label, Game.urlPathEncode(data.root.label));
+        }
         this.buildVisualizationData(data);
     },
 

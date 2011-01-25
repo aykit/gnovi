@@ -103,7 +103,7 @@ var StateEngineWordCollecting = new Class({
         {
             this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
             this.game.draw();
-            return;
+            return false;
         }
 
         if (event.event.keyCode == 13 && this.currentInputText != "")
@@ -113,14 +113,15 @@ var StateEngineWordCollecting = new Class({
 
             this.currentInputText = "";
             this.game.draw();
-            return;
+            return false;
         }
 
         if (event.event.keyCode < 65)
-            return;
+            return false;
 
         this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
         this.game.draw();
+        return false;
     },
 
     finishInput: function()
@@ -208,7 +209,7 @@ var StateEngineInputLocation = new Class({
         {
             this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
             this.game.draw();
-            return;
+            return false;
         }
 
         if (event.event.keyCode == 13)
@@ -219,14 +220,15 @@ var StateEngineInputLocation = new Class({
                 this.game.data.location = text;
                 this.game.setStateEngine(StateEngineLocationWordCollecting);
             }
-            return;
+            return false;
         }
 
         if (event.event.keyCode < 32)
-            return;
+            return false;
 
         this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
         this.game.draw();
+        return false;
     },
 });
 
@@ -283,6 +285,9 @@ var StateEngineLocationWordsFinished = new Class({
 var StateEngineWordRating = new Class({
     Extends: StateEngine,
 
+    selectedButton: "",
+    buttonPositions: null,
+
     start: function(options)
     {
         this.words = Array.clone(this.game.data.inputList);
@@ -295,9 +300,29 @@ var StateEngineWordRating = new Class({
 
     nextWord: function()
     {
+        if (this.words.length == 0)
+            return false;
+
         var i = Number.random(0, this.words.length - 1);
         this.currentWord = this.words[i];
         this.words.splice(i, 1);
+
+        this.buttonPositions = this.game.graphics.getWordRatingButtonPositions(this.currentWord);
+        return true;
+    },
+
+    setConnotation: function(connotation)
+    {
+        this.connotations[this.currentWord] = connotation;
+
+        if (!this.nextWord())
+        {
+            this.game.data.connotations = this.connotations;
+            this.game.setStateEngine(StateEngineFinished);
+            return;
+        }
+
+        this.game.draw();
     },
 
     drawGame: function(graphics, context)
@@ -305,18 +330,36 @@ var StateEngineWordRating = new Class({
         graphics.drawWordRatingScreen(this.currentWord);
     },
 
-    continueEvent: function()
+    mouseMoveEvent: function()
     {
-        this.connotations[this.currentWord] = "+";
+        if (this.game.mouseInsideRect(this.buttonPositions["+"]))
+            this.selectedButton = "+";
+        else if (this.game.mouseInsideRect(this.buttonPositions["-"]))
+            this.selectedButton = "-";
+        else
+            this.selectedButton = "";
+    },
 
-        if (this.words.length == 0)
+    clickEvent: function()
+    {
+        if (this.selectedButton != "+" && this.selectedButton != "-")
+            return false;
+
+        this.setConnotation(this.selectedButton);
+        return false;
+    },
+
+    keydownEvent: function(event)
+    {
+        switch (event.event.keyCode)
         {
-            this.game.setStateEngine(StateEngineFinished);
-            return;
+        case 37:
+            this.setConnotation("+");
+            break;
+        case 39:
+            this.setConnotation("-");
+            break;
         }
-
-        this.nextWord();
-        this.game.draw();
     },
 });
 
@@ -327,13 +370,27 @@ var StateEngineWordRating = new Class({
 var StateEngineFinished = new Class({
     Extends: StateEngine,
 
+    dataIsTransmitted: false,
+
+    start: function()
+    {
+        this.game.transmitData("cmd=storerun&data=" + encodeURIComponent(JSON.encode(this.game.data)));
+        this.game.setTimer("normalfps");
+    },
+
+    dataTransmitted: function(data)
+    {
+        this.dataIsTransmitted = true;
+    },
+
     drawGame: function(graphics, context)
     {
-        graphics.drawFinishedScreen();
+        graphics.drawFinishedScreen(this.dataIsTransmitted);
     },
 
     continueEvent: function()
     {
-        window.location = $("graph_link").href + "/" + Game.urlEncode(this.game.data.randomWord);
+        if (this.dataTransmitted)
+            window.location = $("graph_link").href + "/" + Game.urlPathEncode(this.game.data.randomWord);
     },
 });

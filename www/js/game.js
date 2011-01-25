@@ -26,6 +26,7 @@ var Game = new Class({
         this.graphics.setContext(this.context);
 
         document.addEvent("keypress", this.onKeypress.bind(this));
+        document.addEvent("keydown", this.onKeydown.bind(this));
         this.canvas.addEvent("click", this.onClick.bind(this));
         this.canvas.addEvent("mousemove", this.onMouseMove.bind(this));
 
@@ -179,6 +180,12 @@ var Game = new Class({
             console.log("response: " + this.dataRequest.response.text);
     },
 
+    mouseInsideRect: function(rect)
+    {
+        return this.mouseX >= rect.x && this.mouseY >= rect.y &&
+            this.mouseX < rect.x + rect.width && this.mouseY < rect.y + rect.height;
+    },
+
     onTimer: function()
     {
         this.delta = Date.now() / 1000 - this.lastTimerEventTime;
@@ -203,11 +210,12 @@ var Game = new Class({
 
     onKeypress: function(event) { },
 
+    onKeydown: function(event) { },
+
     onClick: function(event){ },
 });
 
-
-Game.urlEncode = function(s)
+Game.urlPathEncode = function(s)
 {
     s = s.replace(/\+/g, "+0");
     s = s.replace(/%/g, "+1");
@@ -220,7 +228,7 @@ Game.urlEncode = function(s)
     return s;
 };
 
-Game.urlDecode = function(s)
+Game.urlPathDecode = function(s)
 {
     s = decodeURIComponent(s);
     s = s.replace(/_/g, " ");

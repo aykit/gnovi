@@ -30,7 +30,11 @@
             <li>Wir</li>
             <li>Hilfe</li>
             <li>Über gnovi</li>
-            <li>eingeloggt als <?=htmlspecialchars($username)?> </li>
+<?php if ($loggedin) { ?>
+            <li>eingeloggt als <?=htmlspecialchars($username)?> | <a href="/ausloggen">X</a></li>
+<?php } else { ?>
+            <li><a href="/einloggen">Einloggen</a></li>
+<?php } ?>
           </ul>
         </li>
       </ul>

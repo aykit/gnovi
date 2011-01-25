@@ -11,8 +11,8 @@ class RegisterPage extends Page
 
         $posted = $_SERVER["REQUEST_METHOD"] == "POST";
 
-        $username = (string)@$_POST['u'];
-        $email = (string)@$_POST['e'];
+        $username = trim((string)@$_POST['u']);
+        $email = trim((string)@$_POST['e']);
         $password1 = (string)@$_POST['p1'];
         $password2 = (string)@$_POST['p2'];
 

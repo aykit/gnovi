@@ -114,7 +114,7 @@ var Graphics = new Class({
         this.context.strokeStyle = "black";
         this.context.fillStyle = "black";
 
-        this.context.font = "8px";
+        this.context.font = "10px HeroRegular";
         this.context.textAlign = "center";
         var txt = Math.round(fps) + " fps";
         this.context.fillText(txt, 0, 30);

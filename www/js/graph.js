@@ -8,10 +8,13 @@ var Graph = new Class({
     nodesToDraw: [],
     mouseOverNodeId: -1,
 
+    showInterpolation: true,
     interpolationProgress: 1,
     interpolationRunning: false,
 
     addWordToBrowserHistory: false,
+
+    redrawScreen: false,
 
     initialize: function(canvas, scaling)
     {
@@ -31,7 +34,7 @@ var Graph = new Class({
     {
         var wordRequested = window.location.pathname;
         wordRequested = wordRequested.substr(wordRequested.lastIndexOf("/") + 1);
-        this.loadData(Game.urlPathDecode(wordRequested), false);
+        this.loadData(Game.urlPathDecode(wordRequested), false, false);
     },
 
     imageLoadingFinished: function()
@@ -39,8 +42,9 @@ var Graph = new Class({
         this.loadWordFromCurrentUrl();
     },
 
-    loadData: function(rootWord, addWordToBrowserHistory)
+    loadData: function(rootWord, addWordToBrowserHistory, animate)
     {
+        this.showInterpolation = animate;
         this.addWordToBrowserHistory = addWordToBrowserHistory;
         this.transmitData("cmd=getgraph&word=" + encodeURIComponent(rootWord));
     },
@@ -103,9 +107,20 @@ var Graph = new Class({
             this.currentNodesVisData[node.id] = visData;
         }
 
-        // if the interpolation was already running skip this one
-        this.interpolationProgress = this.interpolationRunning ? 1 : 0;
-        this.interpolationRunning = true;
+        if (this.showInterpolation)
+        {
+            this.interpolationRunning = true;
+            this.interpolationProgress = 0;
+        }
+        else
+        {
+            this.interpolationRunning = false;
+
+            this.calculateNodesToDraw();
+            this.calculateConnections();
+
+            this.redrawScreen = true;
+        }
     },
 
     calculateNodesToDraw: function()
@@ -342,8 +357,6 @@ var Graph = new Class({
     {
         this.parent();
 
-        var updateScreen = false;
-
         if (this.interpolationRunning)
         {
             this.interpolationProgress += this.delta / this.graphics.getInterpolationTime();
@@ -356,11 +369,11 @@ var Graph = new Class({
             this.calculateNodesToDraw();
             this.calculateConnections();
 
-            updateScreen = true;
+            this.redrawScreen = true;
         }
 
         if (this.loadingSomething())
-            updateScreen = true;
+            this.redrawScreen = true;
 
         var graphCenter = this.graphics.getGraphCenter();
         var newMouseOverNodeId = -1;
@@ -390,11 +403,14 @@ var Graph = new Class({
         if (newMouseOverNodeId != this.mouseOverNodeId)
         {
             this.mouseOverNodeId = newMouseOverNodeId;
-            updateScreen = true;
+            this.redrawScreen = true;
         }
 
-        if (updateScreen)
+        if (this.redrawScreen)
+        {
             this.draw();
+            this.redrawScreen = false;
+        }
     },
 
     onClick: function(event)
@@ -404,9 +420,9 @@ var Graph = new Class({
         if (!this.interpolationRunning)
         {
             if (this.currentData && this.currentData.root.label == "Haus")
-                this.loadData("", true);
+                this.loadData("", true, true);
             else
-                this.loadData("Haus", true);
+                this.loadData("Haus", true, true);
         }
     },
 

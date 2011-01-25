@@ -90,10 +90,9 @@ var Graph = new Class({
             this.currentNodesVisData[node.id] = visData;
         }
 
-        this.interpolationProgress = 0;
+        // if the interpolation was already running skip this one
+        this.interpolationProgress = this.interpolationRunning ? 1 : 0;
         this.interpolationRunning = true;
-
-        //console.log(this.currentNodes);
     },
 
     calculateNodesToDraw: function()
@@ -149,38 +148,29 @@ var Graph = new Class({
     {
         this.connections = [];
 
-        var rootNode = this.currentNodes[this.currentData.root.id];
-
         var current = 1 / (Math.exp(-20 * (this.interpolationProgress - 0.6)) + 1);
         var prev = 1 / (Math.exp(20 * (this.interpolationProgress - 0.4)) + 1);
 
-        var numNodes = this.currentData.nodes.length;
-        for (var i = 0; i < numNodes; i++)
+        var rootNode = this.currentNodes[this.currentData.root.id];
+        for (var id in this.currentNodes)
         {
-            var node = this.currentNodes[this.currentData.nodes[i].id];
+            var node = this.currentNodes[id];
+
             var connection = {node1: rootNode, node2: node, alpha: current};
             this.connections.push(connection);
         }
 
         if (this.interpolationRunning)
         {
-            var rootNode = this.prevNodes[this.prevData.root.id];
-
-            var numNodes = this.prevData.nodes.length;
-            for (var i = 0; i < numNodes; i++)
+            var rootNode = this.prevNodes[this.prevData.root.id];    
+            for (var id in this.prevNodes)
             {
-                var node = this.prevNodes[this.prevData.nodes[i].id];
+                var node = this.prevNodes[id];
+
                 var connection = {node1: rootNode, node2: node, alpha: prev};
                 this.connections.push(connection);
             }
         }
-
-        for (var i = 0; i < this.nodesToDraw.length; i++)
-        {
-
-        }
-
-        //var relations = Object.merge();
     },
 
     draw: function()

@@ -1,7 +1,6 @@
 <?php
 
-chdir("..");
-require_once "php/page.php";
+require_once "../php/page.php";
 
 class ProfilePage extends Page
 {
@@ -14,7 +13,7 @@ class ProfilePage extends Page
         $username = $this->getUsername();
         $email = $this->getEmail();
 
-        include "html/profile.php";
+        include "../html/profile.php";
 
         $this->drawFooter();
     }

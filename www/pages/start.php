@@ -1,7 +1,6 @@
 <?php
 
-chdir("..");
-require_once "php/page.php";
+require_once "../php/page.php";
 
 class StartPage extends Page
 {
@@ -14,7 +13,7 @@ class StartPage extends Page
         $username = $this->getUsername();
         $email = $this->getEmail();
 
-        include "html/start.php";
+        include "../html/start.php";
 
         $this->drawFooter();
     }

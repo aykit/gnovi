@@ -17,7 +17,7 @@ class Page
 
     protected function exitWithCustomDatabaseError($error)
     {
-        include "html/dberror.php";
+        include "../html/dberror.php";
         exit();
     }
 
@@ -101,12 +101,12 @@ class Page
         $username = $this->getUsername();
         $email = $this->getEmail();
 
-        include "html/header.php";
+        include "../html/header.php";
     }
 
     protected function drawFooter()
     {
-        include "html/footer.php";
+        include "../html/footer.php";
     }
 }
 

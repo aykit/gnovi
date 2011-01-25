@@ -1,7 +1,6 @@
 <?php
 
-chdir("..");
-require_once "php/page.php";
+require_once "../php/page.php";
 
 class LoginPage extends Page
 {
@@ -31,7 +30,7 @@ class LoginPage extends Page
 
         $this->drawHeader("Einloggen", array(), array());
 
-        include "html/login.php";
+        include "../html/login.php";
 
         $this->drawFooter();
     }

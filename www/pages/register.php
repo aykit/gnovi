@@ -1,8 +1,7 @@
 <?php
 
-chdir("..");
-require_once "php/page.php";
-require_once "php/is_email.php";
+require_once "../php/page.php";
+require_once "../php/is_email.php";
 
 class RegisterPage extends Page
 {
@@ -83,7 +82,7 @@ class RegisterPage extends Page
 
         $this->drawHeader("Registrieren", array(), array());
 
-        include "html/register.php";
+        include "../html/register.php";
 
         $this->drawFooter();
     }

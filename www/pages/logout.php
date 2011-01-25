@@ -1,7 +1,6 @@
 <?php
 
-chdir("..");
-require_once "php/page.php";
+require_once "../php/page.php";
 
 class LoginPage extends Page
 {

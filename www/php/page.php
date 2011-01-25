@@ -41,14 +41,17 @@ class Page
         $this->sessionStarted = true;
     }
 
-    protected function requireLogin()
+    protected function requireLogin($pathAfterLogin)
     {
         $this->startSession();
 
         if ($this->isLoggedIn())
             return;
 
-        header("Location: " . PageUrls::LOGIN);
+        if ($pathAfterLogin != "" && $pathAfterLogin[0] != "/")
+            $pathAfterLogin = "";
+
+        header("Location: " . PageUrls::LOGIN . "$pathAfterLogin");
         die();
     }
 

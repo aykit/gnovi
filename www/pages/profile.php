@@ -6,7 +6,7 @@ class ProfilePage extends Page
 {
     public function __construct()
     {
-        $this->requireLogin();
+        $this->requireLogin(PageUrls::PROFILE);
 
         $this->drawHeader("Profil", array(), array("styles/main.css"));
 

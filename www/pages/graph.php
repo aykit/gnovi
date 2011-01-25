@@ -6,7 +6,7 @@ class GraphPage extends Page
 {
     public function __construct()
     {
-        $this->requireLogin();
+        $this->requireLogin($_SERVER["REQUEST_URI"]);
 
         $this->drawHeader("Graph",
             array("/js/mootools.js", "/js/game.js", "/js/graph.js", "/js/graphics.js"), 

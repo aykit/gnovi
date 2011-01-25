@@ -8,7 +8,7 @@ RewriteBase /
 RewriteRule ^graph$ graph/ [R,L]
 
 RewriteRule ^$ pages/start.php
-RewriteRule ^einloggen$ pages/login.php
+RewriteRule ^einloggen(/.*)?$ pages/login.php
 RewriteRule ^ausloggen$ pages/logout.php
 RewriteRule ^registrieren$ pages/register.php
 RewriteRule ^profil$ pages/profile.php

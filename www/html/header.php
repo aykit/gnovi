@@ -24,7 +24,7 @@
               </a>
             </li>
             <li><a href="<?=htmlspecialchars(PageUrls::PROFILE)?>">Profil</a></li>
-            <li><a href="<?=htmlspecialchars(PageUrls::RUN)?>">Anlauf</a></li>
+            <li><a href="<?=htmlspecialchars(PageUrls::INPUT)?>">Anlauf</a></li>
             <li><a id="graph_link" href="graph">Ich</a></li>
             <li>Wir</li>
             <li>Hilfe</li>

@@ -9,10 +9,7 @@ class LoginPage extends Page
         $this->startSession();
 
         if ($this->isLoggedIn())
-        {
-            header("Location: " . PageUrls::PROFILE);
-            die();
-        }
+            $this->redirectToDestination();
 
         $posted = $_SERVER["REQUEST_METHOD"] == "POST";
 
@@ -22,10 +19,7 @@ class LoginPage extends Page
         if ($email != "" && $password != "")
         {
             if ($this->login($email, $password))
-            {
-                header("Location: " . PageUrls::PROFILE);
-                die();
-            }
+                $this->redirectToDestination();
         }
 
         $this->drawHeader("Einloggen", array(), array());
@@ -33,6 +27,19 @@ class LoginPage extends Page
         include "../html/login.php";
 
         $this->drawFooter();
+    }
+
+    protected function redirectToDestination()
+    {
+        $requestUri = $_SERVER["REQUEST_URI"];
+        $loginPath = PageUrls::LOGIN;
+        $path = strncmp($loginPath, $requestUri, strlen($loginPath)) == 0 ?
+            substr($requestUri, strlen($loginPath)) : "";
+        if ($path == "")
+            $path = PageUrls::PROFILE;
+
+        header("Location: " . $path);
+        die();
     }
 }
 

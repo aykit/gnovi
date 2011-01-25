@@ -334,7 +334,6 @@ var StateEngineFinished = new Class({
 
     continueEvent: function()
     {
-        this.game.data.randomWord = "%32;?:@& =+$,ößюфド";
-        window.location = $("graph_link").href + "/" + encodeURIComponent(this.game.data.randomWord);
+        window.location = $("graph_link").href + "/" + Game.urlEncode(this.game.data.randomWord);
     },
 });

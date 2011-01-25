@@ -11,9 +11,13 @@ var Graph = new Class({
     interpolationProgress: 1,
     interpolationRunning: false,
 
+    addWordToBrowserHistory: false,
+
     initialize: function(canvas, scaling)
     {
         this.parent(canvas, new GraphGraphics(), 1);
+
+        window.onpopstate = this.onPopState.bind(this);
 
         this.setTimer("normalfps");
 
@@ -23,22 +27,31 @@ var Graph = new Class({
         });
     },
 
-    imageLoadingFinished: function()
+    loadWordFromCurrentUrl: function()
     {
         var wordRequested = window.location.pathname;
         wordRequested = wordRequested.substr(wordRequested.lastIndexOf("/") + 1);
-        this.loadData(Game.urlDecode(wordRequested));
+        this.loadData(Game.urlDecode(wordRequested), false);
     },
 
-    loadData: function(rootWord)
+    imageLoadingFinished: function()
     {
+        this.loadWordFromCurrentUrl();
+    },
+
+    loadData: function(rootWord, addWordToBrowserHistory)
+    {
+        this.addWordToBrowserHistory = addWordToBrowserHistory;
         this.transmitData("cmd=getgraph&word=" + Game.urlEncode(rootWord));
     },
 
     transmitDataSuccess: function(data)
     {
         console.log(data);
-        window.history.pushState(null, "Graph - " + data.root.label, Game.urlEncode(data.root.label));
+        if (this.addWordToBrowserHistory)
+            window.history.pushState(null, "Graph - " + data.root.label, Game.urlEncode(data.root.label));
+        else
+            window.history.replaceState(null, "Graph - " + data.root.label, Game.urlEncode(data.root.label));
         this.buildVisualizationData(data);
     },
 
@@ -301,11 +314,16 @@ var Graph = new Class({
 
         if (!this.interpolationRunning)
         {
-            if (this.currentData && this.currentData.root.id == 4)
-                this.loadData(0);
+            if (this.currentData && this.currentData.root.label == "Haus")
+                this.loadData("", true);
             else
-                this.loadData("bla");
+                this.loadData("Haus", true);
         }
+    },
+
+    onPopState: function(event)
+    {
+        this.loadWordFromCurrentUrl();
     },
 });
 

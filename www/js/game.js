@@ -195,6 +195,8 @@ var Game = new Class({
 
     onMouseMove: function(e)
     {
+        // TODO: da stimmt noch was nicht, wenn man die seite lädt während nach unten gescrollt ist!!
+        // geht in Firefox & Opera
         this.mouseX = (e.event.pageX - this.clientX) / this.scaling;
         this.mouseY = (e.event.pageY - this.clientY) / this.scaling;
     },

@@ -16,3 +16,4 @@
     <p>Ungülte Email / Passwort</p>
 <?php } ?>
 <?php } ?>
+    <p><a href="<?=htmlspecialchars(PageUrls::REGISTER)?>">Registrieren</a></p>

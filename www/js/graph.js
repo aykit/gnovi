@@ -189,6 +189,84 @@ var Graph = new Class({
                 this.connections.push(connection);
             }
         }
+
+        /*this.connections = [];
+
+        for (var i = 0; i < this.nodesToDraw.length; i++)
+        {
+            var node1 = this.nodesToDraw[i];
+            var visData1 = this.interpolatedNodesVisData[node1.id];
+
+            for (var j = i + 1; j < this.nodesToDraw.length; j++)
+            {
+                var node2 = this.nodesToDraw[j];
+                var visData2 = this.interpolatedNodesVisData[node2.id];
+
+                var direction1 = Math.min(visData1.isRoot, visData2.isDisplayed);
+                var direction2 = Math.min(visData2.isRoot, visData1.isDisplayed);
+                var total = Math.max(direction1, direction2);
+
+                if (total == 0)
+                    continue;
+                if (total > 1)
+                    total = 1;
+
+                alpha = 1 / (Math.exp(-15 * (total - 0.65)) + 1);
+                //alpha = 1 / (Math.exp(-20 * (total - 0.6)) + 1);
+
+                var connection = {node1: node1, node2: node2, alpha: alpha};
+                this.connections.push(connection);
+            }
+        }
+
+        for (var id1 in this.currentNodes)
+        {
+            var rootVisData = this.interpolatedNodesVisData[id1];
+            if (rootVisData.isRoot == 0)
+                continue;
+
+            var rootNode = this.currentNodes[id1];
+            for (var id in this.currentNodes)
+            {
+                var node = this.currentNodes[id];
+                var nodeVisData = this.interpolatedNodesVisData[id];
+
+                var connectionStrength = Math.min(rootVisData.isRoot, nodeVisData.isDisplayed);
+
+                var connection = {
+                    node1: rootNode,
+                    node2: node,
+                    alpha: 1 / (Math.exp(-15 * (connectionStrength - 0.7)) + 1),
+                };
+                this.connections.push(connection);
+            }
+        }
+
+        if (this.interpolationRunning)
+        {
+            for (var id1 in this.prevNodes)
+            {
+                var rootVisData = this.interpolatedNodesVisData[id1];
+                if (rootVisData.isRoot == 0)
+                    continue;
+
+                var rootNode = this.prevNodes[id1];    
+                for (var id in this.prevNodes)
+                {
+                    var node = this.prevNodes[id];
+                    var nodeVisData = this.interpolatedNodesVisData[id];
+
+                    var connectionStrength = Math.min(rootVisData.isRoot, nodeVisData.isDisplayed);
+
+                    var connection = {
+                        node1: rootNode,
+                        node2: node,
+                        alpha: 1 / (Math.exp(-15 * (connectionStrength - 0.7)) + 1),
+                    };
+                    this.connections.push(connection);
+                }
+            }
+        }*/
     },
 
     draw: function()

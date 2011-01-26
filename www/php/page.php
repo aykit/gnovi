@@ -8,7 +8,6 @@ require_once "database.php";
 class Page
 {
     protected $db = null;
-    protected $sessionStarted = false;
 
     protected function exitWithDatabaseError()
     {
@@ -34,11 +33,8 @@ class Page
 
     protected function startSession()
     {
-        if ($this->sessionStarted)
-            return;
-
-        session_start();
-        $this->sessionStarted = true;
+        if (session_id() == "")
+            session_start();
     }
 
     protected function requireLogin($pathAfterLogin)

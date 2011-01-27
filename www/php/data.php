@@ -59,6 +59,8 @@ class DataExchanger
         // (insert random word), get id
         $randomWordId = 0; // TODO: das muss umbenannt werden in irgendwas wie headingWord
 
+        // TODO: Wörter "." und ".." filtern
+
         $this->db->query("INSERT INTO `Runs` (`UserID`, `RandomWordID`, `LocationID`) " . 
             "VALUES ('$userId', '$randomWordId', '$locationId')");
         if (!$this->checkForDbError())

@@ -1,5 +1,5 @@
 var AUTOINPUT = {
-    inputList: ["A", "B", "C", "hallo", "du", "hallo", "nix"],
+    inputList: ["hallo", "du", "hallo", "nix"],
     inputLocation: "Berg",
     inputLocationList: ["deinemama", "du"],
     randomConnotations: true,

@@ -25,7 +25,7 @@ var StateEngineStart = new Class({
     dataTransmitted: function(data)
     {
         this.loading = false;
-        this.game.data.randomWord = String(data);
+        this.game.data.initialWord = String(data);
         this.game.draw();
 
         if (AUTOINPUT)
@@ -64,7 +64,7 @@ var StateEngineWordCollecting = new Class({
         this.currentInputText = "";
         this.inputList = [];
         this.inputListAnimation = [];
-        this.headWord = this.game.data.randomWord;
+        this.headWord = this.game.data.initialWord;
 
         if (AUTOINPUT && AUTOINPUT.inputList)
         {
@@ -173,7 +173,7 @@ var StateEngineWordsFinished = new Class({
 
     drawGame: function(graphics, context)
     {
-        graphics.drawWordsFinishedScreen(this.game.data.randomWord, this.game.data.inputList,
+        graphics.drawWordsFinishedScreen(this.game.data.initialWord, this.game.data.inputList,
             this.inputTime, this.fadeEffect, this.fadeEffect >= 1);
     },
 
@@ -439,6 +439,6 @@ var StateEngineFinished = new Class({
     {
         if (this.dataTransmitted)
             window.location = document.getElementById("graph_link").href + "/" +
-            encodeURIComponent(this.game.data.randomWord);
+            encodeURIComponent(this.game.data.initialWord);
     },
 });

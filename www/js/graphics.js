@@ -198,7 +198,7 @@ var InputGraphics = new Class({
         this.context.fillText("click to start", 100, 20);
     },
 
-    drawWordsFinishedScreen: function(randomWord, wordList, inputTime, alpha, drawContinueNotice)
+    drawWordsFinishedScreen: function(initialWord, wordList, inputTime, alpha, drawContinueNotice)
     {
         this._clearCanvas();
 

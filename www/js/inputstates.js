@@ -353,6 +353,12 @@ var StateEngineWordRating = new Class({
 
     timerEvent: function()
     {
+        if (AUTOINPUT)
+        {
+            this.setConnotation(Number.random(0, 1) ? "+" : "-");
+            return;
+        }
+
         if (this.game.mouseInsideRect(this.buttonPositions["+"]))
             newSelectedButton = "+";
         else if (this.game.mouseInsideRect(this.buttonPositions["-"]))

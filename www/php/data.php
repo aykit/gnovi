@@ -1,7 +1,6 @@
 <?php
 
 require_once "database.php";
-require_once "utilities.php";
 
 class DataExchanger
 {

@@ -214,29 +214,3 @@ var Game = new Class({
 
     onClick: function(event){ },
 });
-
-Game.urlPathEncode = function(s)
-{
-    s = s.replace(/\+/g, "+0");
-    s = s.replace(/%/g, "+1");
-    s = s.replace(/_/g, "+2");
-    s = s.replace(/\//g, "+3");
-    s = s.replace(/\\/g, "+4");
-    s = s.replace(/\./g, "+5");
-    s = s.replace(/ /g, "_");
-    s = encodeURIComponent(s); // escapes all except: - _ . ! ~ * ' ( )
-    return s;
-};
-
-Game.urlPathDecode = function(s)
-{
-    s = decodeURIComponent(s);
-    s = s.replace(/_/g, " ");
-    s = s.replace(/\+5/g, ".");
-    s = s.replace(/\+4/g, "\\");
-    s = s.replace(/\+3/g, "/");
-    s = s.replace(/\+2/g, "_");
-    s = s.replace(/\+1/g, "%");
-    s = s.replace(/\+0/g, "+");
-    return s;
-};

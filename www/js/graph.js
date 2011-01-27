@@ -32,9 +32,9 @@ var Graph = new Class({
 
     loadWordFromCurrentUrl: function()
     {
-        var wordRequested = window.location.pathname;
+        var wordRequested = window.location.href;
         wordRequested = wordRequested.substr(wordRequested.lastIndexOf("/") + 1);
-        this.loadData(Game.urlPathDecode(wordRequested), false, false);
+        this.loadData(decodeURIComponent(wordRequested), false, false);
     },
 
     imageLoadingFinished: function()
@@ -55,9 +55,11 @@ var Graph = new Class({
         if (window.history.pushState)
         {
             if (this.addWordToBrowserHistory)
-                window.history.pushState(null, "Graph - " + data.root.label, Game.urlPathEncode(data.root.label));
+                window.history.pushState("graph", "Graph - " + data.root.label,
+                    encodeURIComponent(data.root.label));
             else
-                window.history.replaceState(null, "Graph - " + data.root.label, Game.urlPathEncode(data.root.label));
+                window.history.replaceState("graph", "Graph - " + data.root.label,
+                    encodeURIComponent(data.root.label));
         }
         this.buildVisualizationData(data);
     },
@@ -428,7 +430,8 @@ var Graph = new Class({
 
     onPopState: function(event)
     {
-        this.loadWordFromCurrentUrl();
+        if (event.state == "graph")
+            this.loadWordFromCurrentUrl();
     },
 });
 

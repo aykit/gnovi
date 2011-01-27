@@ -405,6 +405,6 @@ var StateEngineFinished = new Class({
     continueEvent: function()
     {
         if (this.dataTransmitted)
-            window.location = $("graph_link").href + "/" + Game.urlPathEncode(this.game.data.randomWord);
+            window.location = $("graph_link").href + "/" + encodeURIComponent(this.game.data.randomWord);
     },
 });

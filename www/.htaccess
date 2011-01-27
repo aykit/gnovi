@@ -3,7 +3,9 @@ AcceptPathInfo on
 RewriteEngine on
 RewriteBase /
 
-RewriteRule ^graph$ graph/ [R,L]
+RewriteRule ^graph/([^/]*/[^/]*)/ graph/$1 [R,L]
+RewriteRule ^graph/([^/]*)/$ graph/$1 [R,L]
+RewriteRule ^graph/$ graph [R,L]
 
 RewriteRule ^$ pages/start.php
 RewriteRule ^einloggen(/.*)?$ pages/login.php
@@ -11,6 +13,4 @@ RewriteRule ^ausloggen$ pages/logout.php
 RewriteRule ^registrieren$ pages/register.php
 RewriteRule ^profil$ pages/profile.php
 RewriteRule ^anlauf$ pages/input.php
-RewriteRule ^graph/ pages/graph.php
-
-RewriteRule ^([^/]+)$ pages/$1.php
+RewriteRule ^graph(/.*)?$ pages/graph.php

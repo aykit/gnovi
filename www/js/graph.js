@@ -13,8 +13,8 @@ var Graph = new Class({
     interpolationRunning: false,
 
     addWordToBrowserHistory: false,
-
     redrawScreen: false,
+    graphUri: "",
 
     initialize: function(canvas, scaling)
     {
@@ -32,9 +32,24 @@ var Graph = new Class({
 
     loadWordFromCurrentUrl: function()
     {
-        var wordRequested = window.location.href;
-        wordRequested = wordRequested.substr(wordRequested.lastIndexOf("/") + 1);
-        this.loadData(decodeURIComponent(wordRequested), false, false);
+        var uri = window.location.href;
+
+        var uriInfo =
+            uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]+)\/([^\/]+)$/) ||
+            uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]+)$/) ||
+            uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)$/);
+
+        if (!uriInfo)
+            return;
+
+        this.graphUri = uriInfo[1];
+
+        if (uriInfo.length < 3)
+            return;
+
+        var wordRequested = decodeURIComponent(uriInfo[2]);
+
+        this.loadData(wordRequested, false, false);
     },
 
     imageLoadingFinished: function()
@@ -56,10 +71,10 @@ var Graph = new Class({
         {
             if (this.addWordToBrowserHistory)
                 window.history.pushState("graph", "Graph - " + data.root.label,
-                    encodeURIComponent(data.root.label));
+                    this.graphUri + "/" + encodeURIComponent(data.root.label));
             else
                 window.history.replaceState("graph", "Graph - " + data.root.label,
-                    encodeURIComponent(data.root.label));
+                    this.graphUri + "/" + encodeURIComponent(data.root.label));
         }
         this.buildVisualizationData(data);
     },

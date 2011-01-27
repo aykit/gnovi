@@ -1,4 +1,9 @@
-var AUTOINPUT = true;
+var AUTOINPUT = {
+    inputList: ["A", "B", "C", "hallo", "du", "hallo", "nix"],
+    inputLocation: "Berg",
+    inputLocationList: ["deinemama", "du"],
+    randomConnotations: true,
+};
 
 var InputStatesUtils = new Class({});
 
@@ -22,6 +27,9 @@ var StateEngineStart = new Class({
         this.loading = false;
         this.game.data.randomWord = String(data);
         this.game.draw();
+
+        if (AUTOINPUT)
+            this.continueEvent();
     },
 
     drawGame: function(graphics, context)
@@ -58,11 +66,13 @@ var StateEngineWordCollecting = new Class({
         this.inputListAnimation = [];
         this.headWord = this.game.data.randomWord;
 
-        if (AUTOINPUT)
+        if (AUTOINPUT && AUTOINPUT.inputList)
         {
             this.timeLeft = 0.5;
-            this.inputList = ["hallo", "du", "hallo", "nix"];
-            this.inputListAnimation = [1, 1, 0.5, 0];
+            this.inputList = AUTOINPUT.inputList;
+            this.inputListAnimation = [0.5, 0];
+            for (var i = 0; i < AUTOINPUT.inputList.length - 2; i++)
+                this.inputListAnimation.unshift(1);
         }
 
         this.game.setTimer("highfps");
@@ -196,9 +206,9 @@ var StateEngineInputLocation = new Class({
     {
         this.currentInputText = "";
 
-        if (AUTOINPUT)
+        if (AUTOINPUT && AUTOINPUT.inputLocation)
         {
-            this.game.data.location = "Küche";
+            this.game.data.location = AUTOINPUT.inputLocation;
             this.game.setStateEngine(StateEngineLocationWordCollecting);
         }
     },
@@ -259,10 +269,13 @@ var StateEngineLocationWordCollecting = new Class({
         this.parent();
         this.headWord = this.game.data.location;
 
-        if (AUTOINPUT)
+        if (AUTOINPUT && AUTOINPUT.inputList)
         {
-            this.inputList = ["deinemama", "du"];
-            this.inputListAnimation = [1, 0];
+            this.timeLeft = 0.5;
+            this.inputList = AUTOINPUT.inputLocationList;
+            this.inputListAnimation = [0.5, 0];
+            for (var i = 0; i < AUTOINPUT.inputLocationList.length - 2; i++)
+                this.inputListAnimation.unshift(1);
         }
     },
 
@@ -353,7 +366,7 @@ var StateEngineWordRating = new Class({
 
     timerEvent: function()
     {
-        if (AUTOINPUT)
+        if (AUTOINPUT.randomConnotations)
         {
             this.setConnotation(Number.random(0, 1) ? "+" : "-");
             return;

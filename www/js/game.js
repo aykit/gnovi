@@ -3,6 +3,8 @@ var Game = new Class({
     timer: null,
     delta: 0,
     drawCount: 0,
+    clientX: 0,
+    clientY: 0,
     mouseX: 0,
     mouseY: 0,
     images: {},
@@ -23,7 +25,7 @@ var Game = new Class({
 
         this.context = this.canvas.getContext('2d');
         this.context.scale(this.scaling, this.scaling);
-        this.graphics.setContext(this.context);
+        this.graphics.init(this.context, this.getImage.bind(this));
 
         document.addEvent("keypress", this.onKeypress.bind(this));
         document.addEvent("keydown", this.onKeydown.bind(this));
@@ -37,11 +39,13 @@ var Game = new Class({
             onTimeout: this.onDataRequestTimeout.bind(this),
             timeout: 60000,
         });
+
+        this.loadImages(this.graphics.getImagesToLoad());
     },
 
     loadImages: function(imgList)
     {
-        if (Object.getLength(imgList) == 0)
+        if (!imgList || Object.getLength(imgList) == 0)
         {
             if (!this.loadingImages)
                 this.imageLoadingFinished();
@@ -202,8 +206,6 @@ var Game = new Class({
 
     onMouseMove: function(e)
     {
-        // TODO: da stimmt noch was nicht, wenn man die seite lädt während nach unten gescrollt ist!!
-        // geht in Firefox & Opera
         this.mouseX = (e.event.pageX - this.clientX) / this.scaling;
         this.mouseY = (e.event.pageY - this.clientY) / this.scaling;
     },

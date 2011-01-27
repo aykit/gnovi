@@ -23,12 +23,6 @@ var Graph = new Class({
         window.onpopstate = this.onPopState.bind(this);
 
         this.setTimer("normalfps");
-
-        this.loadImages({
-            
-            "google": "http://badbiosflash.com/asd.gif",
-            //"earth": "http://www.nersc.gov/news/science/Earth_from_Space.jpg",
-        });
     },
 
     loadWordFromCurrentUrl: function()
@@ -438,9 +432,9 @@ var Graph = new Class({
         if (!this.interpolationRunning)
         {
             if (this.currentData && this.currentData.root.label == "Haus")
-                this.loadData("", true, true);
+                this.loadData("", false, true);
             else
-                this.loadData("Haus", true, true);
+                this.loadData("Haus", false, true);
         }
     },
 
@@ -451,6 +445,6 @@ var Graph = new Class({
     },
 });
 
-window.addEvent("domready", function() {
-    new Graph($("graph"));
+window.addEvent("load", function() {
+    new Graph(document.getElementById("graph"));
 });

@@ -4,7 +4,20 @@
  */
 
 var Graphics = new Class({
-    setContext: function(context) { this.context = context; },
+    init: function(context, imageGetter)
+    {
+        this.context = context;
+        this.getImage = imageGetter;
+    },
+
+    getImage: null,
+
+    getImagesToLoad: function()
+    {
+        return {
+            //"google": "http://www.google.com/images/srpr/nav_logo27.png",
+        };
+    },
 
     _makeColor: function(r, g, b, a)
     {
@@ -405,14 +418,14 @@ var GraphGraphics = new Class({
             this.context.font = "14px HeroRegular";
             this._drawGnoviIcon(posX, posY, 50, true, alpha);
             this.context.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
-            this.context.fillText(node.label, posX, posY + 40);
+            this.context.fillText(node.label, Math.round(posX), Math.round(posY) + 40);
         }
         else
         {
             this.context.font = "10px HeroRegular";
             this._drawGnoviIcon(posX, posY, 30, mouseOver, alpha);
             this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
-            this.context.fillText(node.label, posX, posY + 25);
+            this.context.fillText(node.label, Math.round(posX), Math.round(posY) + 25);
         }
     },
 

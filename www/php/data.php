@@ -4,8 +4,11 @@ require_once "database.php";
 
 class DataExchanger
 {
-    public function processRequest()
+    public function __construct()
     {
+        $displayErrors = strtolower(ini_get("display_errors"));
+        $this->returnErrorDetails = $displayErrors == "1" || $displayErrors == "on";
+
         if (session_id() == "")
             session_start();
 
@@ -25,11 +28,11 @@ class DataExchanger
                 $this->storeRun(json_decode(@$_GET["data"], true));
                 break;
             default:
-                $this->setResponseError("Unknown command: " . @$_GET["cmd"]);
+                $this->setResponseError("unknown_command", @$_GET["cmd"]);
             }
         }
         else
-            $this->setResponseError("Not logged in.");
+            $this->setResponseError("login", "Not logged in.");
 
         print(json_encode($this->response));
     }
@@ -110,7 +113,7 @@ class DataExchanger
         $this->db = new Database();
         if (!$this->db->connect())
         {
-            $this->setResponseError("Database: " . $this->db->connectError);
+            $this->setResponseError("database", $this->db->connectError);
             $this->db = null;
             return false;
         }
@@ -122,15 +125,19 @@ class DataExchanger
     {
         if ($this->db->errno != 0)
         {
-            $this->setResponseError("Database: " . $this->db->error);
+            $this->setResponseError("database", $this->db->error);
             return false;
         }
         return true;
     }
 
-    protected function setResponseError($error)
+    protected function setResponseError($errorType, $errorDetails)
     {
-        $this->response = array("status" => "error", "error" => (string)$error);
+        $this->response = array(
+            "status" => "error",
+            "errorType" => (string)$errorType,
+            "errorDetails" => $this->returnErrorDetails ? (string)$errorDetails : "",
+        );
     }
 
     protected function setResponseData($data)
@@ -141,9 +148,9 @@ class DataExchanger
     protected $response = null;
     protected $db = null;
     protected $userId = 0;
+    protected $returnErrorDetails = false;
 }
 
 $dataExchanger = new DataExchanger();
-$dataExchanger->processRequest();
 
 ?>

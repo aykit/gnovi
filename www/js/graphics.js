@@ -15,7 +15,9 @@ var Graphics = new Class({
     getImagesToLoad: function()
     {
         return {
-            //"google": "http://www.google.com/images/srpr/nav_logo27.png",
+            "gnovinode": "/images/gnovi_node.png",
+            "gnovinodeselected": "/images/gnovi_node_selected.png",
+            "gnovinoderoot": "/images/gnovi_node_root.png",
         };
     },
 
@@ -68,8 +70,9 @@ var Graphics = new Class({
         
     },
 
-    _drawGnoviIcon: function(posX, posY, size, glow, alpha)
+    _drawGnoviIcon: function(posX, posY, size, glow, alpha, isRoot)
     {
+        /*
         var gradient = this.context.createRadialGradient(posX, posY, 0, posX, posY, size / 2);
         gradient.addColorStop(0.3, "rgba(255, 255, 255, " + alpha + ")");
         gradient.addColorStop(0.5, "rgba(0, 0, 0, " + alpha + ")");
@@ -82,7 +85,22 @@ var Graphics = new Class({
 
         this.context.fillStyle = gradient;
         this._fillCircle(posX, posY, size / 2);
-        //this.context.putImageData(this.getImage("google"), posX, posY);
+        
+        */
+        
+        var gnoviImageRoot = this.getImage("gnovinode");
+        var gnoviImageSelected = this.getImage("gnovinodeselected");
+        var gnoviImage = this.getImage("gnovinoderoot");
+            
+        if (isRoot)
+            this.context.drawImage(gnoviImageRoot, posX - gnoviImageRoot.width/2, posY - gnoviImageRoot.height/2);
+        else if (glow)
+            this.context.drawImage(gnoviImageSelected, posX - gnoviImageSelected.width/2, 
+                posY - gnoviImageSelected.height/2);
+        else
+            this.context.drawImage(gnoviImage, posX - gnoviImage.width/2, posY - gnoviImage.height/2);
+        
+        
     },
 
     _fillTextRect: function(wordList, x, y, width, spacing, lineHeight)
@@ -171,7 +189,7 @@ var Graphics = new Class({
         this.context.restore();
 
         this.context.textBaseline = "middle";
-        this.context.font = "12px Verdana";
+        this.context.font = "12px HeroRegular";
         this.context.textAlign = "center";
 
         this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
@@ -304,7 +322,7 @@ var InputGraphics = new Class({
         this.context.strokeStyle = "";
         this.context.lineWidth = "2";
 
-        this.context.fillStyle = selectedButton == "+" ? "#FF6666" : "#666666";
+        this.context.fillStyle = selectedButton == "+" ? "#99CC33" : "#666666";
         this._コード(320 - rectWidth/2+1, 86, 40, 42, 12);
         
         this.context.fillStyle = selectedButton == "-" ? "#FF6666" : "#666666";
@@ -355,7 +373,7 @@ var InputGraphics = new Class({
             return;
 
         this.context.font = "20px HeroRegular";
-        this.context.fillText("Bammwamm fertig.", 10, 30);
+        this.context.fillText("HAHA.", 10, 30);
     },
 
     drawLoadingIndicator: function(loadTime)
@@ -386,7 +404,7 @@ var InputGraphics = new Class({
         this.context.restore();
 
         this.context.textBaseline = "middle";
-        this.context.font = "12px Verdana";
+        this.context.font = "12px HeroRegular";
         this.context.textAlign = "center";
 
         this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
@@ -415,17 +433,19 @@ var GraphGraphics = new Class({
 
         if (isRoot)
         {
-            this.context.font = "14px Verdana";
-            this._drawGnoviIcon(posX, posY, 50, true, alpha);
-            this.context.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
+            this.context.font = "20px HeroRegular";
+            this._drawGnoviIcon(posX, posY, 50, true, alpha, true);
+            this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
             this.context.fillText(node.label, Math.round(posX), Math.round(posY) + 40);
+            
         }
         else
         {
-            this.context.font = "10px Verdana";
+            this.context.font = "15px HeroRegular";
             this._drawGnoviIcon(posX, posY, 30, mouseOver, alpha);
             this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
             this.context.fillText(node.label, Math.round(posX), Math.round(posY) + 25);
+
         }
     },
 

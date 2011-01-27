@@ -310,7 +310,11 @@ var StateEngineWordRating = new Class({
 
         this.connotations = {};
 
-        this.nextWord();
+        if (!this.nextWord())
+        {
+            this.game.setStateEngine(StateEngineFinished);
+            return;
+        }
 
         this.game.setTimer("normalfps");
     },

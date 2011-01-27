@@ -88,10 +88,10 @@ var Input = new Class({
             this.currentStateEngine.dataTransmitted(data);
     },
 
-    transmitDataFailure: function(error)
+    transmitDataFailure: function(errorType)
     {
-        this.parent(error);
-        if (confirm("Fehler bei der Datenübertragung. Nochmal versuchen?"))
+        this.parent(errorType);
+        if (confirm("Fehler bei der Datenübertragung (" + errorType + "). Nochmal versuchen?"))
             this.retransmitData();
     },
 

@@ -161,12 +161,12 @@ var Game = new Class({
         if (response.status == "success")
             this.transmitDataSuccess(response.data);
         else
-            this.transmitDataFailure(response.error);
+            this.transmitDataFailure(response.errorType);
     },
 
     onDataRequestFailure: function()
     {
-        this.transmitDataFailure("transfer error");
+        this.transmitDataFailure("transfer");
     },
 
     onDataRequestTimeout: function()

@@ -5,23 +5,32 @@ require_once "utilities.php";
 
 class DataExchanger
 {
-    public function processRequest($request)
+    public function processRequest()
     {
-        switch (@$request["cmd"])
+        if (session_id() == "")
+            session_start();
+
+        $this->userId = (int)@$_SESSION['ID'];
+
+        if ($this->userId > 0)
         {
-        case "getword":
-            $this->returnRandomWord();
-            break;
-        case "getgraph":
-            $this->returnGraphData(@$request["word"]);
-            break;
-        case "storerun":
-            sleep(1);
-            $this->setResponseData(@$request["data"]);
-            break;
-        default:
-            $this->setResponseError("Unknown command: " . @$request["cmd"]);
+            switch (@$_GET["cmd"])
+            {
+            case "getword":
+                $this->returnRandomWord();
+                break;
+            case "getgraph":
+                $this->returnGraphData(@$_GET["word"]);
+                break;
+            case "storerun":
+                $this->storeRun(json_decode(@$_GET["data"], true));
+                break;
+            default:
+                $this->setResponseError("Unknown command: " . @$_GET["cmd"]);
+            }
         }
+        else
+            $this->setResponseError("Not logged in.");
 
         print(json_encode($this->response));
     }
@@ -33,6 +42,30 @@ class DataExchanger
 
         $this->setResponseData("Haus");
         //$this->setResponseData("/!%66; ?_:/.@&=+$,ößюфド\\%%\\\\1");
+    }
+
+    protected function storeRun($data)
+    {
+        if (!$this->connectDb())
+            return;
+
+        $randomWord = $this->db->escape_string((string)$data["randomWord"]);
+        $location = $this->db->escape_string((string)$data["location"]);
+
+        $userId = $this->userId;
+
+        // (insert location), get id
+        $locationId = 0;
+
+        // (insert random word), get id
+        $randomWordId = 0; // TODO: das muss umbenannt werden in irgendwas wie headingWord
+
+        $this->db->query("INSERT INTO `Runs` (`UserID`, `RandomWordID`, `LocationID`) " . 
+            "VALUES ('$userId', '$randomWordId', '$locationId')");
+        if (!$this->checkForDbError())
+            return;
+
+        $this->setResponseData(null);
     }
 
     protected function returnGraphData($word)
@@ -52,7 +85,7 @@ class DataExchanger
         );
 
         $data2 = array(
-            "root" => array("id" => 15, "label" => "blub"),
+            "root" => array("id" => 15, "label" => $word),
             "nodes" => array(
                 array("id" => 3, "label" => "ich"),
                 array("id" => 1, "label" => "Haus"),
@@ -84,6 +117,16 @@ class DataExchanger
         return true;
     }
 
+    protected function checkForDbError()
+    {
+        if ($this->db->errno != 0)
+        {
+            $this->setResponseError("Database: " . $this->db->error);
+            return false;
+        }
+        return true;
+    }
+
     protected function setResponseError($error)
     {
         $this->response = array("status" => "error", "error" => (string)$error);
@@ -96,9 +139,10 @@ class DataExchanger
 
     protected $response = null;
     protected $db = null;
+    protected $userId = 0;
 }
 
 $dataExchanger = new DataExchanger();
-$dataExchanger->processRequest($_GET);
+$dataExchanger->processRequest();
 
 ?>

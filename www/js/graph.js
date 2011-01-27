@@ -437,9 +437,9 @@ var Graph = new Class({
         if (!this.interpolationRunning)
         {
             if (this.currentData && this.currentData.root.label == "Haus")
-                this.loadData("", true, true);
+                this.loadData("", false, true);
             else
-                this.loadData("Haus", true, true);
+                this.loadData("Haus", false, true);
         }
     },
 

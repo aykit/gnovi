@@ -450,6 +450,6 @@ var Graph = new Class({
     },
 });
 
-window.addEvent("domready", function() {
+window.addEvent("load", function() {
     new Graph($("graph"));
 });

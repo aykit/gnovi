@@ -3,6 +3,8 @@ var Game = new Class({
     timer: null,
     delta: 0,
     drawCount: 0,
+    clientX: 0,
+    clientY: 0,
     mouseX: 0,
     mouseY: 0,
     images: {},
@@ -202,8 +204,6 @@ var Game = new Class({
 
     onMouseMove: function(e)
     {
-        // TODO: da stimmt noch was nicht, wenn man die seite lädt während nach unten gescrollt ist!!
-        // geht in Firefox & Opera
         this.mouseX = (e.event.pageX - this.clientX) / this.scaling;
         this.mouseY = (e.event.pageY - this.clientY) / this.scaling;
     },

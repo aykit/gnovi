@@ -124,6 +124,6 @@ var Input = new Class({
     },
 });
 
-window.addEvent("domready", function() {
+window.addEvent("load", function() {
     new Input($("game"));
 });

@@ -405,14 +405,14 @@ var GraphGraphics = new Class({
             this.context.font = "14px Verdana";
             this._drawGnoviIcon(posX, posY, 50, true, alpha);
             this.context.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
-            this.context.fillText(node.label, posX, posY + 40);
+            this.context.fillText(node.label, Math.round(posX), Math.round(posY) + 40);
         }
         else
         {
             this.context.font = "10px Verdana";
             this._drawGnoviIcon(posX, posY, 30, mouseOver, alpha);
             this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
-            this.context.fillText(node.label, posX, posY + 25);
+            this.context.fillText(node.label, Math.round(posX), Math.round(posY) + 25);
         }
     },
 

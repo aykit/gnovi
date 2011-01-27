@@ -26,7 +26,7 @@
             </li>
             <li><a href="<?=htmlspecialchars(PageUrls::PROFILE)?>">Profil</a></li>
             <li><a href="<?=htmlspecialchars(PageUrls::INPUT)?>">Anlauf</a></li>
-            <li><a id="graph_link" href="graph">Ich</a></li>
+            <li><a id="graph_link" href="<?=htmlspecialchars(PageUrls::GRAPH)?>">Ich</a></li>
             <li>Wir</li>
             <li>Hilfe</li>
             <li>Über gnovi</li>

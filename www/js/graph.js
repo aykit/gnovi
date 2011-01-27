@@ -451,5 +451,5 @@ var Graph = new Class({
 });
 
 window.addEvent("load", function() {
-    new Graph($("graph"));
+    new Graph(document.getElementById("graph"));
 });

@@ -125,5 +125,5 @@ var Input = new Class({
 });
 
 window.addEvent("load", function() {
-    new Input($("game"));
+    new Input(document.getElementById("game"));
 });

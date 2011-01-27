@@ -69,7 +69,7 @@ var Graphics = new Class({
 
         this.context.fillStyle = gradient;
         this._fillCircle(posX, posY, size / 2);
-        //this.context.putImageData(this.getImage("google"), posX, posY);
+        this.context.drawImage(this.getImage("google"), posX, posY);
     },
 
     _fillTextRect: function(wordList, x, y, width, spacing, lineHeight)
@@ -158,7 +158,7 @@ var Graphics = new Class({
         this.context.restore();
 
         this.context.textBaseline = "middle";
-        this.context.font = "12px Verdana";
+        this.context.font = "12px HeroRegular";
         this.context.textAlign = "center";
 
         this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
@@ -291,7 +291,7 @@ var InputGraphics = new Class({
         this.context.strokeStyle = "";
         this.context.lineWidth = "2";
 
-        this.context.fillStyle = selectedButton == "+" ? "#FF6666" : "#666666";
+        this.context.fillStyle = selectedButton == "+" ? "#99CC33" : "#666666";
         this._コード(320 - rectWidth/2+1, 86, 40, 42, 12);
         
         this.context.fillStyle = selectedButton == "-" ? "#FF6666" : "#666666";
@@ -373,7 +373,7 @@ var InputGraphics = new Class({
         this.context.restore();
 
         this.context.textBaseline = "middle";
-        this.context.font = "12px Verdana";
+        this.context.font = "12px HeroRegular";
         this.context.textAlign = "center";
 
         this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
@@ -402,14 +402,14 @@ var GraphGraphics = new Class({
 
         if (isRoot)
         {
-            this.context.font = "14px Verdana";
+            this.context.font = "14px HeroRegular";
             this._drawGnoviIcon(posX, posY, 50, true, alpha);
             this.context.fillStyle = "rgba(255, 0, 0, " + alpha + ")";
             this.context.fillText(node.label, posX, posY + 40);
         }
         else
         {
-            this.context.font = "10px Verdana";
+            this.context.font = "10px HeroRegular";
             this._drawGnoviIcon(posX, posY, 30, mouseOver, alpha);
             this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
             this.context.fillText(node.label, posX, posY + 25);

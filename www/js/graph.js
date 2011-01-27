@@ -25,7 +25,8 @@ var Graph = new Class({
         this.setTimer("normalfps");
 
         this.loadImages({
-            //"google": "http://www.google.com/images/srpr/nav_logo27.png",
+            
+            "google": "http://badbiosflash.com/asd.gif",
             //"earth": "http://www.nersc.gov/news/science/Earth_from_Space.jpg",
         });
     },

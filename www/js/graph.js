@@ -23,11 +23,6 @@ var Graph = new Class({
         window.onpopstate = this.onPopState.bind(this);
 
         this.setTimer("normalfps");
-
-        this.loadImages({
-            //"google": "http://www.google.com/images/srpr/nav_logo27.png",
-            //"earth": "http://www.nersc.gov/news/science/Earth_from_Space.jpg",
-        });
     },
 
     loadWordFromCurrentUrl: function()

@@ -25,7 +25,7 @@ var Game = new Class({
 
         this.context = this.canvas.getContext('2d');
         this.context.scale(this.scaling, this.scaling);
-        this.graphics.setContext(this.context);
+        this.graphics.init(this.context, this.getImage.bind(this));
 
         document.addEvent("keypress", this.onKeypress.bind(this));
         document.addEvent("keydown", this.onKeydown.bind(this));
@@ -39,11 +39,13 @@ var Game = new Class({
             onTimeout: this.onDataRequestTimeout.bind(this),
             timeout: 60000,
         });
+
+        this.loadImages(this.graphics.getImagesToLoad());
     },
 
     loadImages: function(imgList)
     {
-        if (Object.getLength(imgList) == 0)
+        if (!imgList || Object.getLength(imgList) == 0)
         {
             if (!this.loadingImages)
                 this.imageLoadingFinished();

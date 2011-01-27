@@ -4,7 +4,20 @@
  */
 
 var Graphics = new Class({
-    setContext: function(context) { this.context = context; },
+    init: function(context, imageGetter)
+    {
+        this.context = context;
+        this.getImage = imageGetter;
+    },
+
+    getImage: null,
+
+    getImagesToLoad: function()
+    {
+        return {
+            //"google": "http://www.google.com/images/srpr/nav_logo27.png",
+        };
+    },
 
     _makeColor: function(r, g, b, a)
     {

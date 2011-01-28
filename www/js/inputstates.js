@@ -6,6 +6,14 @@ var AUTOINPUT = {
     randomConnotations: true,
 };
 
+var AUTOINPUT = {
+    info: true,
+    inputList: ["hund", "malte", "couch", "hallo", "nix"],
+    inputLocation: "Haus",
+    inputLocationList: ["wer", "franz"],
+    randomConnotations: true,
+};
+
 var InputStatesUtils = new Class({});
 
 /*
@@ -170,7 +178,7 @@ var StateEngineWordsFinished = new Class({
         this.inputTime = options.inputTime;
         this.game.setTimer("normalfps");
 
-        this.game.transmitData("cmd=findwords&words=" +
+        this.game.transmitData("cmd=checkwords&words=" +
             encodeURIComponent(JSON.encode(this.game.data[this.inputListField])));
         delete this.game.data[this.inputListField];
     },

@@ -3,7 +3,7 @@
           <p>
             <label>Email:</label>
             <input id="email" type="email" placeholder="E- Mail Adresse" value="<?=htmlspecialchars($email)?>" required 
-              name="e" autofocus>
+              name="e">
           </p>
           <p>
             <label>Passwort:</label>
@@ -14,9 +14,10 @@
       </section>
       <?php if ($posted) { ?>
 <?php if ($email == "" || $password == "") { ?>
-        <mark>Email und Passwort eingeben!</mark>
+<mark>Email und Passwort eingeben oder <a href="<?=htmlspecialchars(PageUrls::REGISTER)?>">registrieren!</a></mark>
 <?php } else { ?>
-        <mark>Ungültige Email / Passwort</mark>
+<mark>Logindaten inkorrekt. Wollen Sie sich <a href="<?=htmlspecialchars(PageUrls::REGISTER)?>">registrieren</a>?</mark>
 <?php } ?>
-<?php } ?>
-      <p id="register"><a href="<?=htmlspecialchars(PageUrls::REGISTER)?>">Registrieren</a></p>
+<?php } else { ?>
+<mark>Wollen Sie sich <a href="<?=htmlspecialchars(PageUrls::REGISTER)?>">registrieren</a>?</mark>
+      <?php } ?>

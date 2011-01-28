@@ -1,17 +1,9 @@
+/* SEMANTIC ELEMENTS */
+
 p {
     margin-top: 10px;
     margin-left: 4px;
 }
-
-#game {
-   /* UNCOMMENT TO CENTER 
-    display: block;
-    margin-left: auto;
-    margin-right: auto;*/
-
-    margin-left: 20px;
-}
-
 
 section {
     font-family: "HeroRegular";
@@ -30,11 +22,30 @@ section {
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px; }
     
-    
 input {
-margin-left: 4px;
-min-width: 140px;;
+    margin-left: 4px;
+    min-width: 140px;;
+    }
+
+mark {
+    font-family: "HeroRegular";
+    float: left;
+    line-height: 115%;
+    max-width: 100px;
+    min-height: 106px;
+    padding: 9px 15px 15px 9px;  
+    margin-top: 11px;
+    margin-left: 3px;
+    background-color: #000000;
+    font-size: 18px;  
+    color: #FFFFFF;  
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border: 3px solid #FFFF33;
 }
+
+/* SEMANTIC ELEMENT CHILD SELECTORS */
 
 input[type="submit"] {
     width: 100%;
@@ -50,21 +61,23 @@ input[type="submit"] {
     -webkit-border-radius: 8px;
 }
 
-mark {
+mark a {    
     font-family: "HeroRegular";
-    float: left;
-    max-width: 88px;
-    min-height: 112px;
-    padding: 9px 15px;  
-    margin-top: 11px;
-    margin-left: 3px;
-    background-color: #000000;
+    line-height: 115%;
+    text-decoration:  underline; 
+    color: #CCCCCC;
     font-size: 18px;  
-    color: #FFFFFF;  
-    border-radius: 8px;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    border: 3px solid #FFFF33;
+}
+
+/* IDs */
+
+#game {
+    margin-left: 20px;
+    
+   /* UNCOMMENT TO CENTER 
+    display: block;
+    margin-left: auto;
+    margin-right: auto;*/
 }
 
 #register {

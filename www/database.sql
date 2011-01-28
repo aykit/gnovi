@@ -8,17 +8,55 @@ GRANT SELECT, INSERT, UPDATE (Word) ON `gnovi`.`Words` TO 'gnovi'@'localhost'
 GRANT SELECT, INSERT, UPDATE ON `gnovi`.`Relations` TO 'gnovi'@'localhost'
 
 --
+-- Database: `gnovi`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `InitialWords`
+--
+
+CREATE TABLE `InitialWords` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Word` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `Frequency` mediumint(8) unsigned DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Relations`
+--
+
+CREATE TABLE `Relations` (
+  `FromWordID` int(11) NOT NULL,
+  `ToWordID` int(11) NOT NULL,
+  `UserID` int(11) NOT NULL,
+  `Time` int(10) unsigned NOT NULL,
+  `Strength` float NOT NULL,
+  UNIQUE KEY `FromWordID_2` (`FromWordID`,`ToWordID`,`UserID`,`Time`),
+  KEY `UserID` (`UserID`),
+  KEY `Time` (`Time`),
+  KEY `FromWordID` (`FromWordID`),
+  KEY `ToWordID` (`ToWordID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `Runs`
 --
 
-CREATE TABLE IF NOT EXISTS `Runs` (
+CREATE TABLE `Runs` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `UserID` int(11) NOT NULL,
-  `Time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Time` int(11) unsigned NOT NULL,
   `InitialWordID` int(11) NOT NULL,
-  `LocationTMP` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `LocationTMP` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -26,14 +64,14 @@ CREATE TABLE IF NOT EXISTS `Runs` (
 -- Table structure for table `RunWords`
 --
 
-CREATE TABLE IF NOT EXISTS `RunWords` (
+CREATE TABLE `RunWords` (
   `RunID` int(11) NOT NULL,
   `WordID` int(11) NOT NULL,
-  `ExactTyping` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `Occurrence` set('RANDOMWORD','LOCATION') COLLATE utf8_unicode_ci NOT NULL,
-  `Connotation` enum('+','-') COLLATE utf8_unicode_ci NOT NULL,
+  `DistanceFromInitialWord` int(11) NOT NULL,
+  `DistanceFromLocation` int(11) NOT NULL,
+  `Connotation` enum('+','-') COLLATE utf8_bin NOT NULL,
   UNIQUE KEY `RunID` (`RunID`,`WordID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -41,15 +79,29 @@ CREATE TABLE IF NOT EXISTS `RunWords` (
 -- Table structure for table `Users`
 --
 
-CREATE TABLE IF NOT EXISTS `Users` (
+CREATE TABLE `Users` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `Name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `Email` varbinary(255) NOT NULL,
-  `PasswordHash` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `Salt` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `Name` varchar(255) COLLATE utf8_bin NOT NULL,
+  `Email` varchar(255) COLLATE utf8_bin NOT NULL,
+  `PasswordHash` varchar(255) COLLATE utf8_bin NOT NULL,
+  `Salt` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Email` (`Email`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Wordcheck`
+--
+
+CREATE TABLE `Wordcheck` (
+  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Word` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `Frequency` mediumint(8) unsigned DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `word` (`Word`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -57,9 +109,9 @@ CREATE TABLE IF NOT EXISTS `Users` (
 -- Table structure for table `Words`
 --
 
-CREATE TABLE IF NOT EXISTS `Words` (
+CREATE TABLE `Words` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `Word` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `Word` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Word` (`Word`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

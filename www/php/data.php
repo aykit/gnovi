@@ -416,8 +416,16 @@ class DataExchanger
         if (count($relations))
         {
             $weight = 1 / $relations[0]["strength"];
+
+            $offset = $relations[count($relations) - 1]["strength"];
+            $offsetWeight = 1 / ($relations[0]["strength"] - $offset);
+
             for ($i = 0; $i < count($relations); $i++)
-                $relations[$i]["strength"] *= $weight;
+            {
+                $strength = $relations[$i]["strength"];
+                $relations[$i]["strength"] = $strength * $weight;
+                $relations[$i]["offsetStrength"] = ($strength - $offset) * $offsetWeight;
+            }
         }
 
         $this->setResponseData(array(

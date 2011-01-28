@@ -26,7 +26,7 @@ var StateEngine = new Class({
     keydownEvent: function(event) {},
     mouseMoveEvent: function(event) {},
     continueEvent: function() {},
-    dataTransmitted: function(data) {},
+    dataTransmitted: function(response) {},
 });
 
 var Input = new Class({
@@ -82,10 +82,10 @@ var Input = new Class({
             this.currentStateEngine = null;
     },
 
-    transmitDataSuccess: function(data)
+    transmitDataSuccess: function(responseData)
     {
         if (this.currentStateEngine)
-            this.currentStateEngine.dataTransmitted(data);
+            this.currentStateEngine.dataTransmitted(responseData);
     },
 
     transmitDataFailure: function(errorType)

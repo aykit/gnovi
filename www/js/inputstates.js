@@ -1,4 +1,5 @@
 var AUTOINPUT = {
+    info: true,
     inputList: ["hallo", "du", "hallo", "nix"],
     inputLocation: "Berg",
     inputLocationList: ["deinemama", "du"],
@@ -22,13 +23,13 @@ var StateEngineStart = new Class({
         this.game.setTimer("normalfps");
     },
 
-    dataTransmitted: function(data)
+    dataTransmitted: function(response)
     {
         this.loading = false;
-        this.game.data.initialWord = String(data);
+        this.game.data.initialWord = String(response);
         this.game.draw();
 
-        if (AUTOINPUT)
+        if (AUTOINPUT.info)
             this.continueEvent();
     },
 
@@ -158,33 +159,69 @@ var StateEngineWordCollecting = new Class({
 var StateEngineWordsFinished = new Class({
     Extends: StateEngine,
 
+    fadeEffect: 0,
+    inputChecked: false,
+    inputListField: "inputList",
+    titlePosField: "titlePos",
+    inputList: [],
+
     start: function(options)
     {
-        this.game.setTimer("normalfps");
-        this.fadeEffect = 0;
         this.inputTime = options.inputTime;
+        this.game.setTimer("normalfps");
 
-        if (AUTOINPUT)
+        this.game.transmitData("cmd=findwords&words=" +
+            encodeURIComponent(JSON.encode(this.game.data[this.inputListField])));
+        delete this.game.data[this.inputListField];
+    },
+
+    dataTransmitted: function(response)
+    {
+        if (!this.game.data.wordMap)
+            this.game.data.wordMap = {};
+        wordMap = this.game.data.wordMap;
+
+        for (var i = 0; i < response.length; i++)
         {
-            this.fadeEffect = 1; // SKIP SCREEN
-            this.continueEvent(); // SKIP SCREEN
+            wordInfo = response[i];
+
+            if (!wordMap[wordInfo.id])
+                wordMap[wordInfo.id] = {};
+            wordData = wordMap[wordInfo.id];
+
+            wordData[this.titlePosField] = i + 1;
+            wordData.word = wordInfo.word;
+
+            this.inputList.push(wordInfo.word);
+        }
+
+        this.inputChecked = true;
+
+        if (AUTOINPUT.info)
+        {
+            this.fadeEffect = 1;
+            this.continueEvent();
         }
     },
 
     drawGame: function(graphics, context)
     {
-        graphics.drawWordsFinishedScreen(this.game.data.initialWord, this.game.data.inputList,
-            this.inputTime, this.fadeEffect, this.fadeEffect >= 1);
+        graphics.drawWordsFinishedScreen(this.game.data.initialWord, this.inputList,
+            this.inputTime, this.fadeEffect, this.fadeEffect >= 1, this.inputChecked);
     },
 
     timerEvent: function(delta)
     {
-        this.fadeEffect += delta;
-        if (this.fadeEffect >= 1)
+        if (this.inputChecked)
         {
-            this.fadeEffect = 1;
-            this.game.setTimer(0);
+            this.fadeEffect += delta;
+            if (this.fadeEffect >= 1)
+            {
+                this.fadeEffect = 1;
+                this.game.setTimer(0);
+            }
         }
+
         this.game.draw();
     },
 
@@ -293,10 +330,13 @@ var StateEngineLocationWordCollecting = new Class({
 var StateEngineLocationWordsFinished = new Class({
     Extends: StateEngineWordsFinished,
 
+    inputListField: "locationInputList",
+    titlePosField: "locationPos",
+
     drawGame: function(graphics, context)
     {
-        graphics.drawLocationWordsFinishedScreen(this.game.data.location, this.game.data.locationInputList,
-            this.inputTime, this.fadeEffect, this.fadeEffect >= 1);
+        graphics.drawLocationWordsFinishedScreen(this.game.data.location, this.inputList,
+            this.inputTime, this.fadeEffect, this.fadeEffect >= 1, this.inputChecked);
     },
 
     continueEvent: function()
@@ -318,10 +358,7 @@ var StateEngineWordRating = new Class({
 
     start: function(options)
     {
-        this.words = Array.clone(this.game.data.inputList);
-        this.words.combine(this.game.data.locationInputList);
-
-        this.connotations = {};
+        this.wordIds = Object.keys(this.game.data.wordMap);
 
         if (!this.nextWord())
         {
@@ -334,12 +371,13 @@ var StateEngineWordRating = new Class({
 
     nextWord: function()
     {
-        if (this.words.length == 0)
+        if (this.wordIds.length == 0)
             return false;
 
-        var i = Number.random(0, this.words.length - 1);
-        this.currentWord = this.words[i];
-        this.words.splice(i, 1);
+        var i = Number.random(0, this.wordIds.length - 1);
+        this.currentWordId = this.wordIds[i];
+        this.currentWord = this.game.data.wordMap[this.currentWordId].word;
+        this.wordIds.splice(i, 1);
 
         this.buttonPositions = this.game.graphics.getWordRatingButtonPositions(this.currentWord);
         return true;
@@ -347,11 +385,10 @@ var StateEngineWordRating = new Class({
 
     setConnotation: function(connotation)
     {
-        this.connotations[this.currentWord] = connotation;
+        this.game.data.wordMap[this.currentWordId].connotation = connotation;
 
         if (!this.nextWord())
         {
-            this.game.data.connotations = this.connotations;
             this.game.setStateEngine(StateEngineFinished);
             return;
         }
@@ -419,11 +456,14 @@ var StateEngineFinished = new Class({
 
     start: function()
     {
+        this.game.data.words = Object.values(this.game.data.wordMap);
+        delete this.game.data.wordMap;
+
         this.game.transmitData("cmd=storerun&data=" + encodeURIComponent(JSON.encode(this.game.data)));
         this.game.setTimer("normalfps");
     },
 
-    dataTransmitted: function(data)
+    dataTransmitted: function(response)
     {
         this.dataIsTransmitted = true;
         this.game.setTimer(0);

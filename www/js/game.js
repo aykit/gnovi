@@ -12,6 +12,7 @@ var Game = new Class({
     dataRequest: null,
     loadingSomethingTime: 0,
     retransmitCount: 0,
+    unloading: false,
 
     initialize: function(canvas, graphics, scaling)
     {
@@ -31,6 +32,7 @@ var Game = new Class({
         document.addEvent("keydown", this.onKeydown.bind(this));
         this.canvas.addEvent("click", this.onClick.bind(this));
         this.canvas.addEvent("mousemove", this.onMouseMove.bind(this));
+        window.addEvent("beforeunload", this.onUnload.bind(this));
 
         this.dataRequest = new Request.JSON({
             url: "/php/data.php",
@@ -129,7 +131,7 @@ var Game = new Class({
         this.imageLoadingFinished();
     },
 
-    imageLoadingFinished: function() { },
+    imageLoadingFinished: function() {},
 
     loadingSomething: function()
     {
@@ -166,6 +168,8 @@ var Game = new Class({
 
     onDataRequestFailure: function()
     {
+        if (this.unloading)
+            return;
         this.transmitDataFailure("transfer");
     },
 
@@ -175,7 +179,7 @@ var Game = new Class({
         this.transmitDataFailure("timeout");
     },
 
-    transmitDataSuccess: function(data) { },
+    transmitDataSuccess: function(responseData) {},
 
     transmitDataFailure: function(error)
     {
@@ -210,9 +214,14 @@ var Game = new Class({
         this.mouseY = (e.event.pageY - this.clientY) / this.scaling;
     },
 
-    onKeypress: function(event) { },
+    onKeypress: function(event) {},
 
-    onKeydown: function(event) { },
+    onKeydown: function(event) {},
 
-    onClick: function(event){ },
+    onClick: function(event) {},
+
+    onUnload: function(event)
+    {
+        this.unloading = true;
+    },
 });

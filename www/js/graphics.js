@@ -216,18 +216,21 @@ var InputGraphics = new Class({
         this.context.fillText("click to start", 100, 20);
     },
 
-    drawWordsFinishedScreen: function(initialWord, wordList, inputTime, alpha, drawContinueNotice)
+    drawWordsFinishedScreen: function(initialWord, wordList, inputTime, fade, drawContinueNotice, wordsChecked)
     {
         this._clearCanvas();
 
-        this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
-
         this.context.font = "20px HeroRegular";
 
-        this.context.fillText(this._suffixNumber(wordList.length, " Wort", " Wörter") +
-            " eingegeben in " + inputTime + " Sekunden", 20, 20);
+        if (wordsChecked)
+        {
+            this.context.fillStyle = "rgba(0, 0, 0, " + fade + ")";
+        
+            this.context.fillText(this._suffixNumber(wordList.length, " Wort", " Wörter") +
+                " eingegeben in " + inputTime + " Sekunden", 20, 20);
 
-        this._fillTextRect(wordList, 40, 50, 300, 10, 25);
+            this._fillTextRect(wordList, 40, 50, 300, 10, 25);
+        }
 
         if (!drawContinueNotice)
             return;
@@ -236,9 +239,9 @@ var InputGraphics = new Class({
         this.context.fillText("press Enter to continue", 20, 300);
     },
 
-    drawLocationWordsFinishedScreen: function(location, wordList, inputTime, alpha, drawContinueNotice)
+    drawLocationWordsFinishedScreen: function(location, wordList, inputTime, fade, drawContinueNotice, wordsChecked)
     {
-        this.drawWordsFinishedScreen(location, wordList, inputTime, alpha, drawContinueNotice);
+        this.drawWordsFinishedScreen(location, wordList, inputTime, fade, drawContinueNotice, wordsChecked);
     },
 
     drawInputLocationScreen: function(inputText)

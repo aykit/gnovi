@@ -59,19 +59,19 @@ var Graph = new Class({
         this.transmitData("cmd=getgraph&word=" + encodeURIComponent(rootWord));
     },
 
-    transmitDataSuccess: function(data)
+    transmitDataSuccess: function(responseData)
     {
-        console.log(data);
+        console.log(responseData);
         if (window.history.pushState)
         {
             if (this.addWordToBrowserHistory)
-                window.history.pushState("graph", "Graph - " + data.root.label,
-                    this.graphUri + "/" + encodeURIComponent(data.root.label));
+                window.history.pushState("graph", "Graph - " + responseData.root.label,
+                    this.graphUri + "/" + encodeURIComponent(responseData.root.label));
             else
-                window.history.replaceState("graph", "Graph - " + data.root.label,
-                    this.graphUri + "/" + encodeURIComponent(data.root.label));
+                window.history.replaceState("graph", "Graph - " + responseData.root.label,
+                    this.graphUri + "/" + encodeURIComponent(responseData.root.label));
         }
-        this.buildVisualizationData(data);
+        this.buildVisualizationData(responseData);
     },
 
     buildVisualizationData: function(newData)

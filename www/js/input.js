@@ -69,7 +69,7 @@ var Input = new Class({
         if (this.currentStateEngine)
         {
             this.currentStateEngine.end();
-            console.log(JSON.encode(this.data));
+            //console.log(JSON.encode(this.data));
         }
 
         if (stateEngineClass)

@@ -440,7 +440,6 @@ var GraphGraphics = new Class({
             this._drawGnoviIcon(posX, posY, 50, true, alpha, true);
             this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
             this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 40);
-            
         }
         else
         {
@@ -460,6 +459,15 @@ var GraphGraphics = new Class({
         this.context.strokeStyle = "rgba(0, 0, 0, " + alpha + ")";
         this.context.lineWidth = 1.5;
         this.context.stroke();
+    },
+
+    getNodeDistance: function(node)
+    {
+        var category = Math.floor(node.distance * 3);
+        if (category > 2)
+            category = 2;
+
+        return 100 + 50 * category;
     },
 
     getGraphCenter: function()

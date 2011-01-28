@@ -62,7 +62,6 @@ var Graph = new Class({
 
     transmitDataSuccess: function(responseData)
     {
-        console.log(responseData);
         if (window.history.pushState)
         {
             if (this.addWordToBrowserHistory)
@@ -116,7 +115,7 @@ var Graph = new Class({
             var node = this.currentData.nodes[i];
             this.currentNodes[node.id] = node;
 
-            var distance = 200 - 50 * Math.floor(node.strength * 3 - 0.001);
+            var distance = this.graphics.getNodeDistance(node);
 
             var visData = {};
             visData.position = {r: distance, phi: i / numNodes * 2 * Math.PI}; // nur diskrete abstände möglich

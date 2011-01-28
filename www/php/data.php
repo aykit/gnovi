@@ -424,7 +424,7 @@ class DataExchanger
             {
                 $strength = $relations[$i]["strength"];
                 $relations[$i]["strength"] = $strength * $weight;
-                $relations[$i]["offsetStrength"] = ($strength - $offset) * $offsetWeight;
+                $relations[$i]["distance"] = 1 - ($strength - $offset) * $offsetWeight;
             }
         }
 

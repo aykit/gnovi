@@ -49,8 +49,30 @@ class DataExchanger
         if (!$this->connectDb())
             return;
 
-        $this->setResponseData("Fernseher");
-        //$this->setResponseData("/!%66; ?_:/.@&=+$,ößюфド\\%%\\\\1");
+        $result = $this->db->query("SELECT COUNT(*) AS `Count` FROM `Wordcheck`");
+        if (!$this->checkForDbError())
+            return null;
+
+        $row = $result->fetch_assoc();
+        if (!$row)
+        {
+            $this->setResponseError("database", "Could get the number of words.");
+            return null;
+        }
+
+        $index = rand(0, $row["Count"] - 1);
+        $result = $this->db->query("SELECT `Word` FROM `Wordcheck` LIMIT $index, 1");
+        if (!$this->checkForDbError())
+            return null;
+
+        $row = $result->fetch_assoc();
+        if (!$row)
+        {
+            $this->setResponseError("database", "Could not get a random word.");
+            return null;
+        }
+
+        $this->setResponseData($row["Word"]);
     }
 
     protected function getWordInfo($word)

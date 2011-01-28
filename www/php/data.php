@@ -49,7 +49,7 @@ class DataExchanger
         if (!$this->connectDb())
             return;
 
-        $result = $this->db->query("SELECT COUNT(*) AS `Count` FROM `Wordcheck`");
+        $result = $this->db->query("SELECT COUNT(*) AS `Count` FROM `InitialWords`");
         if (!$this->checkForDbError())
             return null;
 
@@ -61,7 +61,7 @@ class DataExchanger
         }
 
         $index = rand(0, $row["Count"] - 1);
-        $result = $this->db->query("SELECT `Word` FROM `Wordcheck` LIMIT $index, 1");
+        $result = $this->db->query("SELECT `Word` FROM `InitialWords` LIMIT $index, 1");
         if (!$this->checkForDbError())
             return null;
 

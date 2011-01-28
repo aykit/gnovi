@@ -210,6 +210,9 @@ var InputGraphics = new Class({
     {
         this._clearCanvas();
 
+        if (!canStart)
+            return;
+
         this.context.fillStyle = "black";
 
         this.context.font = "20px HeroRegular";

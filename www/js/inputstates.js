@@ -1,17 +1,9 @@
 var AUTOINPUT = {
-    info: true,
+    /*info: true,
     inputList: ["nix", "haus", "du", "hallo", "nix"],
     inputLocation: "Berg",
     inputLocationList: ["deinemama", "du"],
-    randomConnotations: true,
-};
-
-var AUTOINPUT = {
-    info: true,
-    inputList: ["hund", "malte", "couch", "hallo", "nix"],
-    inputLocation: "Haus",
-    inputLocationList: ["wer", "franz"],
-    randomConnotations: true,
+    randomConnotations: true,*/
 };
 
 var InputStatesUtils = new Class({});

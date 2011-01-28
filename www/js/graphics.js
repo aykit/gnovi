@@ -222,16 +222,29 @@ var InputGraphics = new Class({
 
         this.context.font = "20px HeroRegular";
 
+        if (initialWord)
+        {
+            this.context.font = "20px HeroRegular";
+            this.context.fillStyle = "#FFFFFF";
+            this.context.textAlign = "center";
+            var rectWidth = Math.max(this.context.measureText(initialWord).width + 30, 136);
+            this.context.fillText(initialWord, 320, 47);
+    
+            this.context.strokeStyle = "#7F7F7F";
+            this.context.fillStyle = "#231F20";
+            this._コード(320 - rectWidth / 2, 45, rectWidth, 44, 12);
+        }
+
         if (wordsChecked)
         {
             this.context.fillStyle = "rgba(0, 0, 0, " + fade + ")";
-        
+            this.context.textAlign = "center";
             this.context.fillText(this._suffixNumber(wordList.length, " Wort", " Wörter") +
-                " eingegeben in " + inputTime + " Sekunden", 20, 20);
-
+                " eingegeben in " + inputTime + " Sekunden", 320, 20);
+            this.context.textAlign = "left";
             this._fillTextRect(wordList, 40, 50, 300, 10, 25);
         }
-
+        
         if (!drawContinueNotice)
             return;
 
@@ -376,7 +389,7 @@ var InputGraphics = new Class({
             return;
 
         this.context.font = "20px HeroRegular";
-        this.context.fillText("HAHA.", 10, 30);
+        this.context.fillText("Haha.", 10, 30);
     },
 
     drawLoadingIndicator: function(loadTime)

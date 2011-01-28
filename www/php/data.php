@@ -385,7 +385,7 @@ class DataExchanger
         $result = $this->db->query("SELECT `ToWordID`, SUM(`Strength`) AS `TotalStrength`, `Word` " .
             "FROM `Relations` INNER JOIN `Words` ON `ToWordID` = `Words`.`ID` " . 
             "WHERE $filter GROUP BY `FromWordID`, `ToWordID` HAVING `TotalStrength` >= '$floatMinStrength'" .
-            "ORDER BY `TotalStrength` LIMIT $intMaxEntries");
+            "ORDER BY `TotalStrength` DESC LIMIT $intMaxEntries");
 
         if (!$this->checkForDbError())
             return null;
@@ -413,38 +413,18 @@ class DataExchanger
         if ($relations === null)
             return;
 
+        if (count($relations))
+        {
+            $weight = 1 / $relations[0]["strength"];
+            for ($i = 0; $i < count($relations); $i++)
+                $relations[$i]["strength"] *= $weight;
+        }
+
         $this->setResponseData(array(
             "root" => $wordInfo,
             "nodes" => $relations,
         ));
         return;
-
-        $data1 = array(
-            "root" => array("id" => 1, "label" => "Haus"),
-            "nodes" => array(
-                array("id" => 32, "label" => "du"),
-                array("id" => 3, "label" => "ich"),
-                array("id" => 4, "label" => "bla"),
-                array("id" => 15, "label" => "blub"),
-                array("id" => 6, "label" => "genau"),
-            )
-        );
-
-        $data2 = array(
-            "root" => array("id" => 15, "label" => $word),
-            "nodes" => array(
-                array("id" => 3, "label" => "ich"),
-                array("id" => 1, "label" => "Haus"),
-                array("id" => 11, "label" => "warum"),
-                array("id" => 32, "label" => "du"),
-                array("id" => 7, "label" => "nix"),
-                array("id" => 8, "label" => "jap"),
-            )
-        );
-
-        $data = $word == "Haus" ? $data1 : $data2;
-
-        $this->setResponseData($data);
     }
 
     protected function connectDb()

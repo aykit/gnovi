@@ -107,6 +107,8 @@ var Graph = new Class({
         visData.isRoot = 1;
         this.currentNodesVisData[node.id] = visData;
 
+        this.currentData.nodes.sort(function(node1, node2) { return node1.id - node2.id; });
+
         // other nodes
         var numNodes = this.currentData.nodes.length;
         for (var i = 0; i < numNodes; i++)
@@ -114,8 +116,10 @@ var Graph = new Class({
             var node = this.currentData.nodes[i];
             this.currentNodes[node.id] = node;
 
+            var distance = 200 - 50 * Math.floor(node.strength * 3 - 0.001);
+
             var visData = {};
-            visData.position = {r: 100, phi: i / numNodes * 2 * Math.PI}; // nur diskrete abstände möglich
+            visData.position = {r: distance, phi: i / numNodes * 2 * Math.PI}; // nur diskrete abstände möglich
             visData.alpha = 1;
             visData.isDisplayed = 1;
             visData.isRoot = 0;
@@ -181,11 +185,16 @@ var Graph = new Class({
             current = -2*current*current*current + 3*current*current;
             var prev = 1 - current;
 
+            var angle =
+                prevVisData.position.r == 0 ? currentVisData.position.phi :
+                currentVisData.position.r == 0 ? prevVisData.position.phi :
+                prevVisData.position.phi * prev + currentVisData.position.phi * current;
+
             var visData = {};
             visData.position =
             {
                 r: prevVisData.position.r * prev + currentVisData.position.r * current,
-                phi: prevVisData.position.phi * prev + currentVisData.position.phi * current,
+                phi: angle,
             };
             visData.alpha = prevVisData.alpha * prev + currentVisData.alpha * current;
             visData.isRoot = prevVisData.isRoot * prev + currentVisData.isRoot * current;

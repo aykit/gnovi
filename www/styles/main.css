@@ -8,20 +8,73 @@ p {
     display: block;
     margin-left: auto;
     margin-right: auto;*/
+
     margin-left: 20px;
 }
 
 
-#profile {
+section {
     font-family: "HeroRegular";
+    float: left;
     color: white;
     border: 2px solid #666666;
     background-color: #666666;
-    height: 64px;
-    width: 450px;
-    padding: 8px;
+    min-height: 64px;
+    min-width: 300px;
+    padding-left: 8px;
+    padding-right: 12px;
+    padding-bottom: 8px;
     margin-top: 12px;
-    margin-left: 64px;
+    margin-left: 3px;
     border-radius: 8px;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px; }
+    
+    
+input {
+margin-left: 4px;
+min-width: 140px;;
+}
+
+input[type="submit"] {
+    width: 100%;
+    font-family: "HeroRegular";
+    padding: 9px 15px;  
+    margin-top: 20px;
+    background-color: #CCCCCC;
+    border: 0;  
+    font-size: 14px;  
+    color: #FFFFFF;  
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+}
+
+mark {
+    font-family: "HeroRegular";
+    float: left;
+    max-width: 88px;
+    min-height: 112px;
+    padding: 9px 15px;  
+    margin-top: 11px;
+    margin-left: 3px;
+    background-color: #000000;
+    font-size: 18px;  
+    color: #FFFFFF;  
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border: 3px solid #FFFF33;
+}
+
+#register {
+    font-family: "HeroRegular";
+    float: left;
+    writing-mode: tb-rl;
+    padding: 9px 15px;  
+    margin-top: 13px;
+    background-color: #CCCCCC;
+    border: 0;  
+    font-size: 14px;  
+    color: #FFFFFF;
+}

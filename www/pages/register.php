@@ -80,7 +80,7 @@ class RegisterPage extends Page
         $_SESSION['registerPasswdSafe1'] = $passwordSafe1;
         $_SESSION['registerPasswdSafe2'] = $passwordSafe2;
 
-        $this->drawHeader("Registrieren", array(), array());
+        $this->drawHeader("Registrieren", array(), array("/styles/main.css"));
 
         include "../html/register.php";
 

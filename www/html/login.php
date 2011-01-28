@@ -1,19 +1,22 @@
-    <form action="<?=htmlspecialchars($_SERVER["REQUEST_URI"])?>" method="post">
-      <p>
-        <label>Email:</label>
-        <input id="email" type="email" value="<?=htmlspecialchars($email)?>" required name="e">
-      </p>
-      <p>
-        <label>Passwort:</label>
-        <input id="password" type="password" value="" required name="p">
-      </p>
-      <input type="submit" value="Einloggen">
-    </form>
-<?php if ($posted) { ?>
+      <section>
+        <form action="<?=htmlspecialchars($_SERVER["REQUEST_URI"])?>" method="post">
+          <p>
+            <label>Email:</label>
+            <input id="email" type="email" placeholder="E- Mail Adresse" value="<?=htmlspecialchars($email)?>" required 
+              name="e" autofocus>
+          </p>
+          <p>
+            <label>Passwort:</label>
+            <input id="password" type="password" placeholder="Passwort" value="" required name="p">
+          </p>
+          <input type="submit" value="Einloggen">
+        </form>
+      </section>
+      <?php if ($posted) { ?>
 <?php if ($email == "" || $password == "") { ?>
-    <p>Email und Passwort eingeben!</p>
+        <mark>Email und Passwort eingeben!</mark>
 <?php } else { ?>
-    <p>Ungülte Email / Passwort</p>
+        <mark>Ungültige Email / Passwort</mark>
 <?php } ?>
 <?php } ?>
-    <p><a href="<?=htmlspecialchars(PageUrls::REGISTER)?>">Registrieren</a></p>
+      <p id="register"><a href="<?=htmlspecialchars(PageUrls::REGISTER)?>">Registrieren</a></p>

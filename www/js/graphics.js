@@ -83,7 +83,7 @@ var Graphics = new Class({
         else
             gradient.addColorStop(1, "rgba(0, 0, 255, " + alpha + ")");
 
-        this.context.fillStyle = gradient;
+        this.context.fillStyle = gradient; 
         this._fillCircle(posX, posY, size / 2);
         
         */

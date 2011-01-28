@@ -103,7 +103,9 @@ class DataExchanger
 
         $escWord = $this->db->escape_string($word);
 
-        $result = $this->db->query("SELECT `Word` FROM `Wordcheck` WHERE `Word` = '$escWord'");
+        $result = $this->db->query(
+            "SELECT `Word`, `Word` = '$escWord' AS `LetterCaseMatches` FROM `Wordcheck` " .
+            "WHERE LOWER(`Word`) = LOWER('$escWord') ORDER BY `LetterCaseMatches` DESC LIMIT 1");
         if (!$this->checkForDbError())
             return null;
 
@@ -148,10 +150,11 @@ class DataExchanger
             $wordInfo = $this->checkAndUpdateWord($word);
             if (!$wordInfo)
                 return;
-            $wordMap[] = $wordInfo;
+
+            $wordMap[$wordInfo["id"]] = $wordInfo;
         }
 
-        $this->setResponseData($wordMap);
+        $this->setResponseData(array_values($wordMap));
     }
 
     protected function storeRun($data)

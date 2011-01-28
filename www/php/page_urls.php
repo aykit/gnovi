@@ -6,7 +6,8 @@ class PageUrls
     const PROFILE = "/profil";
     const LOGIN = "/einloggen";
     const INPUT = "/anlauf";
-    const GRAPH = "/graph";
+    const PERSONAL_GRAPH = "/ich";
+    const GLOBAL_GRAPH = "/wir";
     const REGISTER = "/registrieren";
 }
 

@@ -26,8 +26,8 @@
             </li>
             <li><a href="<?=htmlspecialchars(PageUrls::PROFILE)?>">Profil</a></li>
             <li><a href="<?=htmlspecialchars(PageUrls::INPUT)?>">Anlauf</a></li>
-            <li><a id="graph_link" href="<?=htmlspecialchars(PageUrls::GRAPH)?>">Ich</a></li>
-            <li>Wir</li>
+            <li><a id="graph_link" href="<?=htmlspecialchars(PageUrls::PERSONAL_GRAPH)?>">Ich</a></li>
+            <li><a id="graph_link" href="<?=htmlspecialchars(PageUrls::GLOBAL_GRAPH)?>">Wir</a></li>
             <li>Hilfe</li>
             <li>Über gnovi</li>
 <?php if ($loggedin) { ?>

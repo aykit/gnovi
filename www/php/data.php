@@ -25,7 +25,7 @@ class DataExchanger
                 $this->returnRelations(@$_GET["word"], @$_GET["all"], @$_GET["time"]);
                 break;
             case "getchangetimes":
-                $this->returnChangeTimes(@$_GET["word"]);
+                $this->returnChangeTimes(@$_GET["word"], @$_GET["all"]);
                 break;
             case "storerun":
                 $this->storeRun(json_decode(@$_GET["data"], true));
@@ -315,7 +315,7 @@ class DataExchanger
         return $this->checkForDbError();
     }
 
-    protected function returnChangeTimes($word)
+    protected function returnChangeTimes($word, $allUsers)
     {
         $wordInfo = $this->getWordInfo($word);
         if (!$wordInfo)
@@ -326,7 +326,7 @@ class DataExchanger
 
         $filter = "`FromWordID` = '$intWordId'";
 
-        if ($intUserId > 0)
+        if (!$allUsers)
              $filter .= " AND `UserID` = '$intUserId'";
 
         $result = $this->db->query("SELECT `Time` FROM `Relations` WHERE $filter GROUP BY `Time`");

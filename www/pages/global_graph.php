@@ -8,7 +8,7 @@ class GraphPage extends Page
     {
         $this->requireLogin($_SERVER["REQUEST_URI"]);
 
-        $this->drawHeader("Graph",
+        $this->drawHeader("Wir",
             array("/js/mootools.js", "/js/game.js", "/js/graph.js", "/js/graphics.js"), 
             array("/styles/main.css"));
 

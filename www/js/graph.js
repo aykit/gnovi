@@ -15,6 +15,7 @@ var Graph = new Class({
     addWordToBrowserHistory: false,
     redrawScreen: false,
     graphUri: "",
+    selectedNode: null,
 
     initialize: function(canvas, scaling)
     {
@@ -83,6 +84,8 @@ var Graph = new Class({
             Object.append(this.currentNodes, this.prevNodes);
             this.currentNodesVisData = this.interpolatedNodesVisData;
         }*/
+
+        this.selectedNode = null;
 
         this.prevData = this.currentData;
         this.currentData = newData;
@@ -340,6 +343,9 @@ var Graph = new Class({
 
             var mouseOver = this.mouseOverNodeId == node.id;
 
+            if (mouseOver)
+                this.selectedNode = node;
+
             if (visData.isRoot == 0)
                 this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
             else if (visData.isRoot == 1)
@@ -429,13 +435,8 @@ var Graph = new Class({
     {
         this.parent();
 
-        if (!this.interpolationRunning)
-        {
-            if (this.currentData && this.currentData.root.word == "Haus")
-                this.loadData("", false, true);
-            else
-                this.loadData("Haus", false, true);
-        }
+        if (!this.interpolationRunning && this.selectedNode)
+            this.loadData(this.selectedNode.word, false, true);
     },
 
     onPopState: function(event)

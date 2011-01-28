@@ -17,8 +17,9 @@ var Graph = new Class({
     graphUri: "",
     selectedNode: null,
 
-    initialize: function(canvas, scaling)
+    initialize: function(canvas, showAllUsers)
     {
+        this.showAllUsers = showAllUsers;
         this.parent(canvas, new GraphGraphics(), 1);
 
         window.onpopstate = this.onPopState.bind(this);
@@ -57,7 +58,7 @@ var Graph = new Class({
     {
         this.showInterpolation = animate;
         this.addWordToBrowserHistory = addWordToBrowserHistory;
-        this.transmitData("cmd=getrelations&word=" + encodeURIComponent(rootWord));
+        this.transmitData("cmd=getrelations&word=" + encodeURIComponent(rootWord) + "&all=" + (this.showAllUsers ? 1 : 0));
     },
 
     transmitDataSuccess: function(responseData)
@@ -452,8 +453,4 @@ var Graph = new Class({
         if (event.state == "graph")
             this.loadWordFromCurrentUrl();
     },
-});
-
-window.addEvent("load", function() {
-    new Graph(document.getElementById("graph"));
 });

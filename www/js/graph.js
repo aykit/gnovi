@@ -56,7 +56,7 @@ var Graph = new Class({
     {
         this.showInterpolation = animate;
         this.addWordToBrowserHistory = addWordToBrowserHistory;
-        this.transmitData("cmd=getgraph&word=" + encodeURIComponent(rootWord));
+        this.transmitData("cmd=getrelations&word=" + encodeURIComponent(rootWord));
     },
 
     transmitDataSuccess: function(responseData)
@@ -65,11 +65,11 @@ var Graph = new Class({
         if (window.history.pushState)
         {
             if (this.addWordToBrowserHistory)
-                window.history.pushState("graph", "Graph - " + responseData.root.label,
-                    this.graphUri + "/" + encodeURIComponent(responseData.root.label));
+                window.history.pushState("graph", "Graph - " + responseData.root.word,
+                    this.graphUri + "/" + encodeURIComponent(responseData.root.word));
             else
-                window.history.replaceState("graph", "Graph - " + responseData.root.label,
-                    this.graphUri + "/" + encodeURIComponent(responseData.root.label));
+                window.history.replaceState("graph", "Graph - " + responseData.root.word,
+                    this.graphUri + "/" + encodeURIComponent(responseData.root.word));
         }
         this.buildVisualizationData(responseData);
     },
@@ -431,7 +431,7 @@ var Graph = new Class({
 
         if (!this.interpolationRunning)
         {
-            if (this.currentData && this.currentData.root.label == "Haus")
+            if (this.currentData && this.currentData.root.word == "Haus")
                 this.loadData("", false, true);
             else
                 this.loadData("Haus", false, true);

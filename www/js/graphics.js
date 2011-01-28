@@ -439,7 +439,7 @@ var GraphGraphics = new Class({
             this.context.font = "20px HeroRegular";
             this._drawGnoviIcon(posX, posY, 50, true, alpha, true);
             this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
-            this.context.fillText(node.label, Math.round(posX), Math.round(posY) + 40);
+            this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 40);
             
         }
         else
@@ -447,8 +447,7 @@ var GraphGraphics = new Class({
             this.context.font = "15px HeroRegular";
             this._drawGnoviIcon(posX, posY, 30, mouseOver, alpha);
             this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
-            this.context.fillText(node.label, Math.round(posX), Math.round(posY) + 25);
-
+            this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 25);
         }
     },
 
@@ -468,7 +467,7 @@ var GraphGraphics = new Class({
         return {x: 320, y: 240};
     },
 
-    getNodeStartDistance: function() { return 350; },
+    getNodeStartDistance: function() { return 500; },
 
     getInterpolationTime: function() { return 1.8; },
 });

@@ -21,14 +21,17 @@ class DataExchanger
             case "getword":
                 $this->returnRandomWord();
                 break;
-            case "getgraph":
-                $this->returnGraphData(@$_GET["word"]);
+            case "getrelations":
+                $this->returnRelations(@$_GET["word"], @$_GET["all"], @$_GET["time"]);
+                break;
+            case "getchangetimes":
+                $this->returnChangeTimes(@$_GET["word"]);
                 break;
             case "storerun":
                 $this->storeRun(json_decode(@$_GET["data"], true));
                 break;
-            case "findwords":
-                $this->findWords(json_decode(@$_GET["words"], true));
+            case "checkwords":
+                $this->returnCheckedWords(json_decode(@$_GET["words"], true));
                 break;
             default:
                 $this->setResponseError("unknown_command", @$_GET["cmd"]);
@@ -37,7 +40,8 @@ class DataExchanger
         else
             $this->setResponseError("login", "Not logged in.");
 
-        print(json_encode($this->response));
+        if ($this->response !== null)
+            print(json_encode($this->response));
     }
 
     protected function returnRandomWord()
@@ -49,7 +53,28 @@ class DataExchanger
         //$this->setResponseData("/!%66; ?_:/.@&=+$,ößюфド\\%%\\\\1");
     }
 
-    protected function findWord($word)
+    protected function getWordInfo($word)
+    {
+        if (!$this->connectDb())
+            return null;
+
+        $escWord = $this->db->escape_string($word);
+
+        $result = $this->db->query("SELECT `ID`, `Word` FROM `Words` WHERE `Word` = '$escWord'");
+        if (!$this->checkForDbError())
+            return null;
+
+        $row = $result->fetch_assoc();
+        if (!$row)
+        {
+            $this->setResponseError("database", "Could not find word.");
+            return null;
+        }
+
+        return array("id" => (int)$row["ID"], "word" => $row["Word"]);
+    }
+
+    protected function checkWord($word)
     {
         if (!$this->connectDb())
             return null;
@@ -61,11 +86,16 @@ class DataExchanger
             return null;
 
         $row = $result->fetch_assoc();
-        if ($row)
-        {
-            $word = $row["Word"];
-            $escWord = $this->db->escape_string($word);
-        }
+        return $row ? $row["Word"] : $word;
+    }
+
+    protected function checkAndUpdateWord($word)
+    {
+        $word = $this->checkWord($word);
+        if ($word === null)
+            return null;
+
+        $escWord = $this->db->escape_string($word);
 
         // Insert the word or update the entry to reflect letter case changes
         $this->db->query("INSERT INTO `Words` (`Word`) VALUES ('$escWord') " .
@@ -76,26 +106,10 @@ class DataExchanger
         $id = (int)$this->db->insert_id;
 
         // in case nothing hast changed insert_id is zero, so query the id separately
-        if ($id == 0)
-        {
-            $result = $this->db->query("SELECT `ID` FROM `Words` WHERE `Word` = '$escWord'");
-            if (!$this->checkForDbError())
-                return null;
-
-            $row = $result->fetch_assoc();
-            if (!$row)
-            {
-                $this->setResponseError("database", "Could not get word ID.");
-                return null;
-            }
-
-            $id = (int)$row["ID"];
-        }
-
-        return array("id" => $id, "word" => $word);
+        return $id == 0 ? $this->getWordInfo($word) : array("id" => $id, "word" => $word);
     }
 
-    protected function findWords($words)
+    protected function returnCheckedWords($words)
     {
         if (!DataExchanger::isStringArray($words))
         {
@@ -109,7 +123,7 @@ class DataExchanger
             if ($word == "." || $word == "..")
                 continue;
 
-            $wordInfo = $this->findWord($word);
+            $wordInfo = $this->checkAndUpdateWord($word);
             if (!$wordInfo)
                 return;
             $wordMap[] = $wordInfo;
@@ -132,7 +146,7 @@ class DataExchanger
             return;
         }
 
-        $wordInfo = $this->findWord($initialWord);
+        $wordInfo = $this->checkAndUpdateWord($initialWord);
         if (!$wordInfo)
             return;
         $initialWordId = $wordInfo["id"];
@@ -153,7 +167,7 @@ class DataExchanger
                 ($connotation !== "+" && $connotation !== "-"))
                 continue;
 
-            $wordInfo = $this->findWord($word);
+            $wordInfo = $this->checkAndUpdateWord($word);
             if (!$wordInfo)
                 return;
 
@@ -245,6 +259,9 @@ class DataExchanger
 
     protected function addRunn($userId, $initialWordId, $time, $location)
     {
+        if (!$this->connectDb())
+            return;
+
         $intUserId = (int)$userId;
         $intInitialWordId = (int)$initialWordId;
         $intTime = (int)$time;
@@ -258,6 +275,9 @@ class DataExchanger
 
     protected function addRunWord($runId, $wordId, $distanceFromInitialWord, $distanceFromLocation, $connotation)
     {
+        if (!$this->connectDb())
+            return;
+
         $intRunId = (int)$runId;
         $intWordId = (int)$wordId;
         $intDistanceFromInitialWord = (int)$distanceFromInitialWord;
@@ -273,6 +293,9 @@ class DataExchanger
 
     protected function addRelations($word1Id, $word2Id, $userId, $time, $strength)
     {
+        if (!$this->connectDb())
+            return;
+
         $intWord1Id = (int)$word1Id;
         $intWord2Id = (int)$word2Id;
         $intUserId = (int)$userId;
@@ -292,10 +315,87 @@ class DataExchanger
         return $this->checkForDbError();
     }
 
-    protected function returnGraphData($word)
+    protected function returnChangeTimes($word)
+    {
+        $wordInfo = $this->getWordInfo($word);
+        if (!$wordInfo)
+            return;
+
+        $intWordId = (int)$wordInfo["id"];
+        $intUserId = (int)$this->userId;
+
+        $filter = "`FromWordID` = '$intWordId'";
+
+        if ($intUserId > 0)
+             $filter .= " AND `UserID` = '$intUserId'";
+
+        $result = $this->db->query("SELECT `Time` FROM `Relations` WHERE $filter GROUP BY `Time`");
+
+        if (!$this->checkForDbError())
+            return;
+
+        $times = array();
+        while ($row = $result->fetch_assoc())
+            $times[] = (int)$row["Time"];
+
+        $this->setResponseData($times);
+    }
+
+    protected function getRelations($wordId, $userId, $time, $maxEntries, $minStrength)
     {
         if (!$this->connectDb())
+            return null;
+
+        $intWordId = (int)$wordId;
+        $intUserId = (int)$userId;
+        $intTime = (int)$time;
+        $intMaxEntries = (int)$maxEntries;
+        $floatMinStrength = (float)$minStrength;
+
+        $filter = "`FromWordID` = '$intWordId'";
+
+        if ($intTime > 0)
+            $filter .= " AND `Time` <= '$intTime'";
+
+        if ($intUserId > 0)
+             $filter .= " AND `UserID` = '$intUserId'";
+
+        $result = $this->db->query("SELECT `ToWordID`, SUM(`Strength`) AS `TotalStrength`, `Word` " .
+            "FROM `Relations` INNER JOIN `Words` ON `ToWordID` = `Words`.`ID` " . 
+            "WHERE $filter GROUP BY `FromWordID`, `ToWordID` HAVING `TotalStrength` >= '$floatMinStrength'" .
+            "ORDER BY `TotalStrength` LIMIT $intMaxEntries");
+
+        if (!$this->checkForDbError())
+            return null;
+
+        $relations = array();
+        while ($row = $result->fetch_assoc())
+        {
+            $relations[] = array(
+                "id" => $row["ToWordID"],
+                "strength" => $row["TotalStrength"],
+                "word" => $row["Word"],
+            );
+        }
+
+        return $relations;
+    }
+
+    protected function returnRelations($word, $allUsers, $time)
+    {
+        $wordInfo = $this->getWordInfo($word);
+        if (!$wordInfo)
             return;
+
+        $relations = $this->getRelations($wordInfo["id"], $allUsers ? 0 : $this->userId, $time, 10, 0);
+        if ($relations === null)
+            return;
+
+        $this->setResponseData(array(
+            "root" => $wordInfo,
+            "nodes" => $relations,
+        ));
+        return;
 
         $data1 = array(
             "root" => array("id" => 1, "label" => "Haus"),

@@ -418,7 +418,8 @@ class DataExchanger
             $weight = 1 / $relations[0]["strength"];
 
             $offset = $relations[count($relations) - 1]["strength"];
-            $offsetWeight = 1 / ($relations[0]["strength"] - $offset);
+            $span = $relations[0]["strength"] - $offset;
+            $offsetWeight = $span != 0 ? 1 / $span : 1;
 
             for ($i = 0; $i < count($relations); $i++)
             {

@@ -132,8 +132,8 @@ class DataExchanger
             return;
         $intInitialWordId = (int)$wordInfo["id"];
 
-        $this->db->query("INSERT INTO `Runs` (`UserID`, `InitialWordID`, `LocationTMP`) " . 
-            "VALUES ('$intUserId', '$intInitialWordId', '$escLocation')");
+        $this->db->query("INSERT INTO `Runs` (`UserID`, `InitialWordID`, `Time`, `LocationTMP`) " . 
+            "VALUES ('$intUserId', '$intInitialWordId', UNIX_TIMESTAMP(), '$escLocation')");
         if (!$this->checkForDbError())
             return;
 

@@ -451,6 +451,11 @@ var GraphGraphics = new Class({
     drawBackground: function()
     {
         this._clearCanvas();
+
+        this.context.strokeStyle = "#CCCCCC";
+        this._strokeCircle(320, 240, 100);
+        this._strokeCircle(320, 240, 150);
+        this._strokeCircle(320, 240, 200);
     },
 
     drawNode: function(node, posX, posY, isRoot, mouseOver, alpha)

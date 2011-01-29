@@ -446,7 +446,7 @@ var InputGraphics = new Class({
         this.context.strokeText("loading . . .", 0, 200)
 
         this.context.fillStyle = "rgba(0, 0, 0," + alpha + ")";
-        this.context.fillText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 20)
+        this.context.fillText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 50)
 
     },
 
@@ -547,7 +547,7 @@ var GraphGraphics = new Class({
         }
 
         this.context.fillStyle = hoverTime == 0 ? "red" : "black";
-        this._fillCircle(sliderStart + sliderLength, 460, 5);
+        this._fillCircle(sliderStart + sliderLength, 480, 5);
 
         if (hoverTime != -1)
         {
@@ -564,10 +564,10 @@ var GraphGraphics = new Class({
 
             this.context.strokeStyle = "white";
             this.context.lineWidth = 6;
-            this.context.strokeText(date, textPos, 450);
+            this.context.strokeText(date, textPos, 470);
 
             this.context.fillStyle = "black";
-            this.context.fillText(date, textPos, 450);
+            this.context.fillText(date, textPos, 470);
         }
     },
 

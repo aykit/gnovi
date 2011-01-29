@@ -141,7 +141,7 @@ var Graphics = new Class({
 
     drawDebugInfo: function(fps, drawCount)
     {
-        /*this.context.translate(this.context.canvas.width - 40, this.context.canvas.height - 50);
+        /*this.context.translate(this.context.canvas.width - 40, this.context.canvas.height - 70);
 
         this.context.shadowColor = "black";
         this.context.shadowBlur = 2;
@@ -453,9 +453,82 @@ var GraphGraphics = new Class({
         this._clearCanvas();
 
         this.context.strokeStyle = "#CCCCCC";
-        this._strokeCircle(320, 240, 100);
-        this._strokeCircle(320, 240, 150);
-        this._strokeCircle(320, 240, 200);
+        this._strokeCircle(320, 230, 100);
+        this._strokeCircle(320, 230, 150);
+        this._strokeCircle(320, 230, 200);
+    },
+
+    getTimeSliderHotspots: function(times)
+    {
+        if (times.length < 2)
+            return [];
+
+        var hotspots = [];
+
+        var startTime = times[0];
+        var timeSpan = times[times.length - 1] - startTime;
+
+        var sliderLength = 600;
+        var sliderStart = (640 - sliderLength) / 2;
+
+        for (var i = 0; i < times.length; i++)
+        {
+            hotspots.push({
+                time: times[i],
+                x: sliderStart + (times[i] - startTime) / timeSpan * (sliderLength - 20),
+                y: 460,
+                r: 5,
+            });
+        }
+
+        hotspots.push({
+            time: 0,
+            x: sliderStart + sliderLength,
+            y: 460,
+            r: 5,
+        });
+
+        return hotspots;
+    },
+
+    drawTimeSlider: function(times, selectedTime, hoverTime)
+    {
+        if (times.length < 2)
+            return;
+
+        var startTime = times[0];
+        var timeSpan = times[times.length - 1] - startTime;
+
+        var sliderLength = 600;
+        var sliderStart = (640 - sliderLength) / 2;
+
+        this.context.beginPath();
+        this.context.moveTo(sliderStart, 460);
+        this.context.lineTo(sliderStart + sliderLength - 20, 460);
+
+        this.context.strokeStyle = "green";
+        this.context.lineWidth = 2;
+        this.context.stroke();
+
+        this.context.beginPath();
+        var indicatorPos = selectedTime ? sliderStart + (selectedTime - startTime) / timeSpan * (sliderLength - 20) :
+            sliderStart + sliderLength;
+        this.context.moveTo(indicatorPos, 450);
+        this.context.lineTo(indicatorPos, 470);
+
+        this.context.strokeStyle = "green";
+        this.context.lineWidth = 3;
+        this.context.lineCap = "round";
+        this.context.stroke();
+
+        for (var i = 0; i < times.length; i++)
+        {
+            this.context.fillStyle = hoverTime == times[i] ? "red" : "black";
+            this._fillCircle(sliderStart + (times[i] - startTime) / timeSpan * (sliderLength - 20), 460, 5);
+        }
+
+        this.context.fillStyle = hoverTime == 0 ? "red" : "black";
+        this._fillCircle(sliderStart + sliderLength, 460, 5);
     },
 
     drawNode: function(node, posX, posY, isRoot, mouseOver, alpha)
@@ -501,7 +574,7 @@ var GraphGraphics = new Class({
 
     getGraphCenter: function()
     {
-        return {x: 320, y: 240};
+        return {x: 320, y: 230};
     },
 
     getNodeStartDistance: function() { return 500; },

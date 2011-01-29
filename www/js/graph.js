@@ -14,10 +14,11 @@ var Graph = new Class({
 
     addWordToBrowserHistory: false,
     redrawScreen: false,
-    selectedNode: null,
     notFound: false,
     rootWord: "",
     timeSliderTimestamp: 0,
+    timeSliderHotspots: [],
+    timeSliderHoverTime: -1,
 
     initialize: function(canvas, showAllUsers)
     {
@@ -54,8 +55,12 @@ var Graph = new Class({
 
         this.timeSliderTimestamp = 0;
 
-        if (uriInfo.length >= 3)
-            this.timeSliderTimestamp += parseInt(uriInfo[3]);
+        if (uriInfo.length >= 4)
+        {
+            var time = parseInt(uriInfo[3]);
+            if (!isNaN(time))
+                this.timeSliderTimestamp = time;
+        }
 
         var wordRequested = decodeURIComponent(uriInfo[2]);
 
@@ -94,11 +99,15 @@ var Graph = new Class({
                 window.history.replaceState("graph", "Graph - " + responseData.root.word,
                     graphUri + "/" + encodeURIComponent(responseData.root.word) + timePostfix);
         }
+
         this.buildVisualizationData(responseData);
+        this.timeSliderHotspots = this.graphics.getTimeSliderHotspots(this.currentData.changeTimes);
     },
 
     transmitDataFailure: function(error)
     {
+        this.timeSliderHotspots = [];
+
         if (error == "notfound")
         {
             this.notFound = true;
@@ -117,8 +126,6 @@ var Graph = new Class({
             Object.append(this.currentNodes, this.prevNodes);
             this.currentNodesVisData = this.interpolatedNodesVisData;
         }*/
-
-        this.selectedNode = null;
 
         this.prevData = this.currentData;
         this.currentData = newData;
@@ -385,9 +392,6 @@ var Graph = new Class({
 
             var mouseOver = this.mouseOverNodeId == node.id;
 
-            if (mouseOver)
-                this.selectedNode = node;
-
             if (visData.isRoot == 0)
                 this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
             else if (visData.isRoot == 1)
@@ -400,6 +404,13 @@ var Graph = new Class({
         }
 
         this.context.restore();
+
+        if (!this.interpolationRunning && this.currentData)
+        {
+            this.context.save();
+            this.graphics.drawTimeSlider(this.currentData.changeTimes, this.timeSliderTimestamp, this.timeSliderHoverTime);
+            this.context.restore();
+        }
 
         if (this.loadingSomething())
         {
@@ -466,6 +477,29 @@ var Graph = new Class({
             this.redrawScreen = true;
         }
 
+        var newTimeSliderHoverTime = -1;
+
+        for (var i = 0; i < this.timeSliderHotspots.length; i++)
+        {
+            var hotspot = this.timeSliderHotspots[i];
+
+            var dx = hotspot.x - this.mouseX;
+            var dy = hotspot.y - this.mouseY;
+            var mouseOver = dx*dx + dy*dy < hotspot.r*hotspot.r;
+
+            if (mouseOver)
+            {
+                newTimeSliderHoverTime = hotspot.time;
+                break;
+            }
+        }
+
+        if (newTimeSliderHoverTime != this.timeSliderHoverTime)
+        {
+            this.timeSliderHoverTime = newTimeSliderHoverTime;
+            this.redrawScreen = true;
+        }
+
         if (this.redrawScreen)
         {
             this.draw();
@@ -477,8 +511,16 @@ var Graph = new Class({
     {
         this.parent();
 
-        if (!this.interpolationRunning && this.selectedNode)
-            this.loadData(this.selectedNode.word, false, true);
+        if (this.interpolationRunning)
+            return;
+
+        if (this.mouseOverNodeId > 0)
+            this.loadData(this.currentNodes[this.mouseOverNodeId].word, false, true);
+        else if (this.timeSliderHoverTime >= 0)
+        {
+            this.timeSliderTimestamp = this.timeSliderHoverTime;
+            this.loadData(this.rootWord, false, true);
+        }
     },
 
     onPopState: function(event)

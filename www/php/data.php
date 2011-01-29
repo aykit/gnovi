@@ -340,13 +340,12 @@ class DataExchanger
         return $this->checkForDbError();
     }
 
-    protected function returnChangeTimes($word, $allUsers)
+    protected function getChangeTimes($wordId, $allUsers)
     {
-        $wordInfo = $this->getWordInfo($word);
-        if (!$wordInfo)
-            return;
+        if (!$this->connectDb())
+            return null;
 
-        $intWordId = (int)$wordInfo["id"];
+        $intWordId = (int)$wordId;
         $intUserId = (int)$this->userId;
 
         $filter = "`FromWordID` = '$intWordId'";
@@ -354,14 +353,27 @@ class DataExchanger
         if (!$allUsers)
              $filter .= " AND `UserID` = '$intUserId'";
 
-        $result = $this->db->query("SELECT `Time` FROM `Relations` WHERE $filter GROUP BY `Time`");
+        $result = $this->db->query("SELECT `Time` FROM `Relations` WHERE $filter GROUP BY `Time` ORDER BY `Time`");
 
         if (!$this->checkForDbError())
-            return;
+            return null;
 
         $times = array();
         while ($row = $result->fetch_assoc())
             $times[] = (int)$row["Time"];
+
+        return $times;
+    }
+
+    protected function returnChangeTimes($word, $allUsers)
+    {
+        $wordInfo = $this->getWordInfo($word);
+        if (!$wordInfo)
+            return;
+
+        $times = $this->getChangeTimes($wordInfo["id"], $allUsers);
+        if (!$times)
+            return;
 
         $this->setResponseData($times);
     }
@@ -416,6 +428,10 @@ class DataExchanger
         if ($relations === null)
             return;
 
+        $changeTimes = $this->getChangeTimes($wordInfo["id"], $allUsers);
+        if (!$changeTimes)
+            return;
+
         if (count($relations))
         {
             $weight = 1 / $relations[0]["strength"];
@@ -435,6 +451,7 @@ class DataExchanger
         $this->setResponseData(array(
             "root" => $wordInfo,
             "nodes" => $relations,
+            "changeTimes" => $changeTimes,
         ));
         return;
     }

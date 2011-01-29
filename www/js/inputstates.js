@@ -478,7 +478,7 @@ var StateEngineFinished = new Class({
     continueEvent: function()
     {
         if (this.dataTransmitted)
-            window.location = document.getElementById("graph_link").href + "/" +
+            window.location = document.getElementById("personal_graph_link").href + "/" +
             encodeURIComponent(this.game.data.initialWord);
     },
 });

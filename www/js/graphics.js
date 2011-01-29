@@ -473,8 +473,14 @@ var GraphGraphics = new Class({
 
         var hotspots = [];
 
-        var startTime = Math.min(selectedTime, times[0]);
-        var timeSpan = Math.max(selectedTime, times[times.length - 1]) - startTime;
+        var startTime = times[0];
+        var endTime = times[times.length - 1];
+        if (selectedTime > 0)
+        {
+            startTime = Math.min(startTime, selectedTime);
+            endTime = Math.max(endTime, selectedTime);
+        }
+        var timeSpan = endTime - startTime;
 
         var sliderLength = 600;
         var sliderStart = (640 - sliderLength) / 2;
@@ -504,8 +510,14 @@ var GraphGraphics = new Class({
         if (times.length < 2)
             return;
 
-        var startTime = Math.min(selectedTime, times[0]);
-        var timeSpan = Math.max(selectedTime, times[times.length - 1]) - startTime;
+        var startTime = times[0];
+        var endTime = times[times.length - 1];
+        if (selectedTime > 0)
+        {
+            startTime = Math.min(startTime, selectedTime);
+            endTime = Math.max(endTime, selectedTime);
+        }
+        var timeSpan = endTime - startTime;
 
         var sliderLength = 600;
         var sliderStart = (640 - sliderLength) / 2;

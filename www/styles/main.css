@@ -11,8 +11,8 @@ section {
     color: white;
     border: 2px solid #666666;
     background-color: #666666;
-    min-height: 64px;
-    min-width: 300px;
+/*    min-height: 64px;
+    min-width: 300px;*/
     padding-left: 8px;
     padding-right: 12px;
     padding-bottom: 8px;
@@ -24,7 +24,7 @@ section {
     
 input {
     margin-left: 4px;
-    min-width: 140px;;
+    min-width: 140px;
     }
 
 mark {
@@ -94,4 +94,25 @@ mark a {
 
 #word_submit {
     width: 50px;
+    font-family: "HeroRegular";
+    background-color: #CCCCCC;
+    margin-top: 10px; 
 }
+
+#word_search_form {
+    font-family: "HeroRegular";
+    color: white;
+    width: 300px;
+    border: 2px solid #666666;
+    background-color: #666666;
+    min-width: 308px;
+    padding-left: 8px;
+    padding-right: 10px;
+    padding-bottom: 8px;
+    margin-top: 8px;
+    margin-left: 60px;
+    border-radius: 12px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px; 
+}
+

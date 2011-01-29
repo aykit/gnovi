@@ -490,7 +490,7 @@ var GraphGraphics = new Class({
             hotspots.push({
                 time: times[i],
                 x: sliderStart + (times[i] - startTime) / timeSpan * (sliderLength - 20),
-                y: 460,
+                y: 480,
                 r: 5,
             });
         }
@@ -498,7 +498,7 @@ var GraphGraphics = new Class({
         hotspots.push({
             time: 0,
             x: sliderStart + sliderLength,
-            y: 460,
+            y: 480,
             r: 5,
         });
 
@@ -523,28 +523,27 @@ var GraphGraphics = new Class({
         var sliderStart = (640 - sliderLength) / 2;
 
         this.context.beginPath();
-        this.context.moveTo(sliderStart, 460);
-        this.context.lineTo(sliderStart + sliderLength - 20, 460);
+        this.context.moveTo(sliderStart, 480);
+        this.context.lineTo(sliderStart + sliderLength - 20, 480);
 
-        this.context.strokeStyle = "green";
-        this.context.lineWidth = 2;
+        this.context.strokeStyle = "#CCCCCC";
+        this.context.lineWidth = 3;
         this.context.stroke();
 
         this.context.beginPath();
         var indicatorPos = selectedTime ? sliderStart + (selectedTime - startTime) / timeSpan * (sliderLength - 20) :
             sliderStart + sliderLength;
-        this.context.moveTo(indicatorPos, 450);
-        this.context.lineTo(indicatorPos, 470);
+        this.context.moveTo(indicatorPos, 470);
+        this.context.lineTo(indicatorPos, 490);
 
-        this.context.strokeStyle = "green";
-        this.context.lineWidth = 3;
-        this.context.lineCap = "round";
+        this.context.strokeStyle = "black";
+        this.context.lineWidth = 2;
         this.context.stroke();
 
         for (var i = 0; i < times.length; i++)
         {
-            this.context.fillStyle = hoverTime == times[i] ? "red" : "black";
-            this._fillCircle(sliderStart + (times[i] - startTime) / timeSpan * (sliderLength - 20), 460, 5);
+            this.context.fillStyle = hoverTime == times[i] ? "red" : "#CCCCCC";
+            this._fillCircle(sliderStart + (times[i] - startTime) / timeSpan * (sliderLength - 20), 480, 5);
         }
 
         this.context.fillStyle = hoverTime == 0 ? "red" : "black";

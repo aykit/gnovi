@@ -537,6 +537,27 @@ var GraphGraphics = new Class({
 
         this.context.fillStyle = hoverTime == 0 ? "red" : "black";
         this._fillCircle(sliderStart + sliderLength, 460, 5);
+
+        if (hoverTime != -1)
+        {
+            var textPos = hoverTime ? sliderStart + (hoverTime - startTime) / timeSpan * (sliderLength - 20) :
+                sliderStart + sliderLength;
+
+            var date = hoverTime ? (new Date(hoverTime * 1000)).toLocaleString() : "Jetzt";
+            var textWidth = this.context.measureText(date).width;
+
+            textPos = Math.max(10 + textWidth / 2, textPos);
+            textPos = Math.min(630 - textWidth / 2, textPos);
+
+            this.context.textAlign = "center";
+
+            this.context.strokeStyle = "white";
+            this.context.lineWidth = 6;
+            this.context.strokeText(date, textPos, 450);
+
+            this.context.fillStyle = "black";
+            this.context.fillText(date, textPos, 450);
+        }
     },
 
     drawNode: function(node, posX, posY, isRoot, mouseOver, alpha)

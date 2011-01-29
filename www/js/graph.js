@@ -25,6 +25,13 @@ var Graph = new Class({
 
         window.onpopstate = this.onPopState.bind(this);
 
+        this.wordSearchForm = document.getElementById("word_search_form");
+        this.wordInputField = document.getElementById("word_input");
+        this.wordSubmitButton = document.getElementById("word_submit");
+        this.graphInfoElement = document.getElementById("graph_info");
+
+        this.wordSearchForm.onsubmit = this.onSearchWordSubmit.bind(this);
+
         this.setTimer("normalfps");
     },
 
@@ -65,6 +72,7 @@ var Graph = new Class({
     transmitDataSuccess: function(responseData)
     {
         this.notFound = false;
+        this.graphInfoElement.innerHTML = "";
 
         if (window.history.pushState)
         {
@@ -83,6 +91,7 @@ var Graph = new Class({
         if (error == "notfound")
         {
             this.notFound = true;
+            this.graphInfoElement.innerHTML = "not found";
             this.redrawScreen = true;
         }
         else
@@ -475,5 +484,12 @@ var Graph = new Class({
     {
         if (event.state == "graph")
             this.loadWordFromCurrentUrl();
+    },
+
+    onSearchWordSubmit: function(event)
+    {
+        this.loadData(this.wordInputField.value, false, true);
+        this.wordInputField.value = "";
+        return false;
     },
 });

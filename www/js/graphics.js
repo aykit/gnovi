@@ -136,7 +136,7 @@ var Graphics = new Class({
 
     drawDebugInfo: function(fps, drawCount)
     {
-        this.context.translate(this.context.canvas.width - 40, this.context.canvas.height - 50);
+        /*this.context.translate(this.context.canvas.width - 40, this.context.canvas.height - 50);
 
         this.context.shadowColor = "black";
         this.context.shadowBlur = 2;
@@ -151,7 +151,7 @@ var Graphics = new Class({
         this.context.fillText(txt, 0, 30);
 
         this.context.rotate(drawCount * 2 * Math.PI / 64);
-        this.context.strokeRect(-10, -10, 20, 20);
+        this.context.strokeRect(-10, -10, 20, 20);*/
     },
 
     drawLoadingIndicator: function(loadTime)

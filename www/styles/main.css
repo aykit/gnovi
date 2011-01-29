@@ -91,3 +91,7 @@ mark a {
     font-size: 14px;  
     color: #FFFFFF;
 }
+
+#word_submit {
+    width: 50px;
+}

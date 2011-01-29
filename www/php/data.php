@@ -429,7 +429,7 @@ class DataExchanger
             return;
 
         $changeTimes = $this->getChangeTimes($wordInfo["id"], $allUsers);
-        if (!$changeTimes)
+        if ($changeTimes === null)
             return;
 
         if (count($relations))

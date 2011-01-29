@@ -533,12 +533,14 @@ var GraphGraphics = new Class({
         this.context.beginPath();
         var indicatorPos = selectedTime ? sliderStart + (selectedTime - startTime) / timeSpan * (sliderLength - 20) :
             sliderStart + sliderLength;
-        this.context.moveTo(indicatorPos, 470);
-        this.context.lineTo(indicatorPos, 490);
+        this.context.lineCap = "round";
+        this.context.moveTo(indicatorPos, 468);
+        this.context.lineTo(indicatorPos, 492);
 
         this.context.strokeStyle = "black";
         this.context.lineWidth = 2;
         this.context.stroke();
+        this._fillCircle(indicatorPos, 480, 6)
 
         for (var i = 0; i < times.length; i++)
         {

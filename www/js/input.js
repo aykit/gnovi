@@ -123,4 +123,4 @@ var Input = new Class({
 
 window.addEventListener("load", function() {
     new Input(document.getElementById("game"));
-});
+}, false);

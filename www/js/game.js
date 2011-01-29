@@ -28,11 +28,11 @@ var Game = new Class({
         this.context.scale(this.scaling, this.scaling);
         this.graphics.init(this.context, this.getImage.bind(this));
 
-        document.addEventListener("keypress", this.onKeypress.bind(this));
-        document.addEventListener("keydown", this.onKeydown.bind(this));
-        this.canvas.addEventListener("click", this.onClick.bind(this));
-        this.canvas.addEventListener("mousemove", this.onMouseMove.bind(this));
-        window.addEventListener("beforeunload", this.onUnload.bind(this));
+        document.addEventListener("keypress", this.onKeypress.bind(this), false);
+        document.addEventListener("keydown", this.onKeydown.bind(this), false);
+        this.canvas.addEventListener("click", this.onClick.bind(this), false);
+        this.canvas.addEventListener("mousemove", this.onMouseMove.bind(this), false);
+        window.addEventListener("beforeunload", this.onUnload.bind(this), false);
 
         this.dataRequest = new Request.JSON({
             url: "/php/data.php",

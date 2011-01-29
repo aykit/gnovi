@@ -385,6 +385,7 @@ var InputGraphics = new Class({
         this.context.fillStyle = "#231F20";
         this.context.font = "16px HeroRegular";
         this.context.fillText("Empfindest du das Wort als negativ oder positiv?", 320, 170);
+        this.context.fillText("Drücke <- für positiv und -> für negativ.", 320, 190);
     },
 
     getWordRatingButtonPositions: function(word)
@@ -458,7 +459,7 @@ var GraphGraphics = new Class({
     drawBackground: function()
     {
         this._clearCanvas();
-
+        this.context.lineWidth ="0.5";
         this.context.strokeStyle = "#CCCCCC";
         this._strokeCircle(320, 230, 100);
         this._strokeCircle(320, 230, 150);

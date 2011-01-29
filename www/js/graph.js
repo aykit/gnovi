@@ -29,8 +29,10 @@ var Graph = new Class({
         this.wordInputField = document.getElementById("word_input");
         this.wordSubmitButton = document.getElementById("word_submit");
         this.graphInfoElement = document.getElementById("graph_info");
+        this.personalGrapLink = document.getElementById("personal_graph_link");
+        this.globalGrapLink = document.getElementById("global_graph_link");
 
-        this.wordSearchForm.onsubmit = this.onSearchWordSubmit.bind(this);
+        this.wordSearchForm.addEventListener("submit", this.onSearchWordSubmit.bind(this));
 
         this.setTimer("normalfps");
     },
@@ -91,8 +93,7 @@ var Graph = new Class({
         if (error == "notfound")
         {
             this.notFound = true;
-            this.graphInfoElement.innerHTML = "not found";
-            this.redrawScreen = true;
+            this.graphInfoElement.innerHTML = "Wort nicht gefunden.";
         }
         else
             this.parent(error);
@@ -338,67 +339,58 @@ var Graph = new Class({
     {
         this.parent();
 
-        if (this.notFound)
+        this.context.save();
+        this.graphics.drawBackground();
+        this.context.restore();
+
+        this.context.save();
+
+        var graphCenter = this.graphics.getGraphCenter();
+
+        for (var i = 0; i < this.connections.length; i++)
         {
-            this.context.save();
-            this.graphics.drawNotFoundScreen();
-            this.context.restore();
+            var connection = this.connections[i];
+
+            var visData1 = this.interpolatedNodesVisData[connection.node1.id];
+            var visData2 = this.interpolatedNodesVisData[connection.node2.id];
+
+            var posX1 = visData1.position.r * Math.cos(visData1.position.phi) + graphCenter.x;
+            var posY1 = visData1.position.r * Math.sin(visData1.position.phi) + graphCenter.y;
+
+            var posX2 = visData2.position.r * Math.cos(visData2.position.phi) + graphCenter.x;
+            var posY2 = visData2.position.r * Math.sin(visData2.position.phi) + graphCenter.y;
+
+            this.graphics.drawConnection(posX1, posY1, posX2, posY2, connection.alpha);
         }
-        else
+
+        for (var i = 0; i < this.nodesToDraw.length; i++)
         {
-            this.context.save();
-            this.graphics.drawBackground();
-            this.context.restore();
+            var node = this.nodesToDraw[i];
+            var visData = this.interpolatedNodesVisData[node.id];
 
-            this.context.save();
+            var r = visData.position.r;
+            var phi = visData.position.phi;
 
-            var graphCenter = this.graphics.getGraphCenter();
+            var posX = r * Math.cos(phi) + graphCenter.x;
+            var posY = r * Math.sin(phi) + graphCenter.y;
 
-            for (var i = 0; i < this.connections.length; i++)
+            var mouseOver = this.mouseOverNodeId == node.id;
+
+            if (mouseOver)
+                this.selectedNode = node;
+
+            if (visData.isRoot == 0)
+                this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
+            else if (visData.isRoot == 1)
+                this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha);
+            else
             {
-                var connection = this.connections[i];
-
-                var visData1 = this.interpolatedNodesVisData[connection.node1.id];
-                var visData2 = this.interpolatedNodesVisData[connection.node2.id];
-
-                var posX1 = visData1.position.r * Math.cos(visData1.position.phi) + graphCenter.x;
-                var posY1 = visData1.position.r * Math.sin(visData1.position.phi) + graphCenter.y;
-
-                var posX2 = visData2.position.r * Math.cos(visData2.position.phi) + graphCenter.x;
-                var posY2 = visData2.position.r * Math.sin(visData2.position.phi) + graphCenter.y;
-
-                this.graphics.drawConnection(posX1, posY1, posX2, posY2, connection.alpha);
+                this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha * (1 - visData.isRoot));
+                this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha * visData.isRoot);
             }
-
-            for (var i = 0; i < this.nodesToDraw.length; i++)
-            {
-                var node = this.nodesToDraw[i];
-                var visData = this.interpolatedNodesVisData[node.id];
-
-                var r = visData.position.r;
-                var phi = visData.position.phi;
-
-                var posX = r * Math.cos(phi) + graphCenter.x;
-                var posY = r * Math.sin(phi) + graphCenter.y;
-
-                var mouseOver = this.mouseOverNodeId == node.id;
-
-                if (mouseOver)
-                    this.selectedNode = node;
-
-                if (visData.isRoot == 0)
-                    this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
-                else if (visData.isRoot == 1)
-                    this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha);
-                else
-                {
-                    this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha * (1 - visData.isRoot));
-                    this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha * visData.isRoot);
-                }
-            }
-
-            this.context.restore();
         }
+
+        this.context.restore();
 
         if (this.loadingSomething())
         {
@@ -488,8 +480,9 @@ var Graph = new Class({
 
     onSearchWordSubmit: function(event)
     {
+        event.preventDefault();
+
         this.loadData(this.wordInputField.value, false, true);
         this.wordInputField.value = "";
-        return false;
     },
 });

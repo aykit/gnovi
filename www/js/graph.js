@@ -14,9 +14,9 @@ var Graph = new Class({
 
     addWordToBrowserHistory: false,
     redrawScreen: false,
-    graphUri: "",
     selectedNode: null,
     notFound: false,
+    rootWord: "",
 
     initialize: function(canvas, showAllUsers)
     {
@@ -33,11 +33,13 @@ var Graph = new Class({
         this.globalGrapLink = document.getElementById("global_graph_link");
 
         this.wordSearchForm.addEventListener("submit", this.onSearchWordSubmit.bind(this));
+        this.personalGrapLink.addEventListener("click", this.onPersonalGraphClick.bind(this));
+        this.globalGrapLink.addEventListener("click", this.onGlobalGraphClick.bind(this));
 
         this.setTimer("normalfps");
     },
 
-    loadWordFromCurrentUrl: function()
+    loadWordFromCurrentUri: function()
     {
         var uri = window.location.href;
 
@@ -49,8 +51,6 @@ var Graph = new Class({
         if (!uriInfo)
             return;
 
-        this.graphUri = uriInfo[1];
-
         if (uriInfo.length < 3)
             return;
 
@@ -61,7 +61,7 @@ var Graph = new Class({
 
     imageLoadingFinished: function()
     {
-        this.loadWordFromCurrentUrl();
+        this.loadWordFromCurrentUri();
     },
 
     loadData: function(rootWord, addWordToBrowserHistory, animate)
@@ -76,14 +76,18 @@ var Graph = new Class({
         this.notFound = false;
         this.graphInfoElement.innerHTML = "";
 
+        this.rootWord = responseData.root.word;
+
         if (window.history.pushState)
         {
+            var graphUri = this.showAllUsers ? this.globalGrapLink.href : this.personalGrapLink.href;
+
             if (this.addWordToBrowserHistory)
                 window.history.pushState("graph", "Graph - " + responseData.root.word,
-                    this.graphUri + "/" + encodeURIComponent(responseData.root.word));
+                    graphUri + "/" + encodeURIComponent(responseData.root.word));
             else
                 window.history.replaceState("graph", "Graph - " + responseData.root.word,
-                    this.graphUri + "/" + encodeURIComponent(responseData.root.word));
+                    graphUri + "/" + encodeURIComponent(responseData.root.word));
         }
         this.buildVisualizationData(responseData);
     },
@@ -475,7 +479,7 @@ var Graph = new Class({
     onPopState: function(event)
     {
         if (event.state == "graph")
-            this.loadWordFromCurrentUrl();
+            this.loadWordFromCurrentUri();
     },
 
     onSearchWordSubmit: function(event)
@@ -484,5 +488,27 @@ var Graph = new Class({
 
         this.loadData(this.wordInputField.value, false, true);
         this.wordInputField.value = "";
+    },
+
+    onPersonalGraphClick: function(event)
+    {
+        event.preventDefault();
+
+        if (!this.showAllUsers)
+            return;
+        this.showAllUsers = false;
+
+        this.loadData(this.rootWord, false, true);
+    },
+
+    onGlobalGraphClick: function(event)
+    {
+        event.preventDefault();
+
+        if (this.showAllUsers)
+            return;
+        this.showAllUsers = true;
+
+        this.loadData(this.rootWord, false, true);
     },
 });

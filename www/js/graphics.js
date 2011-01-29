@@ -106,12 +106,12 @@ var Graphics = new Class({
     _fillTextRect: function(wordList, x, y, width, spacing, lineHeight)
     {
         
-        var wordOffsetX = 0;
+        var wordOffsetX = 66;
         var wordOffsetY = 0;
 
         for (var i = 0; i < wordList.length; i++)
         {
-            var textWidth = this.context.measureText(wordList[i]).width;
+            var textWidth =  Math.max(this.context.measureText(wordList[i]).width + 30, 136);
 
             if (wordOffsetX != 0 && wordOffsetX + textWidth > width)
             {
@@ -120,13 +120,16 @@ var Graphics = new Class({
             }
             
             this.context.strokeStyle = "#7F7F7F";
-            this.context.fillStyle = "#231F20";
-            this._コード(320 - rectWidth / 2, 45, rectWidth, 44, 12);
-
-            this.context.fillText(wordList[i], x + wordOffsetX, y + wordOffsetY);
+            this.context.fillStyle = "#7F7F7F";
+            this._コード(x + wordOffsetX, y + wordOffsetY + 42, textWidth, 44, 12);
+            
+            this.context.fillStyle = "#FFFFFF";
+            this.context.fillText(wordList[i], x + wordOffsetX + textWidth/2, y + wordOffsetY + 70 );
 
             wordOffsetX += textWidth + spacing;
         }
+
+        return wordOffsetY;
     },
 
     _clearCanvas: function()
@@ -220,8 +223,9 @@ var InputGraphics = new Class({
 
         this.context.fillStyle = "black";
 
-        this.context.font = "20px HeroRegular";
-        this.context.fillText("click to start", 100, 20);
+        this.context.font = "25px HeroRegular";
+        this.context.textAlign = "center";
+        this.context.fillText("Klicken um zu starten", this.context.canvas.width/2, 37);
     },
 
     drawWordsFinishedScreen: function(initialWord, wordList, inputTime, fade, drawContinueNotice, wordsChecked)
@@ -235,32 +239,34 @@ var InputGraphics = new Class({
             
             this.context.strokeStyle = "#7F7F7F";
             this.context.fillStyle = "#231F20";
-            this._コード(320 - rectWidth / 2, 45, rectWidth, 44, 12);
-            
+            this._コード(this.context.canvas.width / 2 - rectWidth/2, 37, rectWidth, 44, 12);
             
             this.context.fillStyle = "#FFFFFF";
             this.context.textAlign = "center";
             
-            this.context.fillText(initialWord, 320, 72);
-            
-
+            this.context.fillText(initialWord, 320, 64);            
         }
 
         if (wordsChecked)
-        {
+        {        
+            var offsetY = this._fillTextRect(wordList, 40, 50, 600, 10, 50);
+
             this.context.fillStyle = "rgba(0, 0, 0, " + fade + ")";
+            this.context.strokeStyle = "rgba(0, 0, 0, " + fade + ")";
             this.context.textAlign = "center";
-            this.context.fillText(this._suffixNumber(wordList.length, " Wort", " Wörter") +
-                " eingegeben in " + inputTime + " Sekunden", 320, 30);
-            this.context.textAlign = "left";
-            this._fillTextRect(wordList, 40, 50, 300, 10, 25);
+            this.context.font = "25px HeroRegular";
+            this.context.beginPath();
+            this.context.moveTo(30, offsetY + 160);
+            this.context.lineTo(620, offsetY + 160);
+            this.context.stroke();
+            this.context.fillText(this._suffixNumber(wordList.length, " Wort", " Wörter") + 
+                " eingegeben in " + inputTime + " Sekunden", 320, offsetY + 200);
+            this.context.font = "20px HeroRegular";
+            this.context.fillText("Mit Enter fortfahren", 320, offsetY + 234);
         }
         
         if (!drawContinueNotice)
             return;
-
-        this.context.font = "14px HeroRegular";
-        this.context.fillText("press Enter to continue", 20, 300);
     },
 
     drawLocationWordsFinishedScreen: function(location, wordList, inputTime, fade, drawContinueNotice, wordsChecked)
@@ -274,11 +280,11 @@ var InputGraphics = new Class({
 
         this.context.fillStyle = "black";
         this.context.font = "20px HeroRegular";
+        this.context.textAlign = "center";
+        this.context.fillText("Gib deinen Ort ein:", this.context.canvas.width/2, 37);
 
-        this.context.fillText("Enter your location:", 20, 20);
-
-        this.context.font = "15px HeroRegular";
-        this.context.fillText(inputText, 30, 50);
+        this.context.font = "25px HeroRegular";
+        this.context.fillText(inputText, this.context.canvas.width/2, 85);
     },
 
     drawWordCollectingScreen: function(headWord, timeLeft, totalTime, currentInputText, inputList, inputListAnimation)
@@ -290,11 +296,11 @@ var InputGraphics = new Class({
 
         this.context.strokeStyle = "#7F7F7F";
         this.context.fillStyle = "#231F20";
-        this._コード(320 - rectWidth / 2, 85, rectWidth, 44, 12);
+        this._コード(this.context.canvas.width / 2 - rectWidth/2, 85, rectWidth, 44, 12);
 
         this.context.fillStyle = "white";
         this.context.textAlign = "center";
-        this.context.fillText(headWord, 320, 115);
+        this.context.fillText(headWord, this.context.canvas.width / 2, 115);
 
             /* DRAW COUNTERTEXT
             this.context.font = "20px HeroRegular"; */
@@ -377,7 +383,7 @@ var InputGraphics = new Class({
         this.context.fillText(word, 320, 115);
     
         this.context.fillStyle = "#231F20";
-        this.context.font = "15px HeroRegular";
+        this.context.font = "16px HeroRegular";
         this.context.fillText("Empfindest du das Wort als negativ oder positiv?", 320, 170);
     },
 
@@ -419,13 +425,13 @@ var InputGraphics = new Class({
         this.context.strokeStyle = "rgba(0, 0, 0," + alpha + ")";
 
         this.context.save();
-        this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2);
+        this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2 + 40);
         this.context.scale(scale1, scale1);
         this._strokeCircle(0, 0, 20);
         this.context.restore();
 
         this.context.save();
-        this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2);
+        this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2 + 40);
         this.context.scale(scale2, scale2);
         this._strokeCircle(0, 0, 20);
         this.context.restore();
@@ -439,7 +445,8 @@ var InputGraphics = new Class({
         this.context.strokeText("loading . . .", 0, 200)
 
         this.context.fillStyle = "rgba(0, 0, 0," + alpha + ")";
-        this.context.fillText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 30)
+        this.context.fillText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 20)
+
     },
 
     getWordCollectingAnimationTime: function() { return 0.2; },
@@ -480,8 +487,8 @@ var GraphGraphics = new Class({
         this.context.moveTo(x1, y1);
         this.context.lineTo(x2, y2);
 
-        this.context.strokeStyle = "rgba(0, 0, 0, " + alpha + ")";
-        this.context.lineWidth = 1.5;
+        this.context.strokeStyle = "rgba(204, 204, 204, " + alpha + ")";
+        this.context.lineWidth = 2;
         this.context.stroke();
     },
 

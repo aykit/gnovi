@@ -117,14 +117,16 @@ var StateEngineWordCollecting = new Class({
 
     keypressEvent: function(event)
     {
-        if (event.keyCode == 8)
+        var key = event.charCode || event.keyCode;
+
+        if (key == 8)
         {
             this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
             this.game.draw();
             return;
         }
 
-        if (event.keyCode == 13 && this.currentInputText != "")
+        if (key == 13 && this.currentInputText != "")
         {
             if (this.currentInputText != "." && this.currentInputText != "..")
             {
@@ -137,10 +139,10 @@ var StateEngineWordCollecting = new Class({
             return;
         }
 
-        if (event.keyCode < 65)
+        if (key < 65)
             return;
 
-        this.currentInputText = this.currentInputText + String.fromCharCode(event.charCode);
+        this.currentInputText = this.currentInputText + String.fromCharCode(key);
         this.game.draw();
     },
 
@@ -261,14 +263,16 @@ var StateEngineInputLocation = new Class({
 
     keypressEvent: function(event)
     {
-        if (event.keyCode == 8)
+        var key = event.charCode || event.keyCode;
+
+        if (key == 8)
         {
             this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
             this.game.draw();
             return;
         }
 
-        if (event.keyCode == 13)
+        if (key == 13)
         {
             var text = this.currentInputText.trim();
             if (text == "." || text == "..")
@@ -286,10 +290,10 @@ var StateEngineInputLocation = new Class({
             return;
         }
 
-        if (event.keyCode < 32)
+        if (key < 32)
             return;
 
-        this.currentInputText = this.currentInputText + String.fromCharCode(event.charCode);
+        this.currentInputText = this.currentInputText + String.fromCharCode(key);
         this.game.draw();
     },
 });

@@ -432,6 +432,15 @@ var GraphGraphics = new Class({
         this._clearCanvas();
     },
 
+    drawNotFoundScreen: function()
+    {
+        this._clearCanvas();
+
+        this.context.font = "20px HeroRegular";
+        this.context.fillStyle = "black";
+        this.context.fillText("Wort nicht gefunden.", 20, 20);
+    },
+
     drawNode: function(node, posX, posY, isRoot, mouseOver, alpha)
     {
         this.context.textBaseline = "middle";

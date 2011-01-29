@@ -89,7 +89,7 @@ class DataExchanger
         $row = $result->fetch_assoc();
         if (!$row)
         {
-            $this->setResponseError("database", "Could not find word.");
+            $this->setResponseError("notfound", "Could not find word.");
             return null;
         }
 

@@ -446,7 +446,7 @@ var InputGraphics = new Class({
         this.context.strokeText("loading . . .", 0, 200)
 
         this.context.fillStyle = "rgba(0, 0, 0," + alpha + ")";
-        this.context.fillText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 20)
+        this.context.fillText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 50)
 
     },
 
@@ -490,7 +490,7 @@ var GraphGraphics = new Class({
             hotspots.push({
                 time: times[i],
                 x: sliderStart + (times[i] - startTime) / timeSpan * (sliderLength - 20),
-                y: 460,
+                y: 480,
                 r: 5,
             });
         }
@@ -498,7 +498,7 @@ var GraphGraphics = new Class({
         hotspots.push({
             time: 0,
             x: sliderStart + sliderLength,
-            y: 460,
+            y: 480,
             r: 5,
         });
 
@@ -523,32 +523,33 @@ var GraphGraphics = new Class({
         var sliderStart = (640 - sliderLength) / 2;
 
         this.context.beginPath();
-        this.context.moveTo(sliderStart, 460);
-        this.context.lineTo(sliderStart + sliderLength - 20, 460);
+        this.context.moveTo(sliderStart, 480);
+        this.context.lineTo(sliderStart + sliderLength - 20, 480);
 
-        this.context.strokeStyle = "green";
-        this.context.lineWidth = 2;
+        this.context.strokeStyle = "#CCCCCC";
+        this.context.lineWidth = 3;
         this.context.stroke();
 
         this.context.beginPath();
         var indicatorPos = selectedTime ? sliderStart + (selectedTime - startTime) / timeSpan * (sliderLength - 20) :
             sliderStart + sliderLength;
-        this.context.moveTo(indicatorPos, 450);
-        this.context.lineTo(indicatorPos, 470);
-
-        this.context.strokeStyle = "green";
-        this.context.lineWidth = 3;
         this.context.lineCap = "round";
+        this.context.moveTo(indicatorPos, 468);
+        this.context.lineTo(indicatorPos, 492);
+
+        this.context.strokeStyle = "black";
+        this.context.lineWidth = 2;
         this.context.stroke();
+        this._fillCircle(indicatorPos, 480, 6)
 
         for (var i = 0; i < times.length; i++)
         {
-            this.context.fillStyle = hoverTime == times[i] ? "red" : "black";
-            this._fillCircle(sliderStart + (times[i] - startTime) / timeSpan * (sliderLength - 20), 460, 5);
+            this.context.fillStyle = hoverTime == times[i] ? "red" : "#CCCCCC";
+            this._fillCircle(sliderStart + (times[i] - startTime) / timeSpan * (sliderLength - 20), 480, 5);
         }
 
         this.context.fillStyle = hoverTime == 0 ? "red" : "black";
-        this._fillCircle(sliderStart + sliderLength, 460, 5);
+        this._fillCircle(sliderStart + sliderLength, 480, 5);
 
         if (hoverTime != -1)
         {
@@ -565,10 +566,10 @@ var GraphGraphics = new Class({
 
             this.context.strokeStyle = "white";
             this.context.lineWidth = 6;
-            this.context.strokeText(date, textPos, 450);
+            this.context.strokeText(date, textPos, 470);
 
             this.context.fillStyle = "black";
-            this.context.fillText(date, textPos, 450);
+            this.context.fillText(date, textPos, 470);
         }
     },
 

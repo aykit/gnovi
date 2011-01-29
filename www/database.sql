@@ -69,7 +69,7 @@ CREATE TABLE `RunWords` (
   `WordID` int(11) NOT NULL,
   `DistanceFromInitialWord` int(11) NOT NULL,
   `DistanceFromLocation` int(11) NOT NULL,
-  `Connotation` enum('+','-') COLLATE utf8_bin NOT NULL,
+  `Connotation` int(11) NOT NULL,
   UNIQUE KEY `RunID` (`RunID`,`WordID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 

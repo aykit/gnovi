@@ -307,11 +307,11 @@ class DataExchanger
         $intWordId = (int)$wordId;
         $intDistanceFromInitialWord = (int)$distanceFromInitialWord;
         $intDistanceFromLocation = (int)$distanceFromLocation;
-        $escConnotation = $this->db->escape_string((string)$connotation);
+        $intConnotation = $connotation == "+" ? 1 : -1;
 
         $this->db->query("INSERT INTO `RunWords` " . 
             "(`RunID`, `WordID`, `DistanceFromInitialWord`, `DistanceFromLocation`, `Connotation`) VALUES " .
-            "('$intRunId', '$intWordId', '$intDistanceFromInitialWord', '$intDistanceFromLocation', '$escConnotation')");
+            "('$intRunId', '$intWordId', '$intDistanceFromInitialWord', '$intDistanceFromLocation', '$intConnotation')");
 
         return $this->checkForDbError();
     }

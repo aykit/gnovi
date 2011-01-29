@@ -104,7 +104,8 @@ var Input = new Class({
     onKeypress: function(event)
     {
         this.currentStateEngine.keypressEvent(event);
-        return event.keyCode != 8 && event.keyCode != 32;
+        if (event.keyCode == 8 || event.keyCode == 32)
+            event.preventDefault();
     },
 
     onKeydown: function(event)

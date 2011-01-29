@@ -591,6 +591,9 @@ var GraphGraphics = new Class({
             this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
             this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 25);
         }
+
+        //this.context.fillStyle = "black";
+        //this.context.fillText(node.connotation, Math.round(posX), Math.round(posY));
     },
 
     drawConnection: function(x1, y1, x2, y2, alpha)

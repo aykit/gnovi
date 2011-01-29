@@ -82,7 +82,8 @@ class DataExchanger
 
         $escWord = $this->db->escape_string($word);
 
-        $result = $this->db->query("SELECT `ID`, `Word` FROM `Words` WHERE `Word` = '$escWord'");
+        $result = $this->db->query("SELECT `ID`, AVG(`Connotation`) AS `AverageConnotation`, `Word` " . 
+            "FROM `Words` INNER JOIN `RunWords` ON `ID` = `WordID` WHERE `Word` = '$escWord' GROUP BY `ID`");
         if (!$this->checkForDbError())
             return null;
 
@@ -93,7 +94,7 @@ class DataExchanger
             return null;
         }
 
-        return array("id" => (int)$row["ID"], "word" => $row["Word"]);
+        return array("id" => (int)$row["ID"], "word" => $row["Word"], "connotation" => (float)$row["AverageConnotation"]);
     }
 
     protected function checkWord($word)
@@ -397,8 +398,10 @@ class DataExchanger
         if ($intUserId > 0)
              $filter .= " AND `UserID` = '$intUserId'";
 
-        $result = $this->db->query("SELECT `ToWordID`, SUM(`Strength`) AS `TotalStrength`, `Word` " .
-            "FROM `Relations` INNER JOIN `Words` ON `ToWordID` = `Words`.`ID` " . 
+        $result = $this->db->query("SELECT `ToWordID`, SUM(`Strength`) AS `TotalStrength`, " .
+            "`Word`, AVG(`Connotation`) AS `AverageConnotation` FROM `Relations` " . 
+            "INNER JOIN `Words` ON `ToWordID` = `Words`.`ID` " . 
+            "INNER JOIN `RunWords` ON `ToWordID` = `RunWords`.`WordID` " . 
             "WHERE $filter GROUP BY `FromWordID`, `ToWordID` HAVING `TotalStrength` >= '$floatMinStrength'" .
             "ORDER BY `TotalStrength` DESC LIMIT $intMaxEntries");
 
@@ -412,6 +415,7 @@ class DataExchanger
                 "id" => $row["ToWordID"],
                 "strength" => $row["TotalStrength"],
                 "word" => $row["Word"],
+                "connotation" => (float)$row["AverageConnotation"],
             );
         }
 

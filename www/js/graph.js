@@ -34,9 +34,9 @@ var Graph = new Class({
         this.personalGrapLink = document.getElementById("personal_graph_link");
         this.globalGrapLink = document.getElementById("global_graph_link");
 
-        this.wordSearchForm.addEventListener("submit", this.onSearchWordSubmit.bind(this));
-        this.personalGrapLink.addEventListener("click", this.onPersonalGraphClick.bind(this));
-        this.globalGrapLink.addEventListener("click", this.onGlobalGraphClick.bind(this));
+        this.wordSearchForm.addEventListener("submit", this.onSearchWordSubmit.bind(this), false);
+        this.personalGrapLink.addEventListener("click", this.onPersonalGraphClick.bind(this), false);
+        this.globalGrapLink.addEventListener("click", this.onGlobalGraphClick.bind(this), false);
 
         this.setTimer("normalfps");
     },
@@ -353,8 +353,6 @@ var Graph = new Class({
 
     draw: function()
     {
-        this.parent();
-
         this.context.save();
         this.graphics.drawBackground();
         this.context.restore();
@@ -419,9 +417,7 @@ var Graph = new Class({
             this.context.restore();
         }
 
-        this.context.save();
-        this.graphics.drawDebugInfo(1 / this.delta, this.drawCount);
-        this.context.restore();
+        this.drawDebugInfo();
     },
 
     onTimer: function()

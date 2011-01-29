@@ -28,11 +28,11 @@ var Game = new Class({
         this.context.scale(this.scaling, this.scaling);
         this.graphics.init(this.context, this.getImage.bind(this));
 
-        document.addEvent("keypress", this.onKeypress.bind(this));
-        document.addEvent("keydown", this.onKeydown.bind(this));
-        this.canvas.addEvent("click", this.onClick.bind(this));
-        this.canvas.addEvent("mousemove", this.onMouseMove.bind(this));
-        window.addEvent("beforeunload", this.onUnload.bind(this));
+        document.addEventListener("keypress", this.onKeypress.bind(this));
+        document.addEventListener("keydown", this.onKeydown.bind(this));
+        this.canvas.addEventListener("click", this.onClick.bind(this));
+        this.canvas.addEventListener("mousemove", this.onMouseMove.bind(this));
+        window.addEventListener("beforeunload", this.onUnload.bind(this));
 
         this.dataRequest = new Request.JSON({
             url: "/php/data.php",
@@ -208,10 +208,10 @@ var Game = new Class({
             this.loadingSomethingTime = 0;
     },
 
-    onMouseMove: function(e)
+    onMouseMove: function(event)
     {
-        this.mouseX = (e.event.pageX - this.clientX) / this.scaling;
-        this.mouseY = (e.event.pageY - this.clientY) / this.scaling;
+        this.mouseX = (event.pageX - this.clientX) / this.scaling;
+        this.mouseY = (event.pageY - this.clientY) / this.scaling;
     },
 
     onKeypress: function(event) {},

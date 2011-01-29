@@ -1,3 +1,3 @@
-window.addEvent("load", function() {
+window.addEventListener("load", function() {
     new Graph(document.getElementById("graph"), false);
 });

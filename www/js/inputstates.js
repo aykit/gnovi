@@ -117,14 +117,14 @@ var StateEngineWordCollecting = new Class({
 
     keypressEvent: function(event)
     {
-        if (event.event.keyCode == 8)
+        if (event.keyCode == 8)
         {
             this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
             this.game.draw();
             return;
         }
 
-        if (event.event.keyCode == 13 && this.currentInputText != "")
+        if (event.keyCode == 13 && this.currentInputText != "")
         {
             if (this.currentInputText != "." && this.currentInputText != "..")
             {
@@ -137,10 +137,10 @@ var StateEngineWordCollecting = new Class({
             return;
         }
 
-        if (event.event.keyCode < 65)
+        if (event.keyCode < 65)
             return;
 
-        this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
+        this.currentInputText = this.currentInputText + String.fromCharCode(event.charCode);
         this.game.draw();
     },
 
@@ -261,14 +261,14 @@ var StateEngineInputLocation = new Class({
 
     keypressEvent: function(event)
     {
-        if (event.event.keyCode == 8)
+        if (event.keyCode == 8)
         {
             this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
             this.game.draw();
             return;
         }
 
-        if (event.event.keyCode == 13)
+        if (event.keyCode == 13)
         {
             var text = this.currentInputText.trim();
             if (text == "." || text == "..")
@@ -286,10 +286,10 @@ var StateEngineInputLocation = new Class({
             return;
         }
 
-        if (event.event.keyCode < 32)
+        if (event.keyCode < 32)
             return;
 
-        this.currentInputText = this.currentInputText + String.fromCharCode(event.event.charCode);
+        this.currentInputText = this.currentInputText + String.fromCharCode(event.charCode);
         this.game.draw();
     },
 });
@@ -433,7 +433,7 @@ var StateEngineWordRating = new Class({
 
     keydownEvent: function(event)
     {
-        switch (event.event.keyCode)
+        switch (event.keyCode)
         {
         case 37:
             this.setConnotation("+");
@@ -478,7 +478,7 @@ var StateEngineFinished = new Class({
     continueEvent: function()
     {
         if (this.dataTransmitted)
-            window.location = document.getElementById("graph_link").href + "/" +
+            window.location = document.getElementById("personal_graph_link").href + "/" +
             encodeURIComponent(this.game.data.initialWord);
     },
 });

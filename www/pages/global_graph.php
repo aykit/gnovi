@@ -9,10 +9,10 @@ class GraphPage extends Page
         $this->requireLogin($_SERVER["REQUEST_URI"]);
 
         $this->drawHeader("Wir",
-            array("/js/mootools.js", "/js/game.js", "/js/graph.js", "/js/graphics.js"), 
+            array("/js/mootools.js", "/js/game.js", "/js/graph.js", "/js/graphics.js", "/js/global_graph.js"), 
             array("/styles/main.css"));
 
-        print('    <canvas id="graph" width="640" height="480"></canvas>' . "\n");
+        include "../html/graph.php";
 
         $this->drawFooter();
     }

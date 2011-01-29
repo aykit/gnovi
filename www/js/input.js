@@ -16,7 +16,7 @@ var StateEngine = new Class({
 
     keypressEvent: function(event)
     {
-        if (event.event.keyCode == 13)
+        if (event.keyCode == 13)
             this.continueEvent();
     },
 
@@ -104,7 +104,7 @@ var Input = new Class({
     onKeypress: function(event)
     {
         this.currentStateEngine.keypressEvent(event);
-        return event.event.keyCode != 8 && event.event.keyCode != 32;
+        return event.keyCode != 8 && event.keyCode != 32;
     },
 
     onKeydown: function(event)
@@ -124,6 +124,6 @@ var Input = new Class({
     },
 });
 
-window.addEvent("load", function() {
+window.addEventListener("load", function() {
     new Input(document.getElementById("game"));
 });

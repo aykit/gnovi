@@ -353,8 +353,6 @@ var Graph = new Class({
 
     draw: function()
     {
-        this.parent();
-
         this.context.save();
         this.graphics.drawBackground();
         this.context.restore();
@@ -419,9 +417,7 @@ var Graph = new Class({
             this.context.restore();
         }
 
-        this.context.save();
-        this.graphics.drawDebugInfo(1 / this.delta, this.drawCount);
-        this.context.restore();
+        this.drawDebugInfo();
     },
 
     onTimer: function()

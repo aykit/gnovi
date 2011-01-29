@@ -76,9 +76,15 @@ var Game = new Class({
         return this.images[name];
     },
 
-    draw: function()
+    draw: function() {},
+
+    drawDebugInfo: function()
     {
-        this.drawCount++;
+        /*this.drawCount++;
+
+        this.context.save();
+        this.graphics.drawDebugInfo(1 / this.delta, this.drawCount);
+        this.context.restore();*/
     },
 
     setTimer: function(interval)

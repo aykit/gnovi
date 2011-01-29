@@ -12,7 +12,7 @@ class GraphPage extends Page
             array("/js/mootools.js", "/js/game.js", "/js/graph.js", "/js/graphics.js", "/js/global_graph.js"), 
             array("/styles/main.css"));
 
-        print('    <canvas id="graph" width="640" height="480"></canvas>' . "\n");
+        include "../html/graph.php";
 
         $this->drawFooter();
     }

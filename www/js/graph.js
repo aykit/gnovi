@@ -17,6 +17,7 @@ var Graph = new Class({
     selectedNode: null,
     notFound: false,
     rootWord: "",
+    timeSliderTimestamp: 0,
 
     initialize: function(canvas, showAllUsers)
     {
@@ -44,15 +45,17 @@ var Graph = new Class({
         var uri = window.location.href;
 
         var uriInfo =
+            //uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]+)\/([^\/]+)\/([^\/]+)$/) ||
             uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]+)\/([^\/]+)$/) ||
-            uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]+)$/) ||
-            uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)$/);
+            uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]+)$/);
 
-        if (!uriInfo)
+        if (!uriInfo || uriInfo.length < 3)
             return;
 
-        if (uriInfo.length < 3)
-            return;
+        this.timeSliderTimestamp = 0;
+
+        if (uriInfo.length >= 3)
+            this.timeSliderTimestamp += parseInt(uriInfo[3]);
 
         var wordRequested = decodeURIComponent(uriInfo[2]);
 
@@ -68,7 +71,8 @@ var Graph = new Class({
     {
         this.showInterpolation = animate;
         this.addWordToBrowserHistory = addWordToBrowserHistory;
-        this.transmitData("cmd=getrelations&word=" + encodeURIComponent(rootWord) + "&all=" + (this.showAllUsers ? 1 : 0));
+        this.transmitData("cmd=getrelations&word=" + encodeURIComponent(rootWord) +
+            "&all=" + (this.showAllUsers ? 1 : 0) + "&time=" + this.timeSliderTimestamp);
     },
 
     transmitDataSuccess: function(responseData)
@@ -81,13 +85,14 @@ var Graph = new Class({
         if (window.history.pushState)
         {
             var graphUri = this.showAllUsers ? this.globalGrapLink.href : this.personalGrapLink.href;
+            var timePostfix = this.timeSliderTimestamp != 0 ? "/" + this.timeSliderTimestamp : "";
 
             if (this.addWordToBrowserHistory)
                 window.history.pushState("graph", "Graph - " + responseData.root.word,
-                    graphUri + "/" + encodeURIComponent(responseData.root.word));
+                    graphUri + "/" + encodeURIComponent(responseData.root.word) + timePostfix);
             else
                 window.history.replaceState("graph", "Graph - " + responseData.root.word,
-                    graphUri + "/" + encodeURIComponent(responseData.root.word));
+                    graphUri + "/" + encodeURIComponent(responseData.root.word) + timePostfix);
         }
         this.buildVisualizationData(responseData);
     },

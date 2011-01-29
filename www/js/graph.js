@@ -101,7 +101,7 @@ var Graph = new Class({
         }
 
         this.buildVisualizationData(responseData);
-        this.timeSliderHotspots = this.graphics.getTimeSliderHotspots(this.currentData.changeTimes);
+        this.timeSliderHotspots = this.graphics.getTimeSliderHotspots(this.currentData.changeTimes, this.timeSliderTimestamp);
     },
 
     transmitDataFailure: function(error)

@@ -465,15 +465,15 @@ var GraphGraphics = new Class({
         this._strokeCircle(320, 230, 200);
     },
 
-    getTimeSliderHotspots: function(times)
+    getTimeSliderHotspots: function(times, selectedTime)
     {
         if (times.length < 2)
             return [];
 
         var hotspots = [];
 
-        var startTime = times[0];
-        var timeSpan = times[times.length - 1] - startTime;
+        var startTime = Math.min(selectedTime, times[0]);
+        var timeSpan = Math.max(selectedTime, times[times.length - 1]) - startTime;
 
         var sliderLength = 600;
         var sliderStart = (640 - sliderLength) / 2;
@@ -503,8 +503,8 @@ var GraphGraphics = new Class({
         if (times.length < 2)
             return;
 
-        var startTime = times[0];
-        var timeSpan = times[times.length - 1] - startTime;
+        var startTime = Math.min(selectedTime, times[0]);
+        var timeSpan = Math.max(selectedTime, times[times.length - 1]) - startTime;
 
         var sliderLength = 600;
         var sliderStart = (640 - sliderLength) / 2;

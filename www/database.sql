@@ -1,7 +1,7 @@
 GRANT USAGE ON *.* TO 'gnovi'@'localhost' IDENTIFIED BY PASSWORD '*F3D2951C35D45EC6069AA36B464AB698354F999A'
-GRANT SELECT ON `gnovi`.`Users` TO 'gnovi'@'localhost'
 GRANT SELECT ON `gnovi`.`Wordcheck` TO 'gnovi'@'localhost'
 GRANT SELECT ON `gnovi`.`InitialWords` TO 'gnovi'@'localhost'
+GRANT SELECT, INSERT ON `gnovi`.`Users` TO 'gnovi'@'localhost'
 GRANT SELECT, INSERT ON `gnovi`.`Runs` TO 'gnovi'@'localhost'
 GRANT SELECT, INSERT ON `gnovi`.`RunWords` TO 'gnovi'@'localhost'
 GRANT SELECT, INSERT, UPDATE (Word) ON `gnovi`.`Words` TO 'gnovi'@'localhost'

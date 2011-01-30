@@ -83,7 +83,7 @@ class DataExchanger
         $escWord = $this->db->escape_string($word);
 
         $result = $this->db->query("SELECT `ID`, AVG(`Connotation`) AS `AverageConnotation`, `Word` " . 
-            "FROM `Words` INNER JOIN `RunWords` ON `ID` = `WordID` WHERE `Word` = '$escWord' GROUP BY `ID`");
+            "FROM `Words` LEFT JOIN `RunWords` ON `ID` = `WordID` WHERE `Word` = '$escWord' GROUP BY `ID`");
         if (!$this->checkForDbError())
             return null;
 
@@ -401,7 +401,7 @@ class DataExchanger
         $result = $this->db->query("SELECT `ToWordID`, SUM(`Strength`) AS `TotalStrength`, " .
             "`Word`, AVG(`Connotation`) AS `AverageConnotation` FROM `Relations` " . 
             "INNER JOIN `Words` ON `ToWordID` = `Words`.`ID` " . 
-            "INNER JOIN `RunWords` ON `ToWordID` = `RunWords`.`WordID` " . 
+            "LEFT JOIN `RunWords` ON `ToWordID` = `RunWords`.`WordID` " . 
             "WHERE $filter GROUP BY `FromWordID`, `ToWordID` HAVING `TotalStrength` >= '$floatMinStrength'" .
             "ORDER BY `TotalStrength` DESC LIMIT $intMaxEntries");
 

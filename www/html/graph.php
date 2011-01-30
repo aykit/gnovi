@@ -2,5 +2,5 @@
         <input id="word_input" type="text">
         <input id="word_submit" type="submit" value="Suchen">
     </form>
-    <p id="graph_info"></p>
+    <div id="graph_info"></div>
     <canvas id="graph" width="640" height="540"></canvas>

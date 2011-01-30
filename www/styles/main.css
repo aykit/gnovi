@@ -102,6 +102,7 @@ mark a {
 #word_search_form {
     font-family: "HeroRegular";
     color: white;
+    float: left;
     width: 300px;
     border: 2px solid #666666;
     background-color: #666666;
@@ -110,9 +111,30 @@ mark a {
     padding-right: 10px;
     padding-bottom: 8px;
     margin-top: 8px;
-    margin-left: 60px;
     border-radius: 12px;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px; 
 }
 
+#graph_info_error {
+    font-family: "HeroRegular";
+    float: left;
+    line-height: 115%;
+    margin-top: 8px;
+    margin-left: 3px;
+    background-color: #000000;
+    font-size: 18px;  
+    color: #FFFFFF;  
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    padding: 9px 15px 15px 9px;  
+    border: 3px solid #FFFF33;
+}
+
+#graph {
+    display: block;
+    position: absolute;
+    margin-top: 70px;
+    margin-left: 80px;
+}

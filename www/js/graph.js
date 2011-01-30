@@ -111,7 +111,7 @@ var Graph = new Class({
         if (error == "notfound")
         {
             this.notFound = true;
-            this.graphInfoElement.innerHTML = "Wort nicht gefunden.";
+            this.graphInfoElement.innerHTML = "<span id='graph_info_error'>Wort nicht gefunden.</span>";
         }
         else
             this.parent(error);

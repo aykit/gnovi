@@ -183,14 +183,14 @@ var Graphics = new Class({
         this.context.strokeStyle = "rgba(0, 0, 0," + alpha + ")";
 
         this.context.save();
-        this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2);
+        this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2 - 20);
         this.context.rotate(loadTime * 2 * Math.PI / 4);
         this.context.scale(scale1, scale1);
         this.context.strokeRect(-10, -10, 20, 20);
         this.context.restore();
 
         this.context.save();
-        this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2);
+        this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2 - 20);
         this.context.rotate(- loadTime * 2 * Math.PI / 4);
         this.context.scale(scale2, scale2);
         this.context.strokeRect(-10, -10, 20, 20);

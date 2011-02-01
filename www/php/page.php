@@ -1,5 +1,5 @@
 <?php
-sleep = 2;
+
 error_reporting(E_ALL);
 
 require_once "page_urls.php";

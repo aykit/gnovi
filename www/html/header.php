@@ -15,10 +15,10 @@
   <link rel="icon" href="/images/gnovi_klein.png">
   </head>
   <body>
-    <nav id="mainnav">
+    <nav>
       <ul id="ulfront">
         <li>
-          <ul>
+          <ul id="nav">
             <li>
               <a href="<?=htmlspecialchars(PageUrls::START)?>">
                 <img src="/images/gnovi_klein.png" alt="gnovi_klein" width="35" height="38">

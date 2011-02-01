@@ -14,5 +14,10 @@ RewriteRule ^ausloggen$ pages/logout.php
 RewriteRule ^registrieren$ pages/register.php
 RewriteRule ^profil$ pages/profile.php
 RewriteRule ^anlauf$ pages/input.php
+RewriteRule ^ueber$ pages/ueber.php
 RewriteRule ^ich(/.*)?$ pages/personal_graph.php
 RewriteRule ^wir(/.*)?$ pages/global_graph.php
+
+#giving the blog a new home
+RewriteCond %{QUERY_STRING} ^p=([0-9]*)$
+RewriteRule ^(.*)$ http://blog.gnovi.org/

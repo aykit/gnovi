@@ -15,10 +15,10 @@
   <link rel="icon" href="/images/gnovi_klein.png">
   </head>
   <body>
-    <nav>
+    <nav id="mainnav">
       <ul id="ulfront">
         <li>
-          <ul id="nav">
+          <ul>
             <li>
               <a href="<?=htmlspecialchars(PageUrls::START)?>">
                 <img src="/images/gnovi_klein.png" alt="gnovi_klein" width="35" height="38">
@@ -28,8 +28,8 @@
             <li><a href="<?=htmlspecialchars(PageUrls::INPUT)?>">Anlauf</a></li>
             <li><a id="personal_graph_link" href="<?=htmlspecialchars(PageUrls::PERSONAL_GRAPH)?>">Ich</a></li>
             <li><a id="global_graph_link" href="<?=htmlspecialchars(PageUrls::GLOBAL_GRAPH)?>">Wir</a></li>
-            <li>Hilfe</li>
-            <li>Über gnovi</li>
+            <li><a href="<?=htmlspecialchars(PageUrls::UEBER)?>">Über gnovi</a></li>
+            <li><a id="global_graph_link" href="http://blog.gnovi.org">Blog</a></li>
 <?php if ($loggedin) { ?>
             <li>eingeloggt als <?=htmlspecialchars($username)?> | <a href="/ausloggen">X</a></li>
 <?php } else { ?>

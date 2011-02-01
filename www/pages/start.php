@@ -8,7 +8,7 @@ class StartPage extends Page
     {
         $this->startSession();
 
-        $this->drawHeader("Hallo", array(), array());
+        $this->drawHeader("Hallo", array(), array("/styles/main.css"));
 
         $username = $this->getUsername();
         $email = $this->getEmail();

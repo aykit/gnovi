@@ -1,13 +1,19 @@
     <nav id="ueber_header">
       <ul>
         <li>
-          test
+          Anleitung
         </li>
         <li>
-          test
+          Theoretisch
         </li>
         <li>
-          test
+          Technisch
+        </li>
+        <li>
+          Links
+        </li>
+        <li>
+          Impressum
         </li>
       </ul>
     </nav>

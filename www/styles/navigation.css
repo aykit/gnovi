@@ -1,10 +1,8 @@
-a {
-    font-size: 12px;
-    color: white;
-    text-decoration: none;
+nav {
+
 }
 
-nav {
+#nav {
     font-size: 12px;
     color: white;
     margin-top: 30px;
@@ -57,4 +55,25 @@ nav {
     border: 3px;
     background-color: #0C0B0B;
 
+}
+
+#ueber_header {
+    font-family: "HeroRegular";
+    font-size: 16px;
+    color: white;
+}
+
+#ueber_header li {
+    float: left;
+    border: 2px solid #666666;
+    background-color: #666666;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 6px;
+    padding-bottom: 8px;
+    margin-top: 8px;
+    margin-left: 4px;
+    border-radius: 12px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
 }

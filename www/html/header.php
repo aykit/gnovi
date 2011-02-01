@@ -16,7 +16,7 @@
   </head>
   <body>
     <nav>
-      <ul id="ulfront">
+      <ul>
         <li>
           <ul id="nav">
             <li>

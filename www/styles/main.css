@@ -1,5 +1,11 @@
 /* SEMANTIC ELEMENTS */
 
+a {
+    font-size: 12px;
+    color: white;
+    text-decoration: none;
+}
+
 p {
     margin-top: 10px;
     margin-left: 4px;
@@ -103,10 +109,8 @@ mark a {
     font-family: "HeroRegular";
     color: white;
     float: left;
-    width: 300px;
     border: 2px solid #666666;
     background-color: #666666;
-    min-width: 308px;
     padding-left: 8px;
     padding-right: 10px;
     padding-bottom: 8px;
@@ -137,4 +141,11 @@ mark a {
     position: absolute;
     margin-top: 70px;
     margin-left: 80px;
+}
+
+#multicolumn {
+    font-size: medium;
+    column-width: 100px;
+    -moz-column-width: 13em; 
+    -webkit-column-width: 13em;
 }

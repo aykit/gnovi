@@ -65,8 +65,9 @@ nav {
 
 #ueber_header li {
     float: left;
-    border: 2px solid #666666;
-    background-color: #666666;
+    border: 2px solid #CCCCCC;
+    background-color: #FFFFFF;
+    color: #000;
     padding-left: 8px;
     padding-right: 8px;
     padding-top: 6px;

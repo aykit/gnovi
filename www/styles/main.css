@@ -147,5 +147,6 @@ mark a {
     font-size: medium;
     column-width: 100px;
     -moz-column-width: 13em; 
+    -moz-column-count: 3;
     -webkit-column-width: 13em;
 }

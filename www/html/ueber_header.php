@@ -1,19 +1,19 @@
     <nav id="ueber_header">
       <ul>
         <li>
-          Anleitung
+          <a href="anleitung">Anleitung</a>
         </li>
         <li>
-          Theoretisch
+          <a href="theoretisch">Theoretisch</a>
         </li>
         <li>
-          Technisch
+          <a href="technisch">Technisch</a>
         </li>
         <li>
-          Links
+          <a href="links">Links</a>
         </li>
         <li>
-          Persönliches
+          <a href="persoenliches">Persönliches</a>
         </li>
       </ul>
     </nav>

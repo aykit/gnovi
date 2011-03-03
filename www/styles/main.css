@@ -124,13 +124,12 @@ input[type="submit"] {
         padding-right: 12px;
         padding-bottom: 8px;
     margin-top: 15px;
-        margin-left: 65px; 
+        margin-left: 0px; 
     column-width: 100px;
         -webkit-column-width: 13em;
         -webkit-column-count: 3;
         -moz-column-width: 13em; 
         -moz-column-count: 3;
-
 } 
 
 #register {
@@ -149,6 +148,29 @@ input[type="submit"] {
     display: block;
     margin-left: 350px;
 }
+
+#startcolumn {
+    font-family: "HeroRegular";
+        line-height: 120%;
+    width: 658px;
+    color: white;
+        background-color: #666666;
+    border: 2px solid #666666;
+        border-radius: 8px;
+        -moz-border-radius: 8px;
+        -webkit-border-radius: 8px;
+    padding-left: 8px;
+        padding-top: 10px;
+        padding-right: 12px;
+        padding-bottom: 8px;
+    margin-top: 15px;
+        margin-left: 65px; 
+    column-width: 100px;
+        -webkit-column-width: 13em;
+        -webkit-column-count: 3;
+        -moz-column-width: 13em; 
+        -moz-column-count: 3;
+} 
 
 #word_search_form {
     font-family: "HeroRegular";

@@ -86,3 +86,14 @@ nav {
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
 }
+
+#ueber_header a {
+    font-size: 14px;
+    color: #000;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 6px;
+    padding-bottom: 8px;
+    margin-top: 8px;
+    margin-left: 4px;
+}

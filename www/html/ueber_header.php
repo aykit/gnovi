@@ -13,7 +13,7 @@
           Links
         </li>
         <li>
-          Impressum
+          Persönliches
         </li>
       </ul>
     </nav>

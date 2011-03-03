@@ -5,26 +5,6 @@ a {
     color: white;
     text-decoration: none;
 }
-
-p {
-    margin-top: 10px;
-    margin-left: 4px;
-}
-
-section {
-    font-family: "HeroRegular";
-    float: left;
-    color: white;
-    border: 2px solid #666666;
-    background-color: #666666;
-    padding-left: 8px;
-    padding-right: 12px;
-    padding-bottom: 8px;
-    margin-top: 12px;
-    margin-left: 3px;
-    border-radius: 8px;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px; }
     
 input {
     margin-left: 4px;
@@ -49,6 +29,35 @@ mark {
     border: 3px solid #FFFF33;
 }
 
+mark a {    
+    font-family: "HeroRegular";
+    line-height: 115%;
+    text-decoration:  underline; 
+    color: #CCCCCC;
+    font-size: 18px;  
+}
+
+p {
+    margin-top: 10px;
+    margin-left: 4px;
+}
+
+section {
+    font-family: "HeroRegular";
+    float: left;
+    color: white;
+    border: 2px solid #666666;
+    background-color: #666666;
+    padding-left: 8px;
+    padding-right: 12px;
+    padding-bottom: 8px;
+    margin-top: 12px;
+    margin-left: 3px;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px; }
+    
+
 /* SEMANTIC ELEMENT CHILD SELECTORS */
 
 input[type="submit"] {
@@ -65,13 +74,6 @@ input[type="submit"] {
     -webkit-border-radius: 8px;
 }
 
-mark a {    
-    font-family: "HeroRegular";
-    line-height: 115%;
-    text-decoration:  underline; 
-    color: #CCCCCC;
-    font-size: 18px;  
-}
 
 /* IDs */
 
@@ -84,38 +86,11 @@ mark a {
     margin-right: auto;*/
 }
 
-#register {
-    font-family: "HeroRegular";
-    float: left;
-    writing-mode: tb-rl;
-    padding: 9px 15px;  
-    margin-top: 13px;
-    background-color: #CCCCCC;
-    border: 0;  
-    font-size: 14px;  
-    color: #FFFFFF;
-}
-
-#word_submit {
-    width: 50px;
-    font-family: "HeroRegular";
-    background-color: #CCCCCC;
-    margin-top: 10px; 
-}
-
-#word_search_form {
-    font-family: "HeroRegular";
-    color: white;
-    float: left;
-    border: 2px solid #666666;
-    background-color: #666666;
-    padding-left: 8px;
-    padding-right: 10px;
-    padding-bottom: 8px;
-    margin-top: 8px;
-    border-radius: 12px;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px; 
+#graph {
+    display: block;
+    position: absolute;
+    margin-top: 70px;
+    margin-left: 80px;
 }
 
 #graph_info_error {
@@ -134,15 +109,9 @@ mark a {
     border: 3px solid #FFFF33;
 }
 
-#graph {
-    display: block;
-    position: absolute;
-    margin-top: 70px;
-    margin-left: 80px;
-}
-
 #multicolumn {
     font-family: "HeroRegular";
+        line-height: 120%;
     width: 658px;
     color: white;
         background-color: #666666;
@@ -154,12 +123,52 @@ mark a {
         padding-top: 10px;
         padding-right: 12px;
         padding-bottom: 8px;
-    margin-top: 20px;
-            margin-left: 65px;
+    margin-top: 15px;
+        margin-left: 65px; 
     column-width: 100px;
         -webkit-column-width: 13em;
         -webkit-column-count: 3;
         -moz-column-width: 13em; 
         -moz-column-count: 3;
 
+} 
+
+#register {
+    font-family: "HeroRegular";
+    float: left;
+    writing-mode: tb-rl;
+    padding: 9px 15px;  
+    margin-top: 13px;
+    background-color: #CCCCCC;
+    border: 0;  
+    font-size: 14px;  
+    color: #FFFFFF;
 }
+
+#startpic {
+    display: block;
+    margin-left: 350px;
+}
+
+#word_search_form {
+    font-family: "HeroRegular";
+    color: white;
+    float: left;
+    border: 2px solid #666666;
+    background-color: #666666;
+    padding-left: 8px;
+    padding-right: 10px;
+    padding-bottom: 8px;
+    margin-top: 8px;
+    border-radius: 12px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px; 
+}
+
+#word_submit {
+    width: 50px;
+    font-family: "HeroRegular";
+    background-color: #CCCCCC;
+    margin-top: 10px; 
+}
+

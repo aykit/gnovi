@@ -9,7 +9,7 @@ class PageUrls
     const PERSONAL_GRAPH = "/ich";
     const GLOBAL_GRAPH = "/wir";
     const REGISTER = "/registrieren";
-    const UEBER = "/ueber";
+    const PERSOENLICHES = "/persönliches";
 }
 
 ?>

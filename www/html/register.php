@@ -10,7 +10,8 @@
         </p>
         <p>
           <label>Passwort:</label>
-          <input id="password1" type="password" placeholder="Gewünschtes Passwort" value="<?=htmlspecialchars($passwordSafe1)?>" required name="p1">
+          <input id="password1" type="password" placeholder="Gewünschtes Passwort" 
+            value="<?=htmlspecialchars($passwordSafe1)?>" required name="p1">
         </p>
         <p>
           <label>Passwort:</label>

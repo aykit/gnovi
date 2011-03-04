@@ -11,6 +11,18 @@ input {
     min-width: 140px;
     }
 
+footer {
+    float: left;
+    text-align: center;
+    width: 790px;
+    font-family: "HeroRegular";
+    font-size: 14px;
+    color: black;
+    background-color: #FFF;
+    margin-top: 20px;
+    margin-left: 12px;
+}
+
 mark {
     font-family: "HeroRegular";
     float: left;
@@ -76,6 +88,9 @@ input[type="submit"] {
 
 
 /* IDs */
+
+#bottompic {
+}
 
 #game {
     margin-left: 20px;
@@ -193,4 +208,3 @@ input[type="submit"] {
     background-color: #CCCCCC;
     margin-top: 10px; 
 }
-

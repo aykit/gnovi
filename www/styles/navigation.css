@@ -57,9 +57,14 @@ nav {
     margin-left: 65px;
     width: 594px;
     height: 2px;
-    border: 3px;
     background-color: #0C0B0B;
+}
 
+#navbar_long {
+    width: 800px;
+    margin-bottom: 10px;
+    height: 2px;
+    background-color: #0C0B0B;
 }
 
 

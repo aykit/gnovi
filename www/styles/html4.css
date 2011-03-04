@@ -1,0 +1,55 @@
+/* SEMANTIC ELEMENTS */
+
+a {
+    background: white;
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    text-align: center;
+    margin-top: 20px;
+}
+
+ul {
+    text-align: center;
+    margin-top: 6px;
+    list-style: none;
+}
+
+li {
+    margin-top: 10px;
+}
+
+/* CLASSES */
+
+.centerimg {
+    display: block;
+    margin-left: auto;   
+    margin-right: auto; 
+}
+
+.footerimg {
+    margin-left: 8px;
+}
+
+#navbar_long {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 10px;
+    height: 2px;
+    background-color: #0C0B0B;
+}
+
+#footer {
+    text-align: center;
+    font-family: "HeroRegular";
+    font-size: 14px;
+    color: black;
+    background-color: #FFF;
+    padding-left: 8px;
+    padding-right: 12px;
+    padding-bottom: 8px;
+    margin-top: 40px;
+    margin-left: 3px;
+}

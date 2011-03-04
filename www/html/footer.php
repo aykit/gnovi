@@ -1,5 +1,3 @@
-<!--  <section>Mit freundlicher Unterst&uuml;tzung der Kulturabteilung der Stadt Wien sowie der Netz Netz - Community<br><img src="/images/netznetzlogo_klein.png"><img src="/images/wienkulturlogo_klein.png"></section>-->
-
     <!-- Piwik --> 
     <script type="text/javascript">
       var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.gerade.org/" : "http://piwik.gerade.org/");
@@ -18,5 +16,6 @@
       </p>
     </noscript>
     <!-- End Piwik Tracking Tag -->
+    
   </body>
 </html>

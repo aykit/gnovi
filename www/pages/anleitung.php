@@ -12,6 +12,7 @@ class UeberPage extends Page
         $email = $this->getEmail();
 
         include "../html/anleitung.php";
+        include "../html/thanks.php";
 
         $this->drawFooter();
     }

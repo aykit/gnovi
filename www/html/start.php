@@ -1,5 +1,5 @@
     <p>
-      <br><img id="startpic" src="images/gnovi_gross.png">
+      <br><img id="startpic" src="images/gnovi_gross.png" alt="gnovi-logo">
     </p>
       <section id="startcolumn">
         Willkommen bei gnovi.
@@ -25,4 +25,4 @@
         <br>
         <br>
          Einen neuen <a href="anlauf">Anlauf</a> starten?
-        </section>
+      </section>

@@ -228,7 +228,7 @@ var InputGraphics = new Class({
         this.context.fillText("Im folgenden wird ein neuer Anlauf gestartet.", this.context.canvas.width/2, 37);
         this.context.fillText("Du hast 20 Sekunden Zeit um Assoziationen", this.context.canvas.width/2, 75);
         this.context.fillText("zum angezeigten Wort einzugeben.", this.context.canvas.width/2, 95);
-        this.context.fillText("Drücke Enter um zu beginnen.", this.context.canvas.width/2, 150), 
+        this.context.fillText("Drücke Enter um zu beginnen.", this.context.canvas.width/2, 150); 
     },
 
     drawWordsFinishedScreen: function(initialWord, wordList, inputTime, fade, drawContinueNotice, wordsChecked)

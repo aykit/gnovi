@@ -61,7 +61,7 @@ nav {
 }
 
 #navbar_long {
-    width: 800px;
+    width: 100%;
     margin-bottom: 10px;
     height: 2px;
     background-color: #0C0B0B;

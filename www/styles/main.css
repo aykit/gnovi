@@ -173,6 +173,7 @@ input[type="submit"] {
     font-family: "HeroRegular";
     background-color: #CCCCCC;
     margin-top: 8px;
+    margin-right: 5px;
 }
 
 #word_input {
@@ -191,4 +192,31 @@ input[type="submit"] {
     border-radius: 12px;
        -moz-border-radius: 8px;
         -webkit-border-radius: 8px;
+}
+
+
+/* CLASSES */
+
+.graph_switch {
+    min-width: 40px;
+    font-family: "HeroRegular";
+    font-size: 14px;
+    color: #000;
+    border: 2px solid #CCCCCC;
+    background-color: #FFFFFF;
+    padding: 7px;
+    margin-top: 8px;
+    border-radius: 12px;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+}
+
+.graph_switch:hover {
+    color: #FFF;
+    background-color: #CCCCCC;
+}
+
+.graph_switch:focus {
+    color: #FFF;
+    background-color: #CCCCCC;
 }

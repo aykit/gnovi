@@ -103,6 +103,7 @@ input[type="submit"] {
 }
 
 #graph {
+    clear: both;
     display: block;
     position: absolute;
     margin-top: 70px;
@@ -198,6 +199,7 @@ input[type="submit"] {
 /* CLASSES */
 
 .graph_switch {
+    float: left;
     min-width: 40px;
     font-family: "HeroRegular";
     font-size: 14px;

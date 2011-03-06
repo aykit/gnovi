@@ -6,8 +6,6 @@ class StartPage extends Page
 {
     public function __construct()
     {
-        $this->startSession();
-
         $this->drawHeader("gnovi", array("/js/modernizr.js","/js/html5check.js"), array("/styles/main.css"));
 
         $username = $this->getUsername();

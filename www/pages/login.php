@@ -6,8 +6,6 @@ class LoginPage extends Page
 {
     public function __construct()
     {
-        $this->startSession();
-
         if ($this->isLoggedIn())
             $this->redirectToDestination();
 

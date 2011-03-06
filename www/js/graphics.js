@@ -21,19 +21,6 @@ var Graphics = new Class({
         };
     },
 
-    _makeColor: function(r, g, b, a)
-    {
-        if (r < 0) r = 0;
-        if (g < 0) g = 0;
-        if (b < 0) b = 0;
-        if (a < 0) a = 0;
-        if (r > 255) r = 255;
-        if (g > 255) g = 255;
-        if (b > 255) b = 255;
-        if (a > 1) a = 1;
-        return "rgba(" + r + "," + g + "," + b + "," + a + ")";
-    },
-
     _fillCircle: function(x, y, r)
     {
         this.context.beginPath();
@@ -70,24 +57,8 @@ var Graphics = new Class({
         
     },
 
-    _drawGnoviIcon: function(posX, posY, size, glow, alpha, isRoot)
+    _drawGnoviIcon: function(posX, posY, size, glow, isRoot)
     {
-        /*
-        var gradient = this.context.createRadialGradient(posX, posY, 0, posX, posY, size / 2);
-        gradient.addColorStop(0.3, "rgba(255, 255, 255, " + alpha + ")");
-        gradient.addColorStop(0.5, "rgba(0, 0, 0, " + alpha + ")");
-        gradient.addColorStop(0.6, "rgba(0, 255, 0, " + alpha + ")");
-
-        if (glow)
-            gradient.addColorStop(1, "rgba(255, 0, 0, " + alpha + ")");
-        else
-            gradient.addColorStop(1, "rgba(0, 0, 255, " + alpha + ")");
-
-        this.context.fillStyle = gradient; 
-        this._fillCircle(posX, posY, size / 2);
-        
-        */
-        
         var gnoviImageRoot = this.getImage("gnovinode");
         var gnoviImageSelected = this.getImage("gnovinodeselected");
         var gnoviImage = this.getImage("gnovinoderoot");
@@ -99,8 +70,6 @@ var Graphics = new Class({
                 posY - gnoviImageSelected.height/2);
         else
             this.context.drawImage(gnoviImage, posX - gnoviImage.width/2, posY - gnoviImage.height/2);
-        
-        
     },
 
     _fillTextRect: function(wordList, x, y, width, spacing, lineHeight)
@@ -180,7 +149,7 @@ var Graphics = new Class({
         if (scale2 < 3)
             scale2 = 3;
 
-        this.context.strokeStyle = "rgba(0, 0, 0," + alpha + ")";
+        this.context.strokeStyle = Graphics._rgba(0, 0, 0, alpha);
 
         this.context.save();
         this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2 - 20);
@@ -200,14 +169,29 @@ var Graphics = new Class({
         this.context.font = "12px HeroRegular";
         this.context.textAlign = "center";
 
-        this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
+        this.context.strokeStyle = Graphics._rgba(255, 255, 255, alpha);
         this.context.lineWidth = 5;
         this.context.strokeText("loading . . .", 0, 200)
 
-        this.context.fillStyle = "rgba(0, 0, 0," + alpha + ")";
+        this.context.fillStyle = Graphics._rgba(0, 0, 0, alpha);
         this.context.fillText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 30)
     },
 });
+
+Graphics._rgba = function(r, g, b, a)
+{
+    if (r < 0.01) r = 0;
+    if (g < 0.01) g = 0;
+    if (b < 0.01) b = 0;
+    if (r > 255) r = 255;
+    if (g > 255) g = 255;
+    if (b > 255) b = 255;
+
+    if (a < 0.01) a = 0;
+    if (a > 1) a = 1;
+
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+};
 
 var InputGraphics = new Class({
     Extends: Graphics,
@@ -254,8 +238,8 @@ var InputGraphics = new Class({
         {        
             var offsetY = this._fillTextRect(wordList, 40, 50, 600, 10, 50);
 
-            this.context.fillStyle = "rgba(0, 0, 0, " + fade + ")";
-            this.context.strokeStyle = "rgba(0, 0, 0, " + fade + ")";
+            this.context.fillStyle = Graphics._rgba(0, 0, 0, fade);
+            this.context.strokeStyle = Graphics._rgba(0, 0, 0, fade);
             this.context.textAlign = "center";
             this.context.font = "25px HeroRegular";
             this.context.beginPath();
@@ -332,7 +316,7 @@ var InputGraphics = new Class({
 
         var firstWordToDraw = Math.floor(wordsOffset);
 
-        this.context.fillStyle = "rgba(0, 0, 0, " + (1 + firstWordToDraw - wordsOffset) + ")";
+        this.context.fillStyle = Graphics._rgba(0, 0, 0, + (1 + firstWordToDraw - wordsOffset));
 
         for (var i = firstWordToDraw; i < inputList.length; i++)
         {
@@ -341,7 +325,7 @@ var InputGraphics = new Class({
             this.context.fillText(inputList[i], 320, ((i - wordsOffset) * 20 + 150) * a + 400 * b);
 
             if (i == firstWordToDraw)
-                this.context.fillStyle = "rgba(0, 0, 0, 1)";
+                this.context.fillStyle = this.rgba(0, 0, 0, 1);
         }
     },
 
@@ -426,7 +410,7 @@ var InputGraphics = new Class({
         scale1 = (Math.cos(loadTime * 2 * Math.PI) + 2) * 2;
         scale2 = (Math.cos(loadTime * 2 * Math.PI + Math.PI / 2) + 2) * 2;
 
-        this.context.strokeStyle = "rgba(0, 0, 0," + alpha + ")";
+        this.context.strokeStyle = Graphics._rgba(0, 0, 0, alpha);
 
         this.context.save();
         this.context.translate(this.context.canvas.width / 2, this.context.canvas.height / 2 + 40);
@@ -444,11 +428,11 @@ var InputGraphics = new Class({
         this.context.font = "12px HeroRegular";
         this.context.textAlign = "center";
 
-        this.context.strokeStyle = "rgba(255, 255, 255," + alpha + ")";
+        this.context.strokeStyle = Graphics._rgba(255, 255, 255, + alpha);
         this.context.lineWidth = 5;
         this.context.strokeText("loading . . .", 0, 200)
 
-        this.context.fillStyle = "rgba(0, 0, 0," + alpha + ")";
+        this.context.fillStyle = Graphics._rgba(0, 0, 0, alpha);
         this.context.fillText("loading . . .", this.context.canvas.width / 2, this.context.canvas.height - 50)
 
     },
@@ -584,15 +568,16 @@ var GraphGraphics = new Class({
         if (isRoot)
         {
             this.context.font = "20px HeroRegular";
-            this._drawGnoviIcon(posX, posY, 50, true, alpha, true);
-            this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
+            this._drawGnoviIcon(posX, posY, 50, true, true);
+            this.context.fillStyle = Graphics._rgba(0, 0, 0, alpha);
+            console.log(this.context.fillStyle);
             this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 40);
         }
         else
         {
             this.context.font = "15px HeroRegular";
-            this._drawGnoviIcon(posX, posY, 30, mouseOver, alpha);
-            this.context.fillStyle = "rgba(0, 0, 0, " + alpha + ")";
+            this._drawGnoviIcon(posX, posY, 30, mouseOver, false);
+            this.context.fillStyle = Graphics._rgba(0, 0, 0, alpha);
             this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 25);
         }
 
@@ -606,7 +591,7 @@ var GraphGraphics = new Class({
         this.context.moveTo(x1, y1);
         this.context.lineTo(x2, y2);
 
-        this.context.strokeStyle = "rgba(204, 204, 204, " + alpha + ")";
+        this.context.strokeStyle = Graphics._rgba(204, 204, 204, alpha);
         this.context.lineWidth = 2;
         this.context.stroke();
     },

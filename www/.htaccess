@@ -1,6 +1,6 @@
-AcceptPathInfo on
+AcceptPathInfo On
 
-RewriteEngine on
+RewriteEngine On
 RewriteBase /
 
 RewriteRule ^ich/([^/]*)/$ ich/$1 [R,L]
@@ -26,3 +26,6 @@ RewriteRule ^html5$ html/html5.html
 #giving the blog a new home
 RewriteCond %{QUERY_STRING} ^p=([0-9]*)$
 RewriteRule ^(.*)$ http://blog.gnovi.org/
+
+ExpiresActive On
+ExpiresDefault A3600

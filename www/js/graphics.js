@@ -325,7 +325,7 @@ var InputGraphics = new Class({
             this.context.fillText(inputList[i], 320, ((i - wordsOffset) * 20 + 150) * a + 400 * b);
 
             if (i == firstWordToDraw)
-                this.context.fillStyle = this.rgba(0, 0, 0, 1);
+                this.context.fillStyle = Graphics._rgba(0, 0, 0, 1);
         }
     },
 

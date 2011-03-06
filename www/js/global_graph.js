@@ -1,3 +1,3 @@
 window.addEventListener("load", function() {
-    new Graph(document.getElementById("graph"), true);
+    new Graph(document.getElementById("graph"), "all");
 }, false);

@@ -6,8 +6,6 @@ class LoginPage extends Page
 {
     public function __construct()
     {
-        $this->startSession();
-
         if ($this->isLoggedIn())
             $this->redirectToDestination();
 
@@ -22,7 +20,7 @@ class LoginPage extends Page
                 $this->redirectToDestination();
         }
 
-        $this->drawHeader("Einloggen", array("/js/modernizr.js","/js/html5check.js"), array("/styles/main.css"));
+        $this->drawHeader("Einloggen", array(), array("/styles/main.css"));
 
         include "../html/login.php";
 

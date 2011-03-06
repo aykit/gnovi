@@ -9,7 +9,7 @@ class GraphPage extends Page
         $this->requireLogin($_SERVER["REQUEST_URI"]);
 
         $this->drawHeader("Ich",
-            array("/js/modernizr.js","/js/html5check.js","/js/mootools.js", "/js/game.js", "/js/graph.js", "/js/graphics.js", 
+            array("/js/mootools.js", "/js/game.js", "/js/graph.js", "/js/graphics.js", 
                 "/js/personal_graph.js"), 
             array("/styles/main.css"));
 

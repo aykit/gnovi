@@ -9,7 +9,7 @@ class InputPage extends Page
         $this->requireLogin(PageUrls::INPUT);
 
         $this->drawHeader("Input",
-            array("/js/modernizr.js","/js/html5check.js","/js/mootools.js", "/js/game.js", "/js/input.js", "/js/inputstates.js", 
+            array("/js/mootools.js", "/js/game.js", "/js/input.js", "/js/inputstates.js", 
                 "/js/graphics.js"), 
             array("/styles/reset.css", "/styles/main.css"));
 

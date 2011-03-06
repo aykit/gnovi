@@ -53,16 +53,19 @@ class Page
 
     protected function isLoggedIn()
     {
+        $this->startSession();
         return isset($_SESSION['ID']);
     }
 
     protected function getUsername()
     {
+        $this->startSession();
         return isset($_SESSION['ID']) ? (string)$_SESSION['Username'] : false;
     }
 
     protected function getEmail()
     {
+        $this->startSession();
         return isset($_SESSION['ID']) ? (string)$_SESSION['Email'] : false;
     }
 
@@ -96,6 +99,8 @@ class Page
 
     protected function drawHeader($title, $javaScripts, $styleSheets)
     {
+        $this->startSession();
+
         $loggedin = $this->isLoggedIn();
         $username = $this->getUsername();
         $email = $this->getEmail();

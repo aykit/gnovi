@@ -11,6 +11,7 @@ class UeberPage extends Page
         $username = $this->getUsername();
         $email = $this->getEmail();
 
+        include "../html/about_header.php";
         include "../html/manual.php";
         include "../html/thanks.php";
 

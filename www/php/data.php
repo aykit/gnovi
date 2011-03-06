@@ -22,11 +22,11 @@ class DataExchanger
                 $this->returnRandomWord();
                 break;
             case "getrelations":
-                $this->returnRelations(@$_GET["word"], @$_GET["all"], @$_GET["time"]);
+                $this->returnRelations(@$_GET["word"], @$_GET["view"], @$_GET["time"]);
                 break;
-            case "getchangetimes":
-                $this->returnChangeTimes(@$_GET["word"], @$_GET["all"]);
-                break;
+            /*case "getchangetimes":
+                $this->returnChangeTimes(@$_GET["word"], @$_GET["view"]);
+                break;*/
             case "storerun":
                 $this->storeRun(json_decode(@$_GET["data"], true));
                 break;
@@ -341,7 +341,7 @@ class DataExchanger
         return $this->checkForDbError();
     }
 
-    protected function getChangeTimes($wordId, $allUsers)
+    protected function getChangeTimes($wordId, $viewMode)
     {
         if (!$this->connectDb())
             return null;
@@ -351,7 +351,7 @@ class DataExchanger
 
         $filter = "`FromWordID` = '$intWordId'";
 
-        if (!$allUsers)
+        if ($viewMode != "all")
              $filter .= " AND `UserID` = '$intUserId'";
 
         $result = $this->db->query("SELECT `Time` FROM `Relations` WHERE $filter GROUP BY `Time` ORDER BY `Time`");
@@ -366,18 +366,18 @@ class DataExchanger
         return $times;
     }
 
-    protected function returnChangeTimes($word, $allUsers)
+    /*protected function returnChangeTimes($word, $viewMode)
     {
         $wordInfo = $this->getWordInfo($word);
         if (!$wordInfo)
             return;
 
-        $times = $this->getChangeTimes($wordInfo["id"], $allUsers);
+        $times = $this->getChangeTimes($wordInfo["id"], $viewMode);
         if (!$times)
             return;
 
         $this->setResponseData($times);
-    }
+    }*/
 
     protected function getRelations($wordId, $userId, $time, $maxEntries, $minStrength)
     {
@@ -422,17 +422,17 @@ class DataExchanger
         return $relations;
     }
 
-    protected function returnRelations($word, $allUsers, $time)
+    protected function returnRelations($word, $viewMode, $time)
     {
         $wordInfo = $this->getWordInfo($word);
         if (!$wordInfo)
             return;
 
-        $relations = $this->getRelations($wordInfo["id"], $allUsers ? 0 : $this->userId, $time, 10, 0);
+        $relations = $this->getRelations($wordInfo["id"], $viewMode == "all" ? 0 : $this->userId, $time, 10, 0);
         if ($relations === null)
             return;
 
-        $changeTimes = $this->getChangeTimes($wordInfo["id"], $allUsers);
+        $changeTimes = $this->getChangeTimes($wordInfo["id"], $viewMode);
         if ($changeTimes === null)
             return;
 

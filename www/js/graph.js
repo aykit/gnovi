@@ -1,6 +1,14 @@
 var Graph = new Class({
     Extends: Game,
 
+    viewWord: "",
+    viewTime: 0,
+    viewMode: "",
+
+    loadingViewWord: "",
+    loadingViewTime: 0,
+    loadingViewMode: "",
+
     currentNodesVisData: null,
     currentData: null,
     currentNodes: null,
@@ -14,15 +22,13 @@ var Graph = new Class({
 
     addWordToBrowserHistory: false,
     redrawScreen: false,
-    notFound: false,
-    rootWord: "",
-    timeSliderTimestamp: 0,
+
     timeSliderHotspots: [],
     timeSliderHoverTime: -1,
 
-    initialize: function(canvas, showAllUsers)
+    initialize: function(canvas, viewMode)
     {
-        this.showAllUsers = showAllUsers;
+        this.viewMode = viewMode;
         this.parent(canvas, new GraphGraphics(), 1);
 
         window.onpopstate = this.onPopState.bind(this);
@@ -30,13 +36,20 @@ var Graph = new Class({
         this.wordSearchForm = document.getElementById("word_search_form");
         this.wordInputField = document.getElementById("word_input");
         this.wordSubmitButton = document.getElementById("word_submit");
-        this.graphInfoElement = document.getElementById("graph_info");
+        this.graphNotfoundElement = document.getElementById("graph_notfound");
         this.personalGrapLink = document.getElementById("personal_graph_link");
         this.globalGrapLink = document.getElementById("global_graph_link");
 
+        this.personalViewButton = document.getElementById("personal_view_button");
+        this.globalViewButton = document.getElementById("global_view_button");
+
         this.wordSearchForm.addEventListener("submit", this.onSearchWordSubmit.bind(this), false);
-        this.personalGrapLink.addEventListener("click", this.onPersonalGraphClick.bind(this), false);
-        this.globalGrapLink.addEventListener("click", this.onGlobalGraphClick.bind(this), false);
+
+        this.personalViewButton.addEventListener("click", this.onPersonalViewClick.bind(this), false);
+        this.globalViewButton.addEventListener("click", this.onGlobalViewClick.bind(this), false);
+
+        this.personalViewButton.hidden = viewMode == "me";
+        this.globalViewButton.hidden = viewMode == "all";
 
         this.setTimer("normalfps");
     },
@@ -46,25 +59,25 @@ var Graph = new Class({
         var uri = window.location.href;
 
         var uriInfo =
-            //uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]+)\/([^\/]+)\/([^\/]+)$/) ||
-            uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]+)\/([^\/]+)$/) ||
-            uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]+)$/);
+            //uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]+)\/([^\/]+)\/([^\/]+)/) ||
+            uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]*)\/([^\/]+)/) ||
+            uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]*)/);
 
         if (!uriInfo || uriInfo.length < 3)
             return;
 
-        this.timeSliderTimestamp = 0;
+        var viewTime = 0;
 
         if (uriInfo.length >= 4)
         {
             var time = parseInt(uriInfo[3]);
             if (!isNaN(time))
-                this.timeSliderTimestamp = time;
+                viewTime = time;
         }
 
         var wordRequested = decodeURIComponent(uriInfo[2]);
 
-        this.loadData(wordRequested, false, false);
+        this.loadView(wordRequested, viewTime, this.viewMode, false, false);
     },
 
     imageLoadingFinished: function()
@@ -72,36 +85,57 @@ var Graph = new Class({
         this.loadWordFromCurrentUri();
     },
 
-    loadData: function(rootWord, addWordToBrowserHistory, animate)
+    loadView: function(viewWord, viewTime, viewMode, addWordToBrowserHistory, animate)
     {
+        if (viewWord == "")
+            return;
+
+        if (animate && this.interpolationRunning)
+            return;
+
         this.showInterpolation = animate;
         this.addWordToBrowserHistory = addWordToBrowserHistory;
-        this.transmitData("cmd=getrelations&word=" + encodeURIComponent(rootWord) +
-            "&all=" + (this.showAllUsers ? 1 : 0) + "&time=" + this.timeSliderTimestamp);
+
+        this.loadingViewWord = viewWord;
+        this.loadingViewTime = viewTime;
+        this.loadingViewMode = viewMode;
+
+        this.transmitData("cmd=getrelations&word=" + encodeURIComponent(viewWord) + "&view=" + viewMode + "&time=" + viewTime);
+    },
+
+    displayViewData: function(data)
+    {
+        this.viewWord = data.root.word;
+        this.viewTime = this.loadingViewTime;
+        this.viewMode = this.loadingViewMode;
+
+        this.personalViewButton.hidden = this.viewMode == "me";
+        this.globalViewButton.hidden = this.viewMode == "all";
+
+        if (window.history.pushState)
+        {
+            var title = "Graph - " + this.viewWord;
+
+            var path = this.viewMode == "all" ? this.globalGrapLink.href : this.personalGrapLink.href;
+            if (this.viewWord != "" || this.viewTime != 0)
+                path += "/" + encodeURIComponent(this.viewWord);
+            if (this.viewTime != 0)
+                path += "/" + this.viewTime;
+
+            if (this.addWordToBrowserHistory)
+                window.history.pushState("graph", title, path);
+            else
+                window.history.replaceState("graph", title, path);
+        }
+
+        this.buildVisualizationData(data);
+        this.timeSliderHotspots = this.graphics.getTimeSliderHotspots(this.currentData.changeTimes, this.viewTime);
     },
 
     transmitDataSuccess: function(responseData)
     {
-        this.notFound = false;
-        this.graphInfoElement.innerHTML = "";
-
-        this.rootWord = responseData.root.word;
-
-        if (window.history.pushState)
-        {
-            var graphUri = this.showAllUsers ? this.globalGrapLink.href : this.personalGrapLink.href;
-            var timePostfix = this.timeSliderTimestamp != 0 ? "/" + this.timeSliderTimestamp : "";
-
-            if (this.addWordToBrowserHistory)
-                window.history.pushState("graph", "Graph - " + responseData.root.word,
-                    graphUri + "/" + encodeURIComponent(responseData.root.word) + timePostfix);
-            else
-                window.history.replaceState("graph", "Graph - " + responseData.root.word,
-                    graphUri + "/" + encodeURIComponent(responseData.root.word) + timePostfix);
-        }
-
-        this.buildVisualizationData(responseData);
-        this.timeSliderHotspots = this.graphics.getTimeSliderHotspots(this.currentData.changeTimes, this.timeSliderTimestamp);
+        this.graphNotfoundElement.hidden = true;
+        this.displayViewData(responseData);
     },
 
     transmitDataFailure: function(error)
@@ -109,10 +143,7 @@ var Graph = new Class({
         this.timeSliderHotspots = [];
 
         if (error == "notfound")
-        {
-            this.notFound = true;
-            this.graphInfoElement.innerHTML = "<span id='graph_info_error'>Wort nicht gefunden.</span>";
-        }
+            this.graphNotfoundElement.hidden = false;
         else
             this.parent(error);
     },
@@ -406,7 +437,7 @@ var Graph = new Class({
         if (!this.interpolationRunning && this.currentData)
         {
             this.context.save();
-            this.graphics.drawTimeSlider(this.currentData.changeTimes, this.timeSliderTimestamp, this.timeSliderHoverTime);
+            this.graphics.drawTimeSlider(this.currentData.changeTimes, this.viewTime, this.timeSliderHoverTime);
             this.context.restore();
         }
 
@@ -511,12 +542,9 @@ var Graph = new Class({
             return;
 
         if (this.mouseOverNodeId > 0)
-            this.loadData(this.currentNodes[this.mouseOverNodeId].word, false, true);
+            this.loadView(this.currentNodes[this.mouseOverNodeId].word, this.viewTime, this.viewMode, false, true);
         else if (this.timeSliderHoverTime >= 0)
-        {
-            this.timeSliderTimestamp = this.timeSliderHoverTime;
-            this.loadData(this.rootWord, false, true);
-        }
+            this.loadView(this.viewWord, this.timeSliderHoverTime, this.viewMode, false, true);
     },
 
     onPopState: function(event)
@@ -529,29 +557,21 @@ var Graph = new Class({
     {
         event.preventDefault();
 
-        this.loadData(this.wordInputField.value, false, true);
+        this.loadView(this.wordInputField.value, this.viewTime, this.viewMode, false, true);
         this.wordInputField.value = "";
     },
 
-    onPersonalGraphClick: function(event)
+    onPersonalViewClick: function(event)
     {
         event.preventDefault();
 
-        if (!this.showAllUsers)
-            return;
-        this.showAllUsers = false;
-
-        this.loadData(this.rootWord, false, true);
+        this.loadView(this.viewWord, this.viewTime, "me", false, true);
     },
 
-    onGlobalGraphClick: function(event)
+    onGlobalViewClick: function(event)
     {
         event.preventDefault();
 
-        if (this.showAllUsers)
-            return;
-        this.showAllUsers = true;
-
-        this.loadData(this.rootWord, false, true);
+        this.loadView(this.viewWord, this.viewTime, "all", false, true);
     },
 });

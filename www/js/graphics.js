@@ -570,7 +570,6 @@ var GraphGraphics = new Class({
             this.context.font = "20px HeroRegular";
             this._drawGnoviIcon(posX, posY, 50, true, true);
             this.context.fillStyle = Graphics._rgba(0, 0, 0, alpha);
-            console.log(this.context.fillStyle);
             this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 40);
         }
         else

@@ -1,7 +1,7 @@
     <p>
       <br><img id="startpic" src="images/gnovi_gross.png" alt="gnovi-logo">
     </p>
-      <section id="startcolumn">
+      <section id="multicolumn">
         Willkommen bei gnovi.
           <br>
           <br>

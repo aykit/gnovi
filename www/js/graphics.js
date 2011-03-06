@@ -566,11 +566,13 @@ var GraphGraphics = new Class({
         this.context.textAlign = "center";
 
         if (isRoot)
-        {
+        {   
+            
             this.context.font = "20px HeroRegular";
             this._drawGnoviIcon(posX, posY, 50, true, true);
             this.context.fillStyle = Graphics._rgba(0, 0, 0, alpha);
             this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 40);
+        	
         }
         else
         {
@@ -578,10 +580,29 @@ var GraphGraphics = new Class({
             this._drawGnoviIcon(posX, posY, 30, mouseOver, false);
             this.context.fillStyle = Graphics._rgba(0, 0, 0, alpha);
             this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 25);
+            
+/*          SHOW CONNOTATION
+            this.context.beginPath();
+            this.context.arc(posX, posY, 15, 4.8, 6.4, false);
+        	this.context.lineWidth=4;
+        	this.context.strokeStyle="red";
+        	this.context.stroke();
+        	
+
+            this.context.beginPath();
+            this.context.arc(posX, posY, 15, 0.1, 4.8, false);
+        	this.context.lineWidth=4;
+        	this.context.strokeStyle="green";
+        	this.context.stroke();
+*/
+
+            
         }
 
-        //this.context.fillStyle = "black";
-        //this.context.fillText(node.connotation, Math.round(posX), Math.round(posY));
+        /* WRITE CONNOTATION
+        this.context.fillStyle = "black";
+        this.context.fillText(node.connotation, Math.round(posX), Math.round(posY)); */
+        
     },
 
     drawConnection: function(x1, y1, x2, y2, alpha)

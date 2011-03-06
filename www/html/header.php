@@ -3,6 +3,8 @@
   <head>
   <meta charset="utf-8"> 
   <title><?=htmlspecialchars($title)?></title>
+  <script type="text/javascript" src="/js/modernizr.js"></script>
+  <script type="text/javascript" src="/js/html5check.js"></script>
 <?php foreach ($javaScripts as $script) { ?>
   <script type="text/javascript" src="<?=htmlspecialchars($script)?>"></script>
 <?php } ?>

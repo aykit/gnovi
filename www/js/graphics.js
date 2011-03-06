@@ -446,7 +446,15 @@ var GraphGraphics = new Class({
     drawBackground: function()
     {
         this._clearCanvas();
-        this.context.lineWidth ="0.5";
+
+        /*var radius = 200;
+        var gradient = this.context.createRadialGradient(320, 230, 0, 320, 230, radius);
+        gradient.addColorStop(0, "#c0ffff");
+        gradient.addColorStop(1, "#ffffff");
+        this.context.fillStyle = gradient;
+        this._fillCircle(320, 230, radius);*/
+
+        this.context.lineWidth = "0.5";
         this.context.strokeStyle = "#CCCCCC";
         this._strokeCircle(320, 230, 100);
         this._strokeCircle(320, 230, 150);

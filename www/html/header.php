@@ -3,6 +3,8 @@
   <head>
   <meta charset="utf-8"> 
   <title><?=htmlspecialchars($title)?></title>
+  <script type="text/javascript" src="http://piwik.gerade.org/piwik.js"></script>
+  <script type="text/javascript" src="/js/piwik.js"></script>
   <script type="text/javascript" src="/js/modernizr.js"></script>
   <script type="text/javascript" src="/js/html5check.js"></script>
 <?php foreach ($javaScripts as $script) { ?>
@@ -43,3 +45,10 @@
     </nav>
     <br>
     <div id="navbar"></div>
+    <noscript>
+      <p>
+        Enable Javascript!
+        <!-- Piwik -->
+        <img src="http://piwik.gerade.org/piwik.php?idsite=10" alt="">
+      </p>
+    </noscript>

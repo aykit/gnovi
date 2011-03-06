@@ -28,7 +28,7 @@
             <li><a href="<?=htmlspecialchars(PageUrls::INPUT)?>">Anlauf</a></li>
             <li><a id="personal_graph_link" href="<?=htmlspecialchars(PageUrls::PERSONAL_GRAPH)?>">Ich</a></li>
             <li><a id="global_graph_link" href="<?=htmlspecialchars(PageUrls::GLOBAL_GRAPH)?>">Wir</a></li>
-            <li><a href="<?=htmlspecialchars(PageUrls::ANLEITUNG)?>">Über gnovi</a></li>
+            <li><a href="<?=htmlspecialchars(PageUrls::MANUAL)?>">Über gnovi</a></li>
             <li><a id="global_graph_link" href="http://blog.gnovi.org">Blog</a></li>
 <?php if ($loggedin) { ?>
             <li>eingeloggt als <?=htmlspecialchars($username)?> | <a href="/ausloggen">X</a></li>

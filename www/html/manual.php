@@ -18,6 +18,6 @@
         angezeigt.
       <br>
       <br>
-      <a href="<?=htmlspecialchars(PageUrls::ANLEITUNG)?>">Über gnovi</a> liefert Hintergrund-informationen zum Projekt, während 
+      <a href="<?=htmlspecialchars(PageUrls::MANUAL)?>">Über gnovi</a> liefert Hintergrund-informationen zum Projekt, während 
         <a href="http://blog.gnovi.org/">Blog</a> näher auf die Entwicklung desselben eingeht.
     </section>

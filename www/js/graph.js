@@ -48,8 +48,8 @@ var Graph = new Class({
         this.personalViewButton.addEventListener("click", this.onPersonalViewClick.bind(this), false);
         this.globalViewButton.addEventListener("click", this.onGlobalViewClick.bind(this), false);
 
-        this.personalViewButton.hidden = viewMode == "me";
-        this.globalViewButton.hidden = viewMode == "all";
+        this.personalViewButton.setStyle("display", this.viewMode == "me" ? "none" : "block");
+        this.globalViewButton.setStyle("display", this.viewMode == "all" ? "none" : "block");
 
         this.setTimer("normalfps");
     },
@@ -109,8 +109,8 @@ var Graph = new Class({
         this.viewTime = this.loadingViewTime;
         this.viewMode = this.loadingViewMode;
 
-        this.personalViewButton.hidden = this.viewMode == "me";
-        this.globalViewButton.hidden = this.viewMode == "all";
+        this.personalViewButton.setStyle("display", this.viewMode == "me" ? "none" : "block");
+        this.globalViewButton.setStyle("display", this.viewMode == "all" ? "none" : "block");
 
         if (window.history.pushState)
         {
@@ -134,7 +134,7 @@ var Graph = new Class({
 
     transmitDataSuccess: function(responseData)
     {
-        this.graphNotfoundElement.hidden = true;
+        this.graphNotfoundElement.setStyle("display", "none");
         this.displayViewData(responseData);
     },
 
@@ -143,7 +143,7 @@ var Graph = new Class({
         this.timeSliderHotspots = [];
 
         if (error == "notfound")
-            this.graphNotfoundElement.hidden = false;
+            this.graphNotfoundElement.setStyle("display", "block");
         else
             this.parent(error);
     },

@@ -105,6 +105,8 @@ var Graph = new Class({
 
     displayViewData: function(data)
     {
+        this.prevViewMode = this.viewMode;
+
         this.viewWord = data.root.word;
         this.viewTime = this.loadingViewTime;
         this.viewMode = this.loadingViewMode;
@@ -385,7 +387,7 @@ var Graph = new Class({
     draw: function()
     {
         this.context.save();
-        this.graphics.drawBackground();
+        this.graphics.drawBackground(this.interpolationRunning ? this.interpolationProgress : 1, this.prevViewMode, this.viewMode);
         this.context.restore();
 
         this.context.save();

@@ -443,16 +443,40 @@ var InputGraphics = new Class({
 var GraphGraphics = new Class({
     Extends: Graphics,
 
-    drawBackground: function()
+    drawBackground: function(interpolationProgress, prevViewMode, viewMode)
     {
         this._clearCanvas();
 
-        /*var radius = 200;
-        var gradient = this.context.createRadialGradient(320, 230, 0, 320, 230, radius);
-        gradient.addColorStop(0, "#c0ffff");
-        gradient.addColorStop(1, "#ffffff");
-        this.context.fillStyle = gradient;
-        this._fillCircle(320, 230, radius);*/
+        /*if (interpolationProgress < 0.5)
+        {
+            var radius = 200;
+            var gradient = this.context.createRadialGradient(320, 230, 0, 320, 230, radius);
+            //gradient.addColorStop(0, Graphics._rgba(0, 0, 255, (1 - interpolationProgress) * 0.5));
+            //gradient.addColorStop(1, Graphics._rgba(255, 255, 255, (1 - interpolationProgress) * 0.5));
+            gradient.addColorStop(0, prevViewMode == "me" ? Graphics._rgba(0, 255, 0, 0.3) : Graphics._rgba(0, 0, 255, 0.3));
+            gradient.addColorStop(1, Graphics._rgba(255, 255, 255, 0.3));
+            this.context.fillStyle = gradient;
+            this.context.beginPath();
+            this.context.moveTo(320, 230);
+            this.context.arc(320, 230, radius, 3 / 2 * Math.PI + 2 * Math.PI * interpolationProgress * 2, 3 / 2 * Math.PI, false);
+            this.context.lineTo(320, 230);
+            this.context.fill();
+        }
+        else
+        {
+            var radius = 200;
+            var gradient = this.context.createRadialGradient(320, 230, 0, 320, 230, radius);
+            //gradient.addColorStop(0, Graphics._rgba(0, 255, 0, (1 - interpolationProgress) * 0.5));
+            //gradient.addColorStop(1, Graphics._rgba(255, 255, 255, (1 - interpolationProgress) * 0.5));
+            gradient.addColorStop(0, viewMode == "me" ? Graphics._rgba(0, 255, 0, 0.3) : Graphics._rgba(0, 0, 255, 0.3));
+            gradient.addColorStop(1, Graphics._rgba(255, 255, 255, 0.3));
+            this.context.fillStyle = gradient;
+            this.context.beginPath();
+            this.context.moveTo(320, 230);
+            this.context.arc(320, 230, radius, 3 / 2 * Math.PI, - 1 / 2 * Math.PI + 2 * Math.PI * interpolationProgress * 2, false);
+            this.context.lineTo(320, 230);
+            this.context.fill();
+        }*/
 
         this.context.lineWidth = "0.5";
         this.context.strokeStyle = "#CCCCCC";

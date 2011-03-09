@@ -41,7 +41,10 @@ class DataExchanger
             $this->setResponseError("login", "Not logged in.");
 
         if ($this->response !== null)
+        {
+            header("Content-Type", "application/json");
             print(json_encode($this->response));
+        }
     }
 
     protected function getRandomWord($table)

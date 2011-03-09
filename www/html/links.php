@@ -89,5 +89,8 @@
 	    <li>
 	      <a title="MooTools" href="http://mootools.net/">Mootools</a>
 	    </li>
+	    <li>
+	      <a href="http://modernizr.github.com">Modernizr</a>
+	    </li>
       </ul>
     </section>

@@ -6,7 +6,7 @@ class InputPage extends Page
 {
     public function __construct()
     {
-        $this->requireLogin(PageUrls::INPUT);
+        $this->requireLogin();
 
         $this->drawHeader("Input",
             array("/js/mootools.js", "/js/game.js", "/js/input.js", "/js/inputstates.js", "/js/graphics.js"), 

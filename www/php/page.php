@@ -37,12 +37,14 @@ class Page
             session_start();
     }
 
-    protected function requireLogin($pathAfterLogin)
+    protected function requireLogin()
     {
         $this->startSession();
 
         if ($this->isLoggedIn())
             return;
+
+        $pathAfterLogin = $_SERVER["REQUEST_URI"];
 
         if ($pathAfterLogin != "" && $pathAfterLogin[0] != "/")
             $pathAfterLogin = "";

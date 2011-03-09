@@ -9,9 +9,8 @@ class GraphPage extends Page
         $this->requireLogin($_SERVER["REQUEST_URI"]);
 
         $this->drawHeader("Wir",
-            array("/js/mootools.js", "/js/game.js", "/js/graph.js", "/js/graphics.js", 
-                "/js/global_graph.js"), 
-            array("/styles/main.css"));
+            array("/js/mootools.js", "/js/game.js", "/js/graph.js", "/js/graphics.js"), 
+            array("/styles/main.css"), 'new Graph(document.getElementById("graph"), "all")');
 
         include "../html/graph.php";
 

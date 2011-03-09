@@ -120,7 +120,3 @@ var Input = new Class({
         this.currentStateEngine.mouseMoveEvent(event);
     },
 });
-
-window.addEventListener("load", function() {
-    new Input(document.getElementById("game"));
-}, false);

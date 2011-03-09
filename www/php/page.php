@@ -97,7 +97,7 @@ class Page
         unset($_SESSION['Email']);
     }
 
-    protected function drawHeader($title, $javaScripts, $styleSheets)
+    protected function drawHeader($title, $javaScripts, $styleSheets, $onload)
     {
         $this->startSession();
 

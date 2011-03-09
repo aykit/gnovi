@@ -21,7 +21,7 @@ var Graph = new Class({
     interpolationRunning: false,
 
     addWordToBrowserHistory: false,
-    redrawScreen: false,
+    redrawScreen: true,
 
     timeSliderHotspots: [],
     timeSliderHoverTime: -1,
@@ -47,9 +47,6 @@ var Graph = new Class({
 
         this.personalViewButton.addEventListener("click", this.onPersonalViewClick.bind(this), false);
         this.globalViewButton.addEventListener("click", this.onGlobalViewClick.bind(this), false);
-
-        this.personalViewButton.setStyle("display", this.viewMode == "me" ? "none" : "block");
-        this.globalViewButton.setStyle("display", this.viewMode == "all" ? "none" : "block");
 
         this.setTimer("normalfps");
     },

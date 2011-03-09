@@ -32,10 +32,11 @@ var StateEngine = new Class({
 var Input = new Class({
     Extends: Game,
 
-    initialize: function(canvas)
+    initialize: function(canvas, mode)
     {
         this.parent(canvas, new InputGraphics(), 1);
 
+        this.mode = mode;
         this.data = {};
 
         this.currentStateEngine = null;
@@ -120,7 +121,3 @@ var Input = new Class({
         this.currentStateEngine.mouseMoveEvent(event);
     },
 });
-
-window.addEventListener("load", function() {
-    new Input(document.getElementById("game"));
-}, false);

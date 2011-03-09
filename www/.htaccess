@@ -22,6 +22,8 @@ RewriteRule ^persoenliches$ pages/personal.php
 RewriteRule ^ich(/.*)?$ pages/personal_graph.php
 RewriteRule ^wir(/.*)?$ pages/global_graph.php
 RewriteRule ^html5$ html/html5.html
+RewriteRule ^slave(/.*)?$ pages/slave_input.php
+RewriteRule ^master(/.*)?$ pages/master_input.php
 
 #giving the blog a new home
 RewriteCond %{QUERY_STRING} ^p=([0-9]*)$

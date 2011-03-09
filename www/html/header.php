@@ -18,7 +18,7 @@
 <?php } ?>
   <link rel="icon" href="/images/gnovi_klein.png">
   </head>
-  <body>
+  <body<?=$onload != '' ? ' onload="' . htmlspecialchars($onload) . '"' : ''?>>
     <nav>
       <ul>
         <li>

@@ -19,7 +19,7 @@ class DataExchanger
             switch (@$_GET["cmd"])
             {
             case "getword":
-                $this->returnRandomWord();
+                $this->returnRandomWord(@$_GET["mode"]);
                 break;
             case "getrelations":
                 $this->returnRelations(@$_GET["word"], @$_GET["view"], @$_GET["time"]);
@@ -41,15 +41,17 @@ class DataExchanger
             $this->setResponseError("login", "Not logged in.");
 
         if ($this->response !== null)
+        {
+            header("Content-Type", "application/json");
             print(json_encode($this->response));
+        }
     }
 
-    protected function returnRandomWord()
+    protected function getRandomWord($table)
     {
-        if (!$this->connectDb())
-            return;
+        $backtickTable = str_replace("`", "``", $table);
 
-        $result = $this->db->query("SELECT COUNT(*) AS `Count` FROM `InitialWords`");
+        $result = $this->db->query("SELECT COUNT(*) AS `Count` FROM `$backtickTable`");
         if (!$this->checkForDbError())
             return null;
 
@@ -61,7 +63,7 @@ class DataExchanger
         }
 
         $index = rand(0, $row["Count"] - 1);
-        $result = $this->db->query("SELECT `Word` FROM `InitialWords` LIMIT $index, 1");
+        $result = $this->db->query("SELECT `Word` FROM `$backtickTable` LIMIT $index, 1");
         if (!$this->checkForDbError())
             return null;
 
@@ -72,7 +74,49 @@ class DataExchanger
             return null;
         }
 
-        $this->setResponseData($row["Word"]);
+        return $row["Word"];
+    }
+
+    protected function returnRandomWord($mode)
+    {
+        if (!$this->connectDb())
+            return;
+
+        switch ($mode)
+        {
+        case "slave":
+            $result = $this->db->query("SELECT `Word` FROM `MasterWord` WHERE `Num` = '1'");
+            if (!$this->checkForDbError())
+                break;
+
+            $row = $result->fetch_assoc();
+            if ($row)
+                $this->setResponseData($row["Word"]);
+            else
+                $this->setResponseError("database", "Could not get the master word.");
+
+            break;
+        case "independent":
+            $word = $this->getRandomWord("InitialWords");
+            if ($word !== null)
+                $this->setResponseData($word);
+            break;
+        case "master":
+            $word = $this->getRandomWord("MasterInitialWords");
+            if ($word !== null)
+            {
+                $escWord = $this->db->escape_string($word);
+                $result = $this->db->query("INSERT INTO `MasterWord` (`Num`, `Word`) VALUES ('1', '$escWord')" .
+                    "ON DUPLICATE KEY UPDATE `Word` = '$escWord'");
+                if (!$this->checkForDbError())
+                    break;
+
+                $this->setResponseData($word);
+            }
+            break;
+        default:
+            $this->setResponseError("value", "Invalid mode.");
+        }
     }
 
     protected function getWordInfo($word)

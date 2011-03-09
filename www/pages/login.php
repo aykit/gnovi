@@ -20,7 +20,7 @@ class LoginPage extends Page
                 $this->redirectToDestination();
         }
 
-        $this->drawHeader("Einloggen", array(), array("/styles/main.css"));
+        $this->drawHeader("Einloggen", array(), array("/styles/main.css"), "");
 
         include "../html/login.php";
 

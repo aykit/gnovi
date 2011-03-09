@@ -6,7 +6,7 @@ class StartPage extends Page
 {
     public function __construct()
     {
-        $this->drawHeader("gnovi", array(), array("/styles/main.css"));
+        $this->drawHeader("gnovi", array(), array("/styles/main.css"), "");
 
         $username = $this->getUsername();
         $email = $this->getEmail();

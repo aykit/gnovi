@@ -26,6 +26,8 @@ var Graph = new Class({
     timeSliderHotspots: [],
     timeSliderHoverTime: -1,
 
+    frequentWords: [],
+
     initialize: function(canvas, viewMode)
     {
         this.viewMode = viewMode;
@@ -61,7 +63,11 @@ var Graph = new Class({
             uri.match(/^(https?:\/\/[^\/]+\/[^\/]+)\/([^\/]*)/);
 
         if (!uriInfo || uriInfo.length < 3)
+        {
+            if (this.viewWord == "")
+                this.transmitData("cmd=getfrequent&view=" + this.viewMode);
             return;
+        }
 
         var viewTime = 0;
 
@@ -131,10 +137,21 @@ var Graph = new Class({
         this.timeSliderHotspots = this.graphics.getTimeSliderHotspots(this.currentData.changeTimes, this.viewTime);
     },
 
-    transmitDataSuccess: function(responseData)
+    transmitDataSuccess: function(responseData, command)
     {
-        this.graphNotfoundElement.setStyle("display", "none");
-        this.displayViewData(responseData);
+        switch (command)
+        {
+        case "getrelations":
+            this.graphNotfoundElement.setStyle("display", "none");
+            this.displayViewData(responseData);
+            break;
+        case "getfrequent":
+            this.frequentWords = responseData;
+            this.redrawScreen = true;
+            break;
+        default:
+            console.log("unrecognised response: " + command);
+        }
     },
 
     transmitDataFailure: function(error)
@@ -383,61 +400,71 @@ var Graph = new Class({
 
     draw: function()
     {
-        this.context.save();
-        this.graphics.drawBackground(this.interpolationRunning ? this.interpolationProgress : 1, this.prevViewMode, this.viewMode);
-        this.context.restore();
-
-        this.context.save();
-
-        var graphCenter = this.graphics.getGraphCenter();
-
-        for (var i = 0; i < this.connections.length; i++)
-        {
-            var connection = this.connections[i];
-
-            var visData1 = this.interpolatedNodesVisData[connection.node1.id];
-            var visData2 = this.interpolatedNodesVisData[connection.node2.id];
-
-            var posX1 = visData1.position.r * Math.cos(visData1.position.phi) + graphCenter.x;
-            var posY1 = visData1.position.r * Math.sin(visData1.position.phi) + graphCenter.y;
-
-            var posX2 = visData2.position.r * Math.cos(visData2.position.phi) + graphCenter.x;
-            var posY2 = visData2.position.r * Math.sin(visData2.position.phi) + graphCenter.y;
-
-            this.graphics.drawConnection(posX1, posY1, posX2, posY2, connection.alpha);
-        }
-
-        for (var i = 0; i < this.nodesToDraw.length; i++)
-        {
-            var node = this.nodesToDraw[i];
-            var visData = this.interpolatedNodesVisData[node.id];
-
-            var r = visData.position.r;
-            var phi = visData.position.phi;
-
-            var posX = r * Math.cos(phi) + graphCenter.x;
-            var posY = r * Math.sin(phi) + graphCenter.y;
-
-            var mouseOver = this.mouseOverNodeId == node.id;
-
-            if (visData.isRoot == 0)
-                this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
-            else if (visData.isRoot == 1)
-                this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha);
-            else
-            {
-                this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha * (1 - visData.isRoot));
-                this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha * visData.isRoot);
-            }
-        }
-
-        this.context.restore();
-
-        if (!this.interpolationRunning && this.currentData)
+        if (this.viewWord == "")
         {
             this.context.save();
-            this.graphics.drawTimeSlider(this.currentData.changeTimes, this.viewTime, this.timeSliderHoverTime);
+            this.graphics.drawFrequentWords(this.frequentWords);
             this.context.restore();
+        }
+        else
+        {
+            this.context.save();
+            this.graphics.drawGraphBackground(this.interpolationRunning ? this.interpolationProgress : 1,
+                this.prevViewMode, this.viewMode);
+            this.context.restore();
+
+            this.context.save();
+    
+            var graphCenter = this.graphics.getGraphCenter();
+    
+            for (var i = 0; i < this.connections.length; i++)
+            {
+                var connection = this.connections[i];
+    
+                var visData1 = this.interpolatedNodesVisData[connection.node1.id];
+                var visData2 = this.interpolatedNodesVisData[connection.node2.id];
+    
+                var posX1 = visData1.position.r * Math.cos(visData1.position.phi) + graphCenter.x;
+                var posY1 = visData1.position.r * Math.sin(visData1.position.phi) + graphCenter.y;
+    
+                var posX2 = visData2.position.r * Math.cos(visData2.position.phi) + graphCenter.x;
+                var posY2 = visData2.position.r * Math.sin(visData2.position.phi) + graphCenter.y;
+    
+                this.graphics.drawConnection(posX1, posY1, posX2, posY2, connection.alpha);
+            }
+    
+            for (var i = 0; i < this.nodesToDraw.length; i++)
+            {
+                var node = this.nodesToDraw[i];
+                var visData = this.interpolatedNodesVisData[node.id];
+    
+                var r = visData.position.r;
+                var phi = visData.position.phi;
+    
+                var posX = r * Math.cos(phi) + graphCenter.x;
+                var posY = r * Math.sin(phi) + graphCenter.y;
+    
+                var mouseOver = this.mouseOverNodeId == node.id;
+    
+                if (visData.isRoot == 0)
+                    this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha);
+                else if (visData.isRoot == 1)
+                    this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha);
+                else
+                {
+                    this.graphics.drawNode(node, posX, posY, false, mouseOver, visData.alpha * (1 - visData.isRoot));
+                    this.graphics.drawNode(node, posX, posY, true, mouseOver, visData.alpha * visData.isRoot);
+                }
+            }
+    
+            this.context.restore();
+    
+            if (!this.interpolationRunning && this.currentData)
+            {
+                this.context.save();
+                this.graphics.drawTimeSlider(this.currentData.changeTimes, this.viewTime, this.timeSliderHoverTime);
+                this.context.restore();
+            }
         }
 
         if (this.loadingSomething())

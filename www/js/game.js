@@ -167,7 +167,7 @@ var Game = new Class({
     onDataRequestSuccess: function(response, text)
     {
         if (response.status == "success")
-            this.transmitDataSuccess(response.data);
+            this.transmitDataSuccess(response.data, response.command);
         else
             this.transmitDataFailure(response.errorType);
     },
@@ -185,7 +185,7 @@ var Game = new Class({
         this.transmitDataFailure("timeout");
     },
 
-    transmitDataSuccess: function(responseData) {},
+    transmitDataSuccess: function(responseData, command) {},
 
     transmitDataFailure: function(error)
     {

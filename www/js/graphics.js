@@ -443,7 +443,37 @@ var InputGraphics = new Class({
 var GraphGraphics = new Class({
     Extends: Graphics,
 
-    drawBackground: function(interpolationProgress, prevViewMode, viewMode)
+    drawFrequentWords: function(wordInfos)
+    {
+        this._clearCanvas();
+
+        if (wordInfos.length == 0)
+            return;
+
+        var maxOccurrences = wordInfos[0].occurrences;
+
+        this.context.textBaseline = "top";
+        this.context.fillStyle = "black";
+        this.context.textAlign = "center";
+
+        var padding = 20;
+        var posY = padding;
+
+        for (var i = 0; i < wordInfos.length; i++)
+        {
+            var fontSize = Math.round(wordInfos[i].occurrences / maxOccurrences * 40);
+
+            if (posY + fontSize > 540 - padding)
+                break;
+
+            this.context.font = fontSize + "px HeroRegular";
+            this.context.fillText(wordInfos[i].word, 320, posY);
+
+            posY += fontSize + 4;
+        }
+    },
+
+    drawGraphBackground: function(interpolationProgress, prevViewMode, viewMode)
     {
         this._clearCanvas();
 

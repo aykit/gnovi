@@ -13,10 +13,11 @@ class DataExchanger
             session_start();
 
         $this->userId = (int)@$_SESSION['ID'];
+        $command = @$_GET["cmd"];
 
         if ($this->userId > 0)
         {
-            switch (@$_GET["cmd"])
+            switch ($command)
             {
             case "getword":
                 $this->returnRandomWord(@$_GET["mode"]);
@@ -33,6 +34,12 @@ class DataExchanger
             case "checkwords":
                 $this->returnCheckedWords(json_decode(@$_GET["words"], true));
                 break;
+            /*case "getrecent":
+                $this->returnRecentWords(@$_GET["view"]);
+                break;*/
+            case "getfrequent":
+                $this->returnFrequentWords(@$_GET["view"]);
+                break;
             default:
                 $this->setResponseError("unknown_command", @$_GET["cmd"]);
             }
@@ -43,6 +50,7 @@ class DataExchanger
         if ($this->response !== null)
         {
             header("Content-Type", "application/json");
+            $this->response["command"] = $command;
             print(json_encode($this->response));
         }
     }
@@ -408,6 +416,44 @@ class DataExchanger
             $times[] = (int)$row["Time"];
 
         return $times;
+    }
+
+    /*protected function returnRecentWords($viewMode)
+    {
+        if (!$this->connectDb())
+            return null;
+
+        $intUserId = (int)$this->userId;
+
+        // SELECT `Word` FROM `RunWords` INNER JOIN `Runs` ON `Runs`.`ID` = `RunWords`.`RunID` INNER JOIN `Words` ON `RunWords`.`WordID` = `Words`.`ID` ORDER BY `Runs`.`Time` DESC LIMIT 30
+        $this->setResponseData(array("Malte", "auch"));
+    }*/
+
+    protected function returnFrequentWords($viewMode)
+    {
+        if (!$this->connectDb())
+            return null;
+
+        $intUserId = (int)$this->userId;
+
+        $filter = $viewMode != "all" ?
+            "INNER JOIN `Runs` ON `Runs`.`ID` = `RunWords`.`RunID` WHERE `Runs`.`UserID` = '$intUserId'" : "";
+
+        $result = $this->db->query("SELECT `Word`, COUNT(*) AS `Occurrences` FROM `Words` " .
+            "INNER JOIN `RunWords` ON `RunWords`.`WordID` = `Words`.`ID` $filter " .
+            "GROUP BY `Words`.`ID` ORDER BY `Occurrences` DESC LIMIT 100");
+
+        if (!$this->checkForDbError())
+            return null;
+
+        $words = array();
+        while ($row = $result->fetch_assoc())
+            $words[] = array(
+                "word" => $row["Word"],
+                "occurrences" => (int)$row["Occurrences"]
+            );
+
+        $this->setResponseData($words);
     }
 
     /*protected function returnChangeTimes($word, $viewMode)

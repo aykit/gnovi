@@ -79,7 +79,7 @@ var Input = new Class({
             this.currentStateEngine = null;
     },
 
-    transmitDataSuccess: function(responseData)
+    transmitDataSuccess: function(responseData, command)
     {
         if (this.currentStateEngine)
             this.currentStateEngine.dataTransmitted(responseData);

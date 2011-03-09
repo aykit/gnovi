@@ -85,6 +85,16 @@ class DataExchanger
         switch ($mode)
         {
         case "slave":
+            $result = $this->db->query("SELECT `Word` FROM `MasterWord` WHERE `Num` = '1'");
+            if (!$this->checkForDbError())
+                break;
+
+            $row = $result->fetch_assoc();
+            if ($row)
+                $this->setResponseData($row["Word"]);
+            else
+                $this->setResponseError("database", "Could not get the master word.");
+
             break;
         case "independent":
             $word = $this->getRandomWord("InitialWords");
@@ -95,7 +105,12 @@ class DataExchanger
             $word = $this->getRandomWord("MasterInitialWords");
             if ($word !== null)
             {
-                
+                $escWord = $this->db->escape_string($word);
+                $result = $this->db->query("INSERT INTO `MasterWord` (`Num`, `Word`) VALUES ('1', '$escWord')" .
+                    "ON DUPLICATE KEY UPDATE `Word` = '$escWord'");
+                if (!$this->checkForDbError())
+                    break;
+
                 $this->setResponseData($word);
             }
             break;

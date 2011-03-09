@@ -1,11 +1,13 @@
-GRANT USAGE ON *.* TO 'gnovi'@'localhost' IDENTIFIED BY PASSWORD '*F3D2951C35D45EC6069AA36B464AB698354F999A'
-GRANT SELECT ON `gnovi`.`Wordcheck` TO 'gnovi'@'localhost'
-GRANT SELECT ON `gnovi`.`InitialWords` TO 'gnovi'@'localhost'
-GRANT SELECT, INSERT ON `gnovi`.`Users` TO 'gnovi'@'localhost'
-GRANT SELECT, INSERT ON `gnovi`.`Runs` TO 'gnovi'@'localhost'
-GRANT SELECT, INSERT ON `gnovi`.`RunWords` TO 'gnovi'@'localhost'
-GRANT SELECT, INSERT, UPDATE (Word) ON `gnovi`.`Words` TO 'gnovi'@'localhost'
-GRANT SELECT, INSERT, UPDATE ON `gnovi`.`Relations` TO 'gnovi'@'localhost'
+GRANT USAGE ON *.* TO 'gnovi'@'localhost' IDENTIFIED BY PASSWORD '*F3D2951C35D45EC6069AA36B464AB698354F999A';
+GRANT SELECT ON `gnovi`.`Wordcheck` TO 'gnovi'@'localhost';
+GRANT SELECT ON `gnovi`.`InitialWords` TO 'gnovi'@'localhost';
+GRANT SELECT ON `gnovi`.`MasterInitialWords` TO 'gnovi'@'localhost';
+GRANT SELECT, INSERT, UPDATE ON `gnovi`.`MasterWord` TO 'gnovi'@'localhost';
+GRANT SELECT, INSERT ON `gnovi`.`Users` TO 'gnovi'@'localhost';
+GRANT SELECT, INSERT ON `gnovi`.`Runs` TO 'gnovi'@'localhost';
+GRANT SELECT, INSERT ON `gnovi`.`RunWords` TO 'gnovi'@'localhost';
+GRANT SELECT, INSERT, UPDATE (Word) ON `gnovi`.`Words` TO 'gnovi'@'localhost';
+GRANT SELECT, INSERT, UPDATE ON `gnovi`.`Relations` TO 'gnovi'@'localhost';
 
 --
 -- Database: `gnovi`
@@ -18,11 +20,31 @@ GRANT SELECT, INSERT, UPDATE ON `gnovi`.`Relations` TO 'gnovi'@'localhost'
 --
 
 CREATE TABLE `InitialWords` (
-  `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `LeipzigID` int(10) unsigned NOT NULL,
   `Word` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `Frequency` mediumint(8) unsigned DEFAULT NULL,
-  PRIMARY KEY (`ID`)
+  `LeipzigFrequency` mediumint(8) unsigned DEFAULT NULL,
+  PRIMARY KEY (`LeipzigID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `MasterInitialWords`
+--
+
+CREATE TABLE `MasterInitialWords` (
+  `Word` varchar(255) COLLATE utf8_bin DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `MasterWord`
+--
+
+CREATE TABLE `MasterWord` (
+  `Word` varchar(255) COLLATE utf8_bin NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 

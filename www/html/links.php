@@ -1,5 +1,7 @@
     <section id="multicolumn">
-      Ohne Gedanken keine Idee:
+      Ohne Gedanke
+      <br>
+      keine Idee:
       <ul>
 	    <li>
 	      <a title="http://spectrumatlas.org/" rel="nofollow" href="http://spectrumatlas.org/">Atlas Of Electromagnetic Space
@@ -75,7 +77,9 @@
         </li>
       </ul>
       <br>
-      Ohne Handwerk kein Projekt:
+      Ohne Handwerk 
+      <br>
+      kein Projekt:
       <ul>
   	    <li>
 	      <a title="http://wortschatz.uni-leipzig.de/axis/servlet/ServiceOverviewServlet" rel="nofollow" href="http://wortschatz.uni-

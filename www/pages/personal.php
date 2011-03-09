@@ -13,6 +13,7 @@ class UeberPage extends Page
 
         include "../html/about_header.php";
         include "../html/personal.php";
+        include "../html/thanks.php";
 
         $this->drawFooter();
     }

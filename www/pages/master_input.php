@@ -9,8 +9,8 @@ class InputPage extends Page
         $this->requireLogin(PageUrls::INPUT);
 
         $this->drawHeader("Input",
-            array("/js/mootools.js", "/js/game.js", "/js/input.js", "/js/inputstates.js", "/js/graphics.js"), 
-            array("/styles/reset.css", "/styles/main.css"), 'new Input(document.getElementById("game"), "independent")');
+            array("/js/mootools.js", "/js/game.js", "/js/input.js", "/js/master_input.js", "/js/inputstates.js", "/js/graphics.js"), 
+            array("/styles/reset.css", "/styles/main.css"), 'new Input(document.getElementById("game"), "master")');
 
         print('    <canvas id="game" width="640" height="480"></canvas>' . "\n");
 

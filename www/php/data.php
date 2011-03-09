@@ -19,7 +19,7 @@ class DataExchanger
             switch (@$_GET["cmd"])
             {
             case "getword":
-                $this->returnRandomWord();
+                $this->returnRandomWord(@$_GET["mode"]);
                 break;
             case "getrelations":
                 $this->returnRelations(@$_GET["word"], @$_GET["view"], @$_GET["time"]);
@@ -44,12 +44,11 @@ class DataExchanger
             print(json_encode($this->response));
     }
 
-    protected function returnRandomWord()
+    protected function getRandomWord($table)
     {
-        if (!$this->connectDb())
-            return;
+        $backtickTable = str_replace("`", "``", $table);
 
-        $result = $this->db->query("SELECT COUNT(*) AS `Count` FROM `InitialWords`");
+        $result = $this->db->query("SELECT COUNT(*) AS `Count` FROM `$backtickTable`");
         if (!$this->checkForDbError())
             return null;
 
@@ -61,7 +60,7 @@ class DataExchanger
         }
 
         $index = rand(0, $row["Count"] - 1);
-        $result = $this->db->query("SELECT `Word` FROM `InitialWords` LIMIT $index, 1");
+        $result = $this->db->query("SELECT `Word` FROM `$backtickTable` LIMIT $index, 1");
         if (!$this->checkForDbError())
             return null;
 
@@ -72,7 +71,34 @@ class DataExchanger
             return null;
         }
 
-        $this->setResponseData($row["Word"]);
+        return $row["Word"];
+    }
+
+    protected function returnRandomWord($mode)
+    {
+        if (!$this->connectDb())
+            return;
+
+        switch ($mode)
+        {
+        case "slave":
+            break;
+        case "independent":
+            $word = $this->getRandomWord("InitialWords");
+            if ($word !== null)
+                $this->setResponseData($word);
+            break;
+        case "master":
+            $word = $this->getRandomWord("MasterInitialWords");
+            if ($word !== null)
+            {
+                
+                $this->setResponseData($word);
+            }
+            break;
+        default:
+            $this->setResponseError("value", "Invalid mode.");
+        }
     }
 
     protected function getWordInfo($word)

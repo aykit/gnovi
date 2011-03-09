@@ -19,7 +19,7 @@ var StateEngineStart = new Class({
 
     start: function()
     {
-        this.game.transmitData("cmd=getword");
+        this.game.transmitData("cmd=getword&mode=" + this.game.mode);
         this.game.setTimer("normalfps");
     },
 

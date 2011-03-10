@@ -5,7 +5,7 @@
   <title><?=htmlspecialchars($title)?></title>
   <script type="text/javascript" src="http://piwik.gerade.org/piwik.js"></script>
   <script type="text/javascript" src="/js/piwik.js"></script>
-  <script type="text/javascript" src="/js/modernizr.js"></script>
+  <script type="text/javascript" src="/js/modernizr_min.js"></script>
   <script type="text/javascript" src="/js/html5check.js"></script>
 <?php foreach ($javaScripts as $script) { ?>
   <script type="text/javascript" src="<?=htmlspecialchars($script)?>"></script>

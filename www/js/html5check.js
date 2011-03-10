@@ -3,11 +3,11 @@
 
 var errormsg = "";
 var error = false;
-
+  
 if (!Modernizr.canvas) {
-    errormsg = errormsg + "canvas";    
+    errormsg = errormsg + "canvas";
     error = true;
-}
+    }
 
 if (!Modernizr.canvastext) {
     errormsg = errormsg + "canvastext";
@@ -36,10 +36,11 @@ if (!Modernizr.opacity) {
 
 if (!Modernizr.csscolumns) {
     errormsg = errormsg + "csscolumns";
+    error = true;
 }
 
 if (error) {
     window.location = "html5";
 }
 
-/* throw(errormsg); */
+/* System.out.println(errormsg); */

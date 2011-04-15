@@ -443,7 +443,7 @@ var InputGraphics = new Class({
 var GraphGraphics = new Class({
     Extends: Graphics,
 
-    drawFrequentWords: function(wordInfos)
+    drawFrequentWords: function(wordInfos, highlightedWord)
     {
         this._clearCanvas();
 
@@ -453,7 +453,6 @@ var GraphGraphics = new Class({
         var maxOccurrences = wordInfos[0].occurrences;
 
         this.context.textBaseline = "top";
-        this.context.fillStyle = "black";
         this.context.textAlign = "center";
         
         this.context.font = "25px HeroRegular";
@@ -469,11 +468,45 @@ var GraphGraphics = new Class({
             if (posY + fontSize > 540 - padding)
                 break;
 
+            this.context.fillStyle = (wordInfos[i].word == highlightedWord ? "red" : "black");
             this.context.font = fontSize + "px HeroRegular";
             this.context.fillText(wordInfos[i].word, 320, posY);
 
             posY += fontSize + 4;
         }
+    },
+
+    getFrequentWordsHotspots: function(wordInfos)
+    {
+        if (wordInfos.length == 0)
+            return [];
+
+        var maxOccurrences = wordInfos[0].occurrences;
+
+        var padding = 40;
+        var posY = padding;
+
+        var hotspots = [];
+
+        for (var i = 0; i < wordInfos.length; i++)
+        {
+            var fontSize = Math.round(wordInfos[i].occurrences / maxOccurrences * 38);
+
+            if (posY + fontSize > 540 - padding)
+                break;
+
+            hotspots.push({
+                time: 0,
+                x1: 100,
+                y1: posY,
+                x2: 540,
+                y2: posY + fontSize,
+            });
+
+            posY += fontSize + 4;
+        }
+
+        return hotspots;
     },
 
     drawGraphBackground: function(interpolationProgress, prevViewMode, viewMode)

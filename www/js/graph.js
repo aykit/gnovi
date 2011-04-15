@@ -403,7 +403,7 @@ var Graph = new Class({
         if (this.viewWord == "")
         {
             this.context.save();
-            this.graphics.drawFrequentWords(this.frequentWords);
+            this.graphics.drawFrequentWords(this.frequentWords, this.mouseOverFrequentWord);
             this.context.restore();
         }
         else
@@ -499,58 +499,83 @@ var Graph = new Class({
         if (this.loadingSomething())
             this.redrawScreen = true;
 
-        var graphCenter = this.graphics.getGraphCenter();
-        var newMouseOverNodeId = -1;
-
-        for (var i = 0; i < this.nodesToDraw.length; i++)
+        if (this.viewWord == "")
         {
-            var node = this.nodesToDraw[i];
-            var visData = this.interpolatedNodesVisData[node.id];
+            var newMouseOverFrequentWord = "";
+            var hotspots = this.graphics.getFrequentWordsHotspots(this.frequentWords);
 
-            var r = visData.position.r;
-            var phi = visData.position.phi;
-
-            var posX = r * Math.cos(phi) + graphCenter.x;
-            var posY = r * Math.sin(phi) + graphCenter.y;
-
-            var dx = posX - this.mouseX;
-            var dy = posY - this.mouseY;
-            var mouseOver = dx*dx + dy*dy < 15*15; // TODO: determine size
-
-            if (mouseOver)
+            for (var i = 0; i < hotspots.length; i++)
             {
-                newMouseOverNodeId = node.id;
-                break;
+                var hotspot = hotspots[i];
+                if (this.mouseX >= hotspot.x1 && this.mouseX < hotspot.x2 &&
+                    this.mouseY >= hotspot.y1 && this.mouseY < hotspot.y2)
+                {
+                    newMouseOverFrequentWord = this.frequentWords[i].word;
+                    break;
+                }
+            }
+
+            if (newMouseOverFrequentWord != this.mouseOverFrequentWord)
+            {
+                this.mouseOverFrequentWord = newMouseOverFrequentWord;
+                this.redrawScreen = true;
             }
         }
-
-        if (newMouseOverNodeId != this.mouseOverNodeId)
+        else
         {
-            this.mouseOverNodeId = newMouseOverNodeId;
-            this.redrawScreen = true;
-        }
-
-        var newTimeSliderHoverTime = -1;
-
-        for (var i = 0; i < this.timeSliderHotspots.length; i++)
-        {
-            var hotspot = this.timeSliderHotspots[i];
-
-            var dx = hotspot.x - this.mouseX;
-            var dy = hotspot.y - this.mouseY;
-            var mouseOver = dx*dx + dy*dy < hotspot.r*hotspot.r;
-
-            if (mouseOver)
+            var graphCenter = this.graphics.getGraphCenter();
+            var newMouseOverNodeId = -1;
+    
+            for (var i = 0; i < this.nodesToDraw.length; i++)
             {
-                newTimeSliderHoverTime = hotspot.time;
-                break;
+                var node = this.nodesToDraw[i];
+                var visData = this.interpolatedNodesVisData[node.id];
+    
+                var r = visData.position.r;
+                var phi = visData.position.phi;
+    
+                var posX = r * Math.cos(phi) + graphCenter.x;
+                var posY = r * Math.sin(phi) + graphCenter.y;
+    
+                var dx = posX - this.mouseX;
+                var dy = posY - this.mouseY;
+                var mouseOver = dx*dx + dy*dy < 15*15; // TODO: determine size
+    
+                if (mouseOver)
+                {
+                    newMouseOverNodeId = node.id;
+                    break;
+                }
             }
-        }
-
-        if (newTimeSliderHoverTime != this.timeSliderHoverTime)
-        {
-            this.timeSliderHoverTime = newTimeSliderHoverTime;
-            this.redrawScreen = true;
+    
+            if (newMouseOverNodeId != this.mouseOverNodeId)
+            {
+                this.mouseOverNodeId = newMouseOverNodeId;
+                this.redrawScreen = true;
+            }
+    
+            var newTimeSliderHoverTime = -1;
+    
+            for (var i = 0; i < this.timeSliderHotspots.length; i++)
+            {
+                var hotspot = this.timeSliderHotspots[i];
+    
+                var dx = hotspot.x - this.mouseX;
+                var dy = hotspot.y - this.mouseY;
+                var mouseOver = dx*dx + dy*dy < hotspot.r*hotspot.r;
+    
+                if (mouseOver)
+                {
+                    newTimeSliderHoverTime = hotspot.time;
+                    break;
+                }
+            }
+    
+            if (newTimeSliderHoverTime != this.timeSliderHoverTime)
+            {
+                this.timeSliderHoverTime = newTimeSliderHoverTime;
+                this.redrawScreen = true;
+            }
         }
 
         if (this.redrawScreen)
@@ -567,10 +592,18 @@ var Graph = new Class({
         if (this.interpolationRunning)
             return;
 
-        if (this.mouseOverNodeId > 0)
-            this.loadView(this.currentNodes[this.mouseOverNodeId].word, this.viewTime, this.viewMode, false, true);
-        else if (this.timeSliderHoverTime >= 0)
-            this.loadView(this.viewWord, this.timeSliderHoverTime, this.viewMode, false, true);
+        if (this.viewWord == "")
+        {
+            if (this.mouseOverFrequentWord != "")
+                this.loadView(this.mouseOverFrequentWord, this.viewTime, this.viewMode, false, true);
+        }
+        else
+        {
+            if (this.mouseOverNodeId > 0)
+                this.loadView(this.currentNodes[this.mouseOverNodeId].word, this.viewTime, this.viewMode, false, true);
+            else if (this.timeSliderHoverTime >= 0)
+                this.loadView(this.viewWord, this.timeSliderHoverTime, this.viewMode, false, true);
+        }
     },
 
     onPopState: function(event)

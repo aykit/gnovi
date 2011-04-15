@@ -455,13 +455,16 @@ var GraphGraphics = new Class({
         this.context.textBaseline = "top";
         this.context.fillStyle = "black";
         this.context.textAlign = "center";
+        
+        this.context.font = "25px HeroRegular";
+        this.context.fillText("Die momentan meistaufgeschriebenen Worte: ", 320, 0);
 
-        var padding = 20;
+        var padding = 40;
         var posY = padding;
 
         for (var i = 0; i < wordInfos.length; i++)
         {
-            var fontSize = Math.round(wordInfos[i].occurrences / maxOccurrences * 40);
+            var fontSize = Math.round(wordInfos[i].occurrences / maxOccurrences * 38);
 
             if (posY + fontSize > 540 - padding)
                 break;

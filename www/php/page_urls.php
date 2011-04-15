@@ -5,6 +5,7 @@ class PageUrls
     const START = "/";
     const PROFILE = "/profil";
     const LOGIN = "/einloggen";
+    const LOGIN_FOR = "/einloggen";
     const INPUT = "/anlauf";
     const PERSONAL_GRAPH = "/ich";
     const GLOBAL_GRAPH = "/wir";

@@ -30,9 +30,9 @@ class LoginPage extends Page
     protected function redirectToDestination()
     {
         $requestUri = $_SERVER["REQUEST_URI"];
-        $loginPath = PageUrls::LOGIN;
-        $path = strncmp($loginPath, $requestUri, strlen($loginPath)) == 0 ?
-            substr($requestUri, strlen($loginPath)) : "";
+        $loginForPath = PageUrls::LOGIN_FOR;
+        $path = strncmp($loginForPath, $requestUri, strlen($loginForPath)) == 0 ?
+            substr($requestUri, strlen($loginForPath)) : "";
         if ($path == "")
             $path = PageUrls::PROFILE;
 

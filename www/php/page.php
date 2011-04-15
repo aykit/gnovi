@@ -49,7 +49,7 @@ class Page
         if ($pathAfterLogin != "" && $pathAfterLogin[0] != "/")
             $pathAfterLogin = "";
 
-        header("Location: " . PageUrls::LOGIN . "$pathAfterLogin");
+        header("Location: " . PageUrls::LOGIN_FOR . "$pathAfterLogin");
         die();
     }
 

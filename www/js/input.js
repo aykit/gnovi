@@ -16,10 +16,8 @@ var StateEngine = new Class({
         this.continueEvent();
     },
 
-    keypressEvent: function(event)
+    keypressEvent: function(event, key)
     {
-        var key = event.charCode || event.keyCode;
-
         if (key == 13)
             this.continueEvent();
         else if (key == 8)
@@ -110,8 +108,9 @@ var Input = new Class({
 
     onKeypress: function(event)
     {
-        this.currentStateEngine.keypressEvent(event);
-        if (event.keyCode == 8 || event.keyCode == 32)
+        var key = event.charCode || event.keyCode;
+        this.currentStateEngine.keypressEvent(event, key);
+        if (key == 8 || key == 32)
             event.preventDefault();
     },
 

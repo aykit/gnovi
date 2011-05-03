@@ -166,15 +166,13 @@ class DataExchanger
         return $row ? $row["Word"] : "";
     }
 
-    protected function checkAndUpdateWord($word)
+    protected function obtainWordId($word)
     {
-        $word = $this->lookupWordcheck($word);
-        if ($word === null)
+        if (!$this->connectDb())
             return null;
 
         $escWord = $this->db->escape_string($word);
 
-        // Insert the word or update the entry to reflect letter case changes
         $this->db->query("INSERT INTO `Words` (`Word`) VALUES ('$escWord') " .
             "ON DUPLICATE KEY UPDATE `Word` = '$escWord'");
         if (!$this->checkForDbError())
@@ -182,8 +180,12 @@ class DataExchanger
 
         $id = (int)$this->db->insert_id;
 
+        if ($id != 0)
+            return $id;
+
         // in case nothing hast changed insert_id is zero, so query the id separately
-        return $id == 0 ? $this->getWordInfo($word) : array("id" => $id, "word" => $word);
+        $wordInfo = $this->getWordInfo($word);
+        return $wordInfo["id"];
     }
 
     protected function returnCheckedWords($words)
@@ -222,10 +224,9 @@ class DataExchanger
             return;
         }
 
-        $wordInfo = $this->checkAndUpdateWord($initialWord);
-        if (!$wordInfo)
+        $initialWordId = $this->obtainWordId($initialWord);
+        if (!$initialWordId)
             return;
-        $initialWordId = $wordInfo["id"];
 
         $checkedWords = array();
         $wordsForInitialWord = array();
@@ -243,21 +244,21 @@ class DataExchanger
                 ($connotation !== "+" && $connotation !== "-"))
                 continue;
 
-            $wordInfo = $this->checkAndUpdateWord($word);
-            if (!$wordInfo)
+            $wordId = $this->obtainWordId($word);
+            if (!$wordId)
                 return;
 
             $checkedWords[] = array(
-                "id" => $wordInfo["id"],
+                "id" => $wordId,
                 "distanceFromInitialWord" => $titlePos,
                 "distanceFromLocation" => $locationPos,
                 "connotation" => $connotation,
             );
 
             if ($titlePos > 0)
-                $wordsForInitialWord[$titlePos - 1] = $wordInfo["id"];
+                $wordsForInitialWord[$titlePos - 1] = $wordId;
             if ($locationPos > 0)
-                $wordsForLocation[$locationPos - 1] = $wordInfo["id"];
+                $wordsForLocation[$locationPos - 1] = $wordId;
         }
 
         $time = time();

@@ -114,9 +114,9 @@ var StateEngineWordCollecting = new Class({
             this.game.draw();
     },
 
-    keypressEvent: function(event)
+    keypressEvent: function(event, key)
     {
-        this.parent(event);
+        this.parent(event, key);
         this.game.draw();
     },
 
@@ -182,19 +182,20 @@ var StateEngineWordsFinished = new Class({
     {
         if (this.editingWordIndex >= 0)
         {
-            this.wordList[this.editingWordIndex].wordcheck = response[0].wordcheck;
+            if (response[0].wordcheck != "")
+                this.wordList[this.editingWordIndex].wordcheck = response[0].wordcheck;
             this.wordList[this.editingWordIndex].marked = response[0].original != response[0].wordcheck;
 
-            this.editingWordIndex = -1;
             this.requestFinished();
-            this.game.draw();
+            this.editingWordIndex = -1;
+            this.editWord(this.nextEditingWordIndex);
             return;
         }
 
         this.wordList = response.map(function(wordInfo) {
             return {
                 "wordcheck": wordInfo.wordcheck,
-                "word": wordInfo.wordcheck !== null ? wordInfo.wordcheck: wordInfo.original,
+                "word": wordInfo.wordcheck != "" ? wordInfo.wordcheck: wordInfo.original,
                 "marked": wordInfo.original != wordInfo.wordcheck,
             }
         });
@@ -203,6 +204,7 @@ var StateEngineWordsFinished = new Class({
         if (AUTOINPUT.info)
         {
             this.fadeEffect = 1;
+            this.requestFinished();
             this.continueEvent();
         }
     },
@@ -212,11 +214,16 @@ var StateEngineWordsFinished = new Class({
         if (this.editingWordIndex >= 0)
             this.wordList[this.editingWordIndex].word = this.inputText + "_";
 
-        graphics.drawWordsFinishedScreen(this.game.data.initialWord, this.wordList,
-            this.inputTime, this.fadeEffect, this.fadeEffect >= 1, this.inputChecked);
+        this.drawGameInternal(graphics, context);
 
         if (this.editingWordIndex >= 0)
             this.wordList[this.editingWordIndex].word = this.inputText;
+    },
+
+    drawGameInternal: function(graphics, context)
+    {
+        graphics.drawWordsFinishedScreen(this.game.data.initialWord, this.wordList,
+            this.inputTime, this.fadeEffect, this.fadeEffect >= 1, this.inputChecked);
     },
 
     timerEvent: function(delta)
@@ -234,9 +241,15 @@ var StateEngineWordsFinished = new Class({
         this.game.draw();
     },
 
-    keypressEvent: function(event)
+    keypressEvent: function(event, key)
     {
-        this.parent(event);
+        //if (this.editingWordIndex >= 0 && key == 27) /* esc */
+        //{
+        //    this.continueEvent();
+        //    return;
+        //}
+
+        this.parent(event, key);
         this.game.draw();
     },
 
@@ -244,6 +257,22 @@ var StateEngineWordsFinished = new Class({
 
     editWord: function(index)
     {
+        if (this.editingWordIndex >= 0)
+        {
+            var oldIndex = this.editingWordIndex;
+            if (this.wordList[oldIndex].word == this.wordList[oldIndex].wordcheck)
+            {
+                this.wordList[oldIndex].marked = false;
+            }
+            else
+            {
+                this.nextEditingWordIndex = index;
+                this.performRequest("cmd=checkwords&words=" +
+                    encodeURIComponent(JSON.encode([this.wordList[oldIndex].word])));
+                return;
+            }
+        }
+
         this.editingWordIndex = index;
         if (index >= 0)
             this.inputText = this.wordList[index].word;
@@ -251,29 +280,23 @@ var StateEngineWordsFinished = new Class({
         this.game.draw();
     },
 
-    endWordEditing: function()
-    {
-        var index = this.editingWordIndex;
-        if (this.wordList[index].word == this.wordList[index].wordcheck)
-        {
-            this.wordList[index].marked = false;
-            this.editingWordIndex = -1;
-            this.game.draw();
-        }
-        else
-        {
-            this.requestPending = true;
-            this.performRequest("cmd=checkwords&words=" +
-                encodeURIComponent(JSON.encode([this.wordList[index].word])));
-        }
-    },
-
     clickEvent: function()
     {
         if (this.requestPending)
             return;
 
-        this.editWord(1);
+        if (this.editingWordIndex >= 0 && this.inputText == "")
+            return;
+
+        var hotspots = this.game.graphics.getWordsFinishedScreenHotspots(this.wordList);
+        for (var i = 0; i < hotspots.length; i++)
+        {
+            if (this.game.mouseInsideRect(hotspots[i]))
+            {
+                this.editWord(i);
+                return;
+            }
+        }
     },
 
     continueEvent: function()
@@ -284,29 +307,31 @@ var StateEngineWordsFinished = new Class({
         if (this.editingWordIndex >= 0)
         {
             if (this.inputText != "")
-                this.endWordEditing();
+                this.editWord(-1);
             return;
         }
 
-    /*
         if (!this.game.data.wordMap)
             this.game.data.wordMap = {};
         wordMap = this.game.data.wordMap;
 
-        for (var i = 0; i < response.length; i++)
+        for (var i = 0; i < this.wordList.length; i++)
         {
-            wordInfo = response[i];
+            wordInfo = this.wordList[i];
 
-            if (!wordMap[wordInfo.id])
-                wordMap[wordInfo.id] = {};
-            wordData = wordMap[wordInfo.id];
+            if (!wordMap[wordInfo.word])
+                wordMap[wordInfo.word] = {};
+            wordData = wordMap[wordInfo.word];
 
             wordData[this.titlePosField] = i + 1;
             wordData.word = wordInfo.word;
+        }
 
-            this.inputList.push(wordInfo.word);
-        }*/
+        this.nextState();
+    },
 
+    nextState: function()
+    {
         this.game.setStateEngine(StateEngineInputLocation);
     },
 });
@@ -332,9 +357,9 @@ var StateEngineInputLocation = new Class({
         graphics.drawInputLocationScreen(this.inputText);
     },
 
-    keypressEvent: function(event)
+    keypressEvent: function(event, key)
     {
-        this.parent(event);
+        this.parent(event, key);
         this.game.draw();
     },
 
@@ -393,16 +418,15 @@ var StateEngineLocationWordsFinished = new Class({
     inputListField: "locationInputList",
     titlePosField: "locationPos",
 
-    drawGame: function(graphics, context)
+    drawGameInternal: function(graphics, context)
     {
-        graphics.drawLocationWordsFinishedScreen(this.game.data.location, this.inputList,
+        graphics.drawLocationWordsFinishedScreen(this.game.data.location, this.wordList,
             this.inputTime, this.fadeEffect, this.fadeEffect >= 1, this.inputChecked);
     },
 
-    continueEvent: function()
+    nextState: function()
     {
-        if (this.fadeEffect >= 1)
-            this.game.setStateEngine(StateEngineWordRating);
+        this.game.setStateEngine(StateEngineWordRating);
     },
 });
 
@@ -418,7 +442,7 @@ var StateEngineWordRating = new Class({
 
     start: function(options)
     {
-        this.wordIds = Object.keys(this.game.data.wordMap);
+        this.words = Object.keys(this.game.data.wordMap);
 
         if (!this.nextWord())
         {
@@ -431,13 +455,12 @@ var StateEngineWordRating = new Class({
 
     nextWord: function()
     {
-        if (this.wordIds.length == 0)
+        if (this.words.length == 0)
             return false;
 
-        var i = Number.random(0, this.wordIds.length - 1);
-        this.currentWordId = this.wordIds[i];
-        this.currentWord = this.game.data.wordMap[this.currentWordId].word;
-        this.wordIds.splice(i, 1);
+        var i = Number.random(0, this.words.length - 1);
+        this.currentWord = this.words[i];
+        this.words.splice(i, 1);
 
         this.buttonPositions = this.game.graphics.getWordRatingButtonPositions(this.currentWord);
         return true;
@@ -445,7 +468,7 @@ var StateEngineWordRating = new Class({
 
     setConnotation: function(connotation)
     {
-        this.game.data.wordMap[this.currentWordId].connotation = connotation;
+        this.game.data.wordMap[this.currentWord].connotation = connotation;
 
         if (!this.nextWord())
         {

@@ -149,7 +149,7 @@ class DataExchanger
         return array("id" => (int)$row["ID"], "word" => $row["Word"], "connotation" => (float)$row["AverageConnotation"]);
     }
 
-    protected function checkWord($word)
+    protected function lookupWordcheck($word)
     {
         if (!$this->connectDb())
             return null;
@@ -163,12 +163,12 @@ class DataExchanger
             return null;
 
         $row = $result->fetch_assoc();
-        return $row ? $row["Word"] : $word;
+        return $row ? $row["Word"] : "";
     }
 
     protected function checkAndUpdateWord($word)
     {
-        $word = $this->checkWord($word);
+        $word = $this->lookupWordcheck($word);
         if ($word === null)
             return null;
 
@@ -194,20 +194,18 @@ class DataExchanger
             return;
         }
 
-        $wordMap = array();
+        $checkedWords = array();
         foreach ($words as $word)
         {
-            if ($word == "." || $word == "..")
-                continue;
+            $wordcheck = $this->lookupWordcheck($word);
 
-            $wordInfo = $this->checkAndUpdateWord($word);
-            if (!$wordInfo)
-                return;
-
-            $wordMap[$wordInfo["id"]] = $wordInfo;
+            $checkedWords[] = array(
+                "original" => $word,
+                "wordcheck" => $wordcheck,
+            );
         }
 
-        $this->setResponseData(array_values($wordMap));
+        $this->setResponseData($checkedWords);
     }
 
     protected function storeRun($data)

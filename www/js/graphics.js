@@ -72,9 +72,38 @@ var Graphics = new Class({
             this.context.drawImage(gnoviImage, posX - gnoviImage.width/2, posY - gnoviImage.height/2);
     },
 
+    _drawWordBoxes: function(x, y, width, wordList, markedFlags)
+    {
+        var spacing = 10;
+        var lineHeight = 50;
+        var wordOffsetX = 66;
+        var wordOffsetY = 0;
+
+        for (var i = 0; i < wordList.length; i++)
+        {
+            var textWidth =  Math.max(this.context.measureText(wordList[i]).width + 30, 136);
+
+            if (wordOffsetX != 0 && wordOffsetX + textWidth > width)
+            {
+                wordOffsetX = 0;
+                wordOffsetY += lineHeight;
+            }
+
+            this.context.strokeStyle = "#7F7F7F";
+            this.context.fillStyle = markedFlags && markedFlags[i] ? "red" : "#7F7F7F";
+            this._コード(x + wordOffsetX, y + wordOffsetY + 42, textWidth, 44, 12);
+
+            this.context.fillStyle = "#FFFFFF";
+            this.context.fillText(wordList[i], x + wordOffsetX + textWidth/2, y + wordOffsetY + 70 );
+
+            wordOffsetX += textWidth + spacing;
+        }
+
+        return wordOffsetY;
+    },
+
     _fillTextRect: function(wordList, x, y, width, spacing, lineHeight)
     {
-        
         var wordOffsetX = 66;
         var wordOffsetY = 0;
 
@@ -235,8 +264,10 @@ var InputGraphics = new Class({
         }
 
         if (wordsChecked)
-        {        
-            var offsetY = this._fillTextRect(wordList, 40, 50, 600, 10, 50);
+        {
+            var offsetY = this._drawWordBoxes(40, 50, 600,
+                wordList.map(function(info) { return info.word; }),
+                wordList.map(function(info) { return info.marked; }));
 
             this.context.fillStyle = Graphics._rgba(0, 0, 0, fade);
             this.context.strokeStyle = Graphics._rgba(0, 0, 0, fade);

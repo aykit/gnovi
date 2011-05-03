@@ -152,20 +152,143 @@ var StateEngineWordsFinished = new Class({
     inputChecked: false,
     inputListField: "inputList",
     titlePosField: "titlePos",
-    inputList: [],
+    editingWordIndex: -1,
+    editingWord: "",
+    wordList: [],
 
     start: function(options)
     {
         this.inputTime = options.inputTime;
-        this.game.setTimer("normalfps");
 
-        this.game.transmitData("cmd=checkwords&words=" +
+        this.performRequest("cmd=checkwords&words=" +
             encodeURIComponent(JSON.encode(this.game.data[this.inputListField])));
         delete this.game.data[this.inputListField];
     },
 
+    performRequest: function(data)
+    {
+        this.game.setTimer("normalfps");
+        this.requestPending = true;
+        this.game.transmitData(data);
+    },
+
+    requestFinished: function()
+    {
+        this.game.setTimer(0);
+        this.requestPending = false;
+    },
+
     dataTransmitted: function(response)
     {
+        if (this.editingWordIndex >= 0)
+        {
+            this.wordList[this.editingWordIndex].wordcheck = response[0].wordcheck;
+            this.wordList[this.editingWordIndex].marked = response[0].original != response[0].wordcheck;
+
+            this.editingWordIndex = -1;
+            this.requestFinished();
+            this.game.draw();
+            return;
+        }
+
+        this.wordList = response.map(function(wordInfo) {
+            return {
+                "wordcheck": wordInfo.wordcheck,
+                "word": wordInfo.wordcheck !== null ? wordInfo.wordcheck: wordInfo.original,
+                "marked": wordInfo.original != wordInfo.wordcheck,
+            }
+        });
+        this.inputChecked = true;
+
+        if (AUTOINPUT.info)
+        {
+            this.fadeEffect = 1;
+            this.continueEvent();
+        }
+    },
+
+    drawGame: function(graphics, context)
+    {
+        if (this.editingWordIndex >= 0)
+            this.wordList[this.editingWordIndex].word = this.inputText + "_";
+
+        graphics.drawWordsFinishedScreen(this.game.data.initialWord, this.wordList,
+            this.inputTime, this.fadeEffect, this.fadeEffect >= 1, this.inputChecked);
+
+        if (this.editingWordIndex >= 0)
+            this.wordList[this.editingWordIndex].word = this.inputText;
+    },
+
+    timerEvent: function(delta)
+    {
+        if (this.inputChecked && this.fadeEffect != 1)
+        {
+            this.fadeEffect += delta;
+            if (this.fadeEffect >= 1)
+            {
+                this.fadeEffect = 1;
+                this.requestFinished();
+            }
+        }
+
+        this.game.draw();
+    },
+
+    keypressEvent: function(event)
+    {
+        this.parent(event);
+        this.game.draw();
+    },
+
+    inputCharacterAllowed: function(key) { return key >= 65 && key != 95; },
+
+    editWord: function(index)
+    {
+        this.editingWordIndex = index;
+        if (index >= 0)
+            this.inputText = this.wordList[index].word;
+
+        this.game.draw();
+    },
+
+    endWordEditing: function()
+    {
+        var index = this.editingWordIndex;
+        if (this.wordList[index].word == this.wordList[index].wordcheck)
+        {
+            this.wordList[index].marked = false;
+            this.editingWordIndex = -1;
+            this.game.draw();
+        }
+        else
+        {
+            this.requestPending = true;
+            this.performRequest("cmd=checkwords&words=" +
+                encodeURIComponent(JSON.encode([this.wordList[index].word])));
+        }
+    },
+
+    clickEvent: function()
+    {
+        if (this.requestPending)
+            return;
+
+        this.editWord(1);
+    },
+
+    continueEvent: function()
+    {
+        if (this.requestPending)
+            return;
+
+        if (this.editingWordIndex >= 0)
+        {
+            if (this.inputText != "")
+                this.endWordEditing();
+            return;
+        }
+
+    /*
         if (!this.game.data.wordMap)
             this.game.data.wordMap = {};
         wordMap = this.game.data.wordMap;
@@ -182,42 +305,9 @@ var StateEngineWordsFinished = new Class({
             wordData.word = wordInfo.word;
 
             this.inputList.push(wordInfo.word);
-        }
+        }*/
 
-        this.inputChecked = true;
-
-        if (AUTOINPUT.info)
-        {
-            this.fadeEffect = 1;
-            this.continueEvent();
-        }
-    },
-
-    drawGame: function(graphics, context)
-    {
-        graphics.drawWordsFinishedScreen(this.game.data.initialWord, this.inputList,
-            this.inputTime, this.fadeEffect, this.fadeEffect >= 1, this.inputChecked);
-    },
-
-    timerEvent: function(delta)
-    {
-        if (this.inputChecked)
-        {
-            this.fadeEffect += delta;
-            if (this.fadeEffect >= 1)
-            {
-                this.fadeEffect = 1;
-                this.game.setTimer(0);
-            }
-        }
-
-        this.game.draw();
-    },
-
-    continueEvent: function()
-    {
-        if (this.fadeEffect >= 1)
-            this.game.setStateEngine(StateEngineInputLocation);
+        this.game.setStateEngine(StateEngineInputLocation);
     },
 });
 

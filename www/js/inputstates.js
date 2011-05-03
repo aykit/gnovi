@@ -291,7 +291,7 @@ var StateEngineWordsFinished = new Class({
         var hotspots = this.game.graphics.getWordsFinishedScreenHotspots(this.wordList);
         for (var i = 0; i < hotspots.length; i++)
         {
-            if (this.game.mouseInsideRect(hotspots[i]))
+            if (this.wordList[i].marked && this.game.mouseInsideRect(hotspots[i]))
             {
                 this.editWord(i);
                 return;

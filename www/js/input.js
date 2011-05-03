@@ -1,4 +1,6 @@
 var StateEngine = new Class({
+    inputText: "",
+
     initialize: function(game)
     {
         this.game = game;
@@ -16,9 +18,17 @@ var StateEngine = new Class({
 
     keypressEvent: function(event)
     {
-        if (event.keyCode == 13)
+        var key = event.charCode || event.keyCode;
+
+        if (key == 13)
             this.continueEvent();
+        else if (key == 8)
+            this.inputText = this.inputText.substr(0, this.inputText.length - 1);
+        else if (this.inputCharacterAllowed(key))
+            this.inputText += String.fromCharCode(key);
     },
+
+    inputCharacterAllowed: function(key) { return key >= 32; },
 
     start: function(options) {},
     end: function() {},

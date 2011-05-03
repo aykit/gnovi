@@ -62,7 +62,6 @@ var StateEngineWordCollecting = new Class({
     {
         this.totalTime = 20;
         this.timeLeft = this.totalTime;
-        this.currentInputText = "";
         this.inputList = [];
         this.inputListAnimation = [];
         this.headWord = this.game.data.initialWord;
@@ -82,7 +81,7 @@ var StateEngineWordCollecting = new Class({
     drawGame: function(graphics, context)
     {
         graphics.drawWordCollectingScreen(this.headWord, this.timeLeft, this.totalTime,
-            this.currentInputText, this.inputList, this.inputListAnimation);
+            this.inputText, this.inputList, this.inputListAnimation);
     },
 
     timerEvent: function(delta)
@@ -117,33 +116,21 @@ var StateEngineWordCollecting = new Class({
 
     keypressEvent: function(event)
     {
-        var key = event.charCode || event.keyCode;
-
-        if (key == 8)
-        {
-            this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
-            this.game.draw();
-            return;
-        }
-
-        if (key == 13 && this.currentInputText != "")
-        {
-            if (this.currentInputText != "." && this.currentInputText != "..")
-            {
-                this.inputList.push(this.currentInputText);
-                this.inputListAnimation.push(0);
-            }
-
-            this.currentInputText = "";
-            this.game.draw();
-            return;
-        }
-
-        if (key < 65)
-            return;
-
-        this.currentInputText = this.currentInputText + String.fromCharCode(key);
+        this.parent(event);
         this.game.draw();
+    },
+
+    inputCharacterAllowed: function(key) { return key >= 65 && key != 95; },
+
+    continueEvent: function()
+    {
+        if (this.inputText != "")
+        {
+            this.inputList.push(this.inputText); // inputText should not be "." or ".."
+            this.inputListAnimation.push(0);
+            this.inputText = "";
+            this.game.draw();
+        }
     },
 
     finishInput: function()
@@ -165,20 +152,151 @@ var StateEngineWordsFinished = new Class({
     inputChecked: false,
     inputListField: "inputList",
     titlePosField: "titlePos",
-    inputList: [],
+    editingWordIndex: -1,
+    editingWord: "",
+    wordList: [],
 
     start: function(options)
     {
         this.inputTime = options.inputTime;
-        this.game.setTimer("normalfps");
 
-        this.game.transmitData("cmd=checkwords&words=" +
+        this.performRequest("cmd=checkwords&words=" +
             encodeURIComponent(JSON.encode(this.game.data[this.inputListField])));
         delete this.game.data[this.inputListField];
     },
 
+    performRequest: function(data)
+    {
+        this.game.setTimer("normalfps");
+        this.requestPending = true;
+        this.game.transmitData(data);
+    },
+
+    requestFinished: function()
+    {
+        this.game.setTimer(0);
+        this.requestPending = false;
+    },
+
     dataTransmitted: function(response)
     {
+        if (this.editingWordIndex >= 0)
+        {
+            if (response[0].wordcheck != "")
+                this.wordList[this.editingWordIndex].wordcheck = response[0].wordcheck;
+            this.wordList[this.editingWordIndex].marked = response[0].original != response[0].wordcheck;
+
+            this.requestFinished();
+            this.editingWordIndex = -1;
+            this.editWord(this.nextEditingWordIndex);
+            return;
+        }
+
+        this.wordList = response.map(function(wordInfo) {
+            return {
+                "wordcheck": wordInfo.wordcheck,
+                "word": wordInfo.wordcheck != "" ? wordInfo.wordcheck: wordInfo.original,
+                "marked": wordInfo.original != wordInfo.wordcheck,
+            }
+        });
+        this.inputChecked = true;
+
+        if (AUTOINPUT.info)
+        {
+            this.fadeEffect = 1;
+            this.continueEvent();
+        }
+    },
+
+    drawGame: function(graphics, context)
+    {
+        if (this.editingWordIndex >= 0)
+            this.wordList[this.editingWordIndex].word = this.inputText + "_";
+
+        graphics.drawWordsFinishedScreen(this.game.data.initialWord, this.wordList,
+            this.inputTime, this.fadeEffect, this.fadeEffect >= 1, this.inputChecked);
+
+        if (this.editingWordIndex >= 0)
+            this.wordList[this.editingWordIndex].word = this.inputText;
+    },
+
+    timerEvent: function(delta)
+    {
+        if (this.inputChecked && this.fadeEffect != 1)
+        {
+            this.fadeEffect += delta;
+            if (this.fadeEffect >= 1)
+            {
+                this.fadeEffect = 1;
+                this.requestFinished();
+            }
+        }
+
+        this.game.draw();
+    },
+
+    keypressEvent: function(event)
+    {
+        this.parent(event);
+        this.game.draw();
+    },
+
+    inputCharacterAllowed: function(key) { return key >= 65 && key != 95; },
+
+    editWord: function(index)
+    {
+        if (this.editingWordIndex >= 0)
+        {
+            var oldIndex = this.editingWordIndex;
+            if (this.wordList[oldIndex].word == this.wordList[oldIndex].wordcheck)
+            {
+                this.wordList[oldIndex].marked = false;
+            }
+            else
+            {
+                this.nextEditingWordIndex = index;
+                this.performRequest("cmd=checkwords&words=" +
+                    encodeURIComponent(JSON.encode([this.wordList[oldIndex].word])));
+                return;
+            }
+        }
+
+        this.editingWordIndex = index;
+        if (index >= 0)
+            this.inputText = this.wordList[index].word;
+
+        this.game.draw();
+    },
+
+    clickEvent: function()
+    {
+        if (this.requestPending)
+            return;
+
+        var hotspots = this.game.graphics.getWordsFinishedScreenHotspots(this.wordList);
+        for (var i = 0; i < hotspots.length; i++)
+        {
+            if (this.game.mouseInsideRect(hotspots[i]))
+            {
+                this.editWord(i);
+                return;
+            }
+        }
+    },
+
+    continueEvent: function()
+    {
+        if (this.requestPending)
+            return;
+
+        if (this.editingWordIndex >= 0)
+        {
+            if (this.inputText != "")
+                this.editWord(-1);
+            return;
+        }
+
+    /*
         if (!this.game.data.wordMap)
             this.game.data.wordMap = {};
         wordMap = this.game.data.wordMap;
@@ -195,42 +313,9 @@ var StateEngineWordsFinished = new Class({
             wordData.word = wordInfo.word;
 
             this.inputList.push(wordInfo.word);
-        }
+        }*/
 
-        this.inputChecked = true;
-
-        if (AUTOINPUT.info)
-        {
-            this.fadeEffect = 1;
-            this.continueEvent();
-        }
-    },
-
-    drawGame: function(graphics, context)
-    {
-        graphics.drawWordsFinishedScreen(this.game.data.initialWord, this.inputList,
-            this.inputTime, this.fadeEffect, this.fadeEffect >= 1, this.inputChecked);
-    },
-
-    timerEvent: function(delta)
-    {
-        if (this.inputChecked)
-        {
-            this.fadeEffect += delta;
-            if (this.fadeEffect >= 1)
-            {
-                this.fadeEffect = 1;
-                this.game.setTimer(0);
-            }
-        }
-
-        this.game.draw();
-    },
-
-    continueEvent: function()
-    {
-        if (this.fadeEffect >= 1)
-            this.game.setStateEngine(StateEngineInputLocation);
+        this.game.setStateEngine(StateEngineInputLocation);
     },
 });
 
@@ -243,8 +328,6 @@ var StateEngineInputLocation = new Class({
 
     start: function(options)
     {
-        this.currentInputText = "";
-
         if (AUTOINPUT && AUTOINPUT.inputLocation)
         {
             this.game.data.location = AUTOINPUT.inputLocation;
@@ -254,47 +337,28 @@ var StateEngineInputLocation = new Class({
 
     drawGame: function(graphics, context)
     {
-        graphics.drawInputLocationScreen(this.currentInputText);
-    },
-
-    timerEvent: function(delta)
-    {
+        graphics.drawInputLocationScreen(this.inputText);
     },
 
     keypressEvent: function(event)
     {
-        var key = event.charCode || event.keyCode;
-
-        if (key == 8)
-        {
-            this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
-            this.game.draw();
-            return;
-        }
-
-        if (key == 13)
-        {
-            var text = this.currentInputText.trim();
-            if (text == "." || text == "..")
-            {
-                this.currentInputText = "";
-                this.game.draw();
-                return;
-            }
-
-            if (text != "")
-            {
-                this.game.data.location = text;
-                this.game.setStateEngine(StateEngineLocationWordCollecting);
-            }
-            return;
-        }
-
-        if (key < 32)
-            return;
-
-        this.currentInputText = this.currentInputText + String.fromCharCode(key);
+        this.parent(event);
         this.game.draw();
+    },
+
+    continueEvent: function()
+    {
+        var text = this.inputText.trim();
+        if (text == "." || text == "..")
+        {
+            this.inputText = "";
+            this.game.draw();
+        }
+        else if (text != "")
+        {
+            this.game.data.location = text;
+            this.game.setStateEngine(StateEngineLocationWordCollecting);
+        }
     },
 });
 

@@ -103,7 +103,7 @@ var Graph = new Class({
         this.loadingViewTime = viewTime;
         this.loadingViewMode = viewMode;
 
-        this.transmitData("cmd=getrelations&word=" + encodeURIComponent(viewWord) + "&view=" + viewMode + "&time=" + viewTime);
+        this.transmitData("cmd=searchwordgetrelations&word=" + encodeURIComponent(viewWord) + "&view=" + viewMode + "&time=" + viewTime);
     },
 
     displayViewData: function(data)
@@ -141,7 +141,7 @@ var Graph = new Class({
     {
         switch (command)
         {
-        case "getrelations":
+        case "searchwordgetrelations":
             this.graphNotfoundElement.setStyle("display", "none");
             this.displayViewData(responseData);
             break;

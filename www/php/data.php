@@ -22,8 +22,8 @@ class DataExchanger
             case "getword":
                 $this->returnRandomWord(@$_GET["mode"]);
                 break;
-            case "getrelations":
-                $this->returnRelations(@$_GET["word"], @$_GET["view"], @$_GET["time"]);
+            case "searchwordgetrelations":
+                $this->returnRelationsSearch(@$_GET["word"], @$_GET["view"], @$_GET["time"]);
                 break;
             /*case "getchangetimes":
                 $this->returnChangeTimes(@$_GET["word"], @$_GET["view"]);
@@ -127,26 +127,23 @@ class DataExchanger
         }
     }
 
-    protected function getWordInfo($word)
+    protected function getConnotation($wordId)
     {
         if (!$this->connectDb())
             return null;
 
-        $escWord = $this->db->escape_string($word);
+        $intWordId = (int)$wordId;
 
-        $result = $this->db->query("SELECT `ID`, AVG(`Connotation`) AS `AverageConnotation`, `Word` " . 
-            "FROM `Words` LEFT JOIN `RunWords` ON `ID` = `WordID` WHERE `Word` = '$escWord' GROUP BY `ID`");
+        $result = $this->db->query("SELECT AVG(`Connotation`) AS `AverageConnotation`" . 
+            "FROM `RunWords` `WordID` = '$wordId' GROUP BY `WordID`");
         if (!$this->checkForDbError())
             return null;
 
         $row = $result->fetch_assoc();
         if (!$row)
-        {
-            $this->setResponseError("notfound", "Could not find word.");
             return null;
-        }
 
-        return array("id" => (int)$row["ID"], "word" => $row["Word"], "connotation" => (float)$row["AverageConnotation"]);
+        return (float)$row["AverageConnotation"];
     }
 
     protected function lookupWordcheck($word)
@@ -166,6 +163,29 @@ class DataExchanger
         return $row ? $row["Word"] : "";
     }
 
+    protected function searchWord($word)
+    {
+        if (!$this->connectDb())
+            return null;
+
+        $escWord = $this->db->escape_string($word);
+
+        $result = $this->db->query(
+            "SELECT `ID`, `Word`, `Word` = '$escWord' AS `LetterCaseMatches` FROM `Words` " .
+            "WHERE LOWER(`Word`) = LOWER('$escWord') ORDER BY `LetterCaseMatches` DESC LIMIT 1");
+        if (!$this->checkForDbError())
+            return null;
+
+        $row = $result->fetch_assoc();
+        if (!$row)
+        {
+            $this->setResponseError("notfound", "Could not find word.");
+            return null;
+        }
+
+        return array("id" => $row["ID"], "word" => $row["Word"]);
+    }
+
     protected function obtainWordId($word)
     {
         if (!$this->connectDb())
@@ -173,19 +193,19 @@ class DataExchanger
 
         $escWord = $this->db->escape_string($word);
 
-        $this->db->query("INSERT INTO `Words` (`Word`) VALUES ('$escWord') " .
-            "ON DUPLICATE KEY UPDATE `Word` = '$escWord'");
+        $result = $this->db->query("SELECT `ID` FROM `Words` WHERE `Word` = '$escWord'");
         if (!$this->checkForDbError())
             return null;
 
-        $id = (int)$this->db->insert_id;
+        $row = $result->fetch_assoc();
+        if ($row)
+            return $row['ID'];
 
-        if ($id != 0)
-            return $id;
+        $this->db->query("INSERT INTO `Words` (`Word`) VALUES ('$escWord')");
+        if (!$this->checkForDbError())
+            return null;
 
-        // in case nothing hast changed insert_id is zero, so query the id separately
-        $wordInfo = $this->getWordInfo($word);
-        return $wordInfo["id"];
+        return (int)$this->db->insert_id;
     }
 
     protected function returnCheckedWords($words)
@@ -511,11 +531,13 @@ class DataExchanger
         return $relations;
     }
 
-    protected function returnRelations($word, $viewMode, $time)
+    protected function returnRelationsSearch($word, $viewMode, $time)
     {
-        $wordInfo = $this->getWordInfo($word);
-        if (!$wordInfo)
-            return;
+        $wordInfo = $this->searchWord($word);
+        if ($wordInfo === null)
+            return null;
+
+        $wordInfo["connotation"] = $this->getConnotation($wordInfo["id"]);
 
         $relations = $this->getRelations($wordInfo["id"], $viewMode == "all" ? 0 : $this->userId, $time, 10, 0);
         if ($relations === null)

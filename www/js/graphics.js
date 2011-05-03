@@ -454,7 +454,7 @@ var GraphGraphics = new Class({
         var maxOccurrences = wordInfos[0].occurrences;
 
         this.context.font = "25px HeroRegular";
-        this.context.fillText("Die momentan meistaufgeschriebenen Worte: ", 30, 40);
+        this.context.fillText("Die momentan meistaufgeschriebenen Worte:", 320, 40);
         
         var rectWidth = Math.max(this.context.measureText(wordInfos[0].word).width + 30, 136);
         this.context.strokeStyle = "#7F7F7F";
@@ -467,8 +467,9 @@ var GraphGraphics = new Class({
         var wordList = [];
         for (var i = 1; i < Math.min(8, wordInfos.length); i++)
             wordList.push(wordInfos[i].word);
-            this._fillTextRect(wordList, 30, 100, 600, 10, 50);
-            /*
+            this._fillTextRect(wordList, 30, 98, 600, 10, 50);
+
+            /* ALTERNATIV DAZU
             this._fillTextRect(wordInfos.filter(function(wordInfo, index){return index > 0;}).map(function(wordInfo){return       
                 wordInfo.word}), 10, 150, 600, 10, 50);
             */         
@@ -487,12 +488,10 @@ var GraphGraphics = new Class({
 
             if (posY + fontSize > 640 - padding)
                 break;
-
         
-    this.context.fillStyle = (wordInfos[i].word == highlightedWord ? "red" : "black");
+            this.context.fillStyle = (wordInfos[i].word == highlightedWord ? "red" : "black");
             this.context.font = fontSize + "px HeroRegular";
             this.context.fillText(wordInfos[i].word, posX, posY);
-
             
             j++;
             
@@ -515,13 +514,20 @@ var GraphGraphics = new Class({
 
         var maxOccurrences = wordInfos[0].occurrences;
 
+        var hotspots = [];
+
+        for (var i = 0; i < Math.min(8, wordInfos.length); i++)
+            hotspots.push({
+                x1: 0,
+                y1: 0,
+                x2: 0,
+                y2: 0,
+            });
         
         this.context.textAlign = "center";
               
         var padding = 260;
         var posY = padding;
-
-        var hotspots = [];
 
         var j = 0;
         var defaultX = 100;
@@ -534,20 +540,14 @@ var GraphGraphics = new Class({
             if (posY + fontSize > 640 - padding)
                 break;
 
+            this.context.font = fontSize + "px HeroRegular";
+
             hotspots.push({
                 x1: posX - this.context.measureText(wordInfos[i].word).width/2,
-                y1: posY,
+                y1: posY - fontSize,
                 x2: posX + this.context.measureText(wordInfos[i].word).width/2,
-                y2: posY + fontSize,
+                y2: posY,
             });
-            
-            console.log();
-/*
-
-            this.context.fillStyle = "black";
-            this.context.font = fontSize + "px HeroRegular";
-            this.context.fillText(wordInfos[i].word, posX, posY);
-*/
             
             j++;
             

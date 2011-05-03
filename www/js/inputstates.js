@@ -62,7 +62,6 @@ var StateEngineWordCollecting = new Class({
     {
         this.totalTime = 20;
         this.timeLeft = this.totalTime;
-        this.currentInputText = "";
         this.inputList = [];
         this.inputListAnimation = [];
         this.headWord = this.game.data.initialWord;
@@ -82,7 +81,7 @@ var StateEngineWordCollecting = new Class({
     drawGame: function(graphics, context)
     {
         graphics.drawWordCollectingScreen(this.headWord, this.timeLeft, this.totalTime,
-            this.currentInputText, this.inputList, this.inputListAnimation);
+            this.inputText, this.inputList, this.inputListAnimation);
     },
 
     timerEvent: function(delta)
@@ -117,33 +116,21 @@ var StateEngineWordCollecting = new Class({
 
     keypressEvent: function(event)
     {
-        var key = event.charCode || event.keyCode;
-
-        if (key == 8)
-        {
-            this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
-            this.game.draw();
-            return;
-        }
-
-        if (key == 13 && this.currentInputText != "")
-        {
-            if (this.currentInputText != "." && this.currentInputText != "..")
-            {
-                this.inputList.push(this.currentInputText);
-                this.inputListAnimation.push(0);
-            }
-
-            this.currentInputText = "";
-            this.game.draw();
-            return;
-        }
-
-        if (key < 65)
-            return;
-
-        this.currentInputText = this.currentInputText + String.fromCharCode(key);
+        this.parent(event);
         this.game.draw();
+    },
+
+    inputCharacterAllowed: function(key) { return key >= 65 && key != 95; },
+
+    continueEvent: function()
+    {
+        if (this.inputText != "")
+        {
+            this.inputList.push(this.inputText); // inputText should not be "." or ".."
+            this.inputListAnimation.push(0);
+            this.inputText = "";
+            this.game.draw();
+        }
     },
 
     finishInput: function()
@@ -243,8 +230,6 @@ var StateEngineInputLocation = new Class({
 
     start: function(options)
     {
-        this.currentInputText = "";
-
         if (AUTOINPUT && AUTOINPUT.inputLocation)
         {
             this.game.data.location = AUTOINPUT.inputLocation;
@@ -254,47 +239,28 @@ var StateEngineInputLocation = new Class({
 
     drawGame: function(graphics, context)
     {
-        graphics.drawInputLocationScreen(this.currentInputText);
-    },
-
-    timerEvent: function(delta)
-    {
+        graphics.drawInputLocationScreen(this.inputText);
     },
 
     keypressEvent: function(event)
     {
-        var key = event.charCode || event.keyCode;
-
-        if (key == 8)
-        {
-            this.currentInputText = this.currentInputText.substr(0, this.currentInputText.length - 1);
-            this.game.draw();
-            return;
-        }
-
-        if (key == 13)
-        {
-            var text = this.currentInputText.trim();
-            if (text == "." || text == "..")
-            {
-                this.currentInputText = "";
-                this.game.draw();
-                return;
-            }
-
-            if (text != "")
-            {
-                this.game.data.location = text;
-                this.game.setStateEngine(StateEngineLocationWordCollecting);
-            }
-            return;
-        }
-
-        if (key < 32)
-            return;
-
-        this.currentInputText = this.currentInputText + String.fromCharCode(key);
+        this.parent(event);
         this.game.draw();
+    },
+
+    continueEvent: function()
+    {
+        var text = this.inputText.trim();
+        if (text == "." || text == "..")
+        {
+            this.inputText = "";
+            this.game.draw();
+        }
+        else if (text != "")
+        {
+            this.game.data.location = text;
+            this.game.setStateEngine(StateEngineLocationWordCollecting);
+        }
     },
 });
 

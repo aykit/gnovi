@@ -196,6 +196,10 @@ var Game = new Class({
 
     mouseInsideRect: function(rect)
     {
+        if (rect.x1 !== undefined)
+            return this.mouseX >= rect.x1 && this.mouseY >= rect.y1 &&
+                this.mouseX < rect.x2 && this.mouseY < rect.y2;
+
         return this.mouseX >= rect.x && this.mouseY >= rect.y &&
             this.mouseX < rect.x + rect.width && this.mouseY < rect.y + rect.height;
     },

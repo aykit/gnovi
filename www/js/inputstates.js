@@ -182,19 +182,20 @@ var StateEngineWordsFinished = new Class({
     {
         if (this.editingWordIndex >= 0)
         {
-            this.wordList[this.editingWordIndex].wordcheck = response[0].wordcheck;
+            if (response[0].wordcheck != "")
+                this.wordList[this.editingWordIndex].wordcheck = response[0].wordcheck;
             this.wordList[this.editingWordIndex].marked = response[0].original != response[0].wordcheck;
 
-            this.editingWordIndex = -1;
             this.requestFinished();
-            this.game.draw();
+            this.editingWordIndex = -1;
+            this.editWord(this.nextEditingWordIndex);
             return;
         }
 
         this.wordList = response.map(function(wordInfo) {
             return {
                 "wordcheck": wordInfo.wordcheck,
-                "word": wordInfo.wordcheck !== null ? wordInfo.wordcheck: wordInfo.original,
+                "word": wordInfo.wordcheck != "" ? wordInfo.wordcheck: wordInfo.original,
                 "marked": wordInfo.original != wordInfo.wordcheck,
             }
         });
@@ -244,6 +245,22 @@ var StateEngineWordsFinished = new Class({
 
     editWord: function(index)
     {
+        if (this.editingWordIndex >= 0)
+        {
+            var oldIndex = this.editingWordIndex;
+            if (this.wordList[oldIndex].word == this.wordList[oldIndex].wordcheck)
+            {
+                this.wordList[oldIndex].marked = false;
+            }
+            else
+            {
+                this.nextEditingWordIndex = index;
+                this.performRequest("cmd=checkwords&words=" +
+                    encodeURIComponent(JSON.encode([this.wordList[oldIndex].word])));
+                return;
+            }
+        }
+
         this.editingWordIndex = index;
         if (index >= 0)
             this.inputText = this.wordList[index].word;
@@ -251,29 +268,20 @@ var StateEngineWordsFinished = new Class({
         this.game.draw();
     },
 
-    endWordEditing: function()
-    {
-        var index = this.editingWordIndex;
-        if (this.wordList[index].word == this.wordList[index].wordcheck)
-        {
-            this.wordList[index].marked = false;
-            this.editingWordIndex = -1;
-            this.game.draw();
-        }
-        else
-        {
-            this.requestPending = true;
-            this.performRequest("cmd=checkwords&words=" +
-                encodeURIComponent(JSON.encode([this.wordList[index].word])));
-        }
-    },
-
     clickEvent: function()
     {
         if (this.requestPending)
             return;
 
-        this.editWord(1);
+        var hotspots = this.game.graphics.getWordsFinishedScreenHotspots(this.wordList);
+        for (var i = 0; i < hotspots.length; i++)
+        {
+            if (this.game.mouseInsideRect(hotspots[i]))
+            {
+                this.editWord(i);
+                return;
+            }
+        }
     },
 
     continueEvent: function()
@@ -284,7 +292,7 @@ var StateEngineWordsFinished = new Class({
         if (this.editingWordIndex >= 0)
         {
             if (this.inputText != "")
-                this.endWordEditing();
+                this.editWord(-1);
             return;
         }
 

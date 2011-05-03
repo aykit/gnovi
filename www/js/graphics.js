@@ -102,10 +102,14 @@ var Graphics = new Class({
         return wordOffsetY;
     },
 
-    _fillTextRect: function(wordList, x, y, width, spacing, lineHeight)
+    _getWordBoxesHotspots: function(x, y, width, wordList, markedFlags)
     {
+        var spacing = 10;
+        var lineHeight = 50;
         var wordOffsetX = 66;
         var wordOffsetY = 0;
+
+        var hotspots = [];
 
         for (var i = 0; i < wordList.length; i++)
         {
@@ -116,18 +120,18 @@ var Graphics = new Class({
                 wordOffsetX = 0;
                 wordOffsetY += lineHeight;
             }
-            
-            this.context.strokeStyle = "#7F7F7F";
-            this.context.fillStyle = "#7F7F7F";
-            this._コード(x + wordOffsetX, y + wordOffsetY + 42, textWidth, 44, 12);
-            
-            this.context.fillStyle = "#FFFFFF";
-            this.context.fillText(wordList[i], x + wordOffsetX + textWidth/2, y + wordOffsetY + 70 );
+
+            hotspots.push({
+                x1: x + wordOffsetX,
+                y1: y + wordOffsetY + 42,
+                x2: x + wordOffsetX + textWidth,
+                y2: y + wordOffsetY + 42 + 44,
+            });
 
             wordOffsetX += textWidth + spacing;
         }
 
-        return wordOffsetY;
+        return hotspots;
     },
 
     _clearCanvas: function()
@@ -287,9 +291,23 @@ var InputGraphics = new Class({
             return;
     },
 
+    getWordsFinishedScreenHotspots: function(wordList)
+    {
+        this.context.font = "20px HeroRegular";
+
+        return this._getWordBoxesHotspots(40, 50, 600,
+            wordList.map(function(info) { return info.word; }),
+            wordList.map(function(info) { return info.marked; }));
+    },
+
     drawLocationWordsFinishedScreen: function(location, wordList, inputTime, fade, drawContinueNotice, wordsChecked)
     {
         this.drawWordsFinishedScreen(location, wordList, inputTime, fade, drawContinueNotice, wordsChecked);
+    },
+
+    getLocationWordsFinishedScreenHotspots: function(wordList)
+    {
+        return this.getWordsFinishedScreenHotspots(wordList);
     },
 
     drawInputLocationScreen: function(inputText)
@@ -498,7 +516,7 @@ var GraphGraphics = new Class({
         var wordList = [];
         for (var i = 1; i < Math.min(8, wordInfos.length); i++)
             wordList.push(wordInfos[i].word);
-            this._fillTextRect(wordList, 30, 100, 600, 10, 50);
+        this._drawWordBoxes(30, 100, 600, wordList, null);
             /*
             this._fillTextRect(wordInfos.filter(function(wordInfo, index){return index > 0;}).map(function(wordInfo){return       
                 wordInfo.word}), 10, 150, 600, 10, 50);

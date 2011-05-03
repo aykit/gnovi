@@ -503,7 +503,7 @@ var GraphGraphics = new Class({
         var maxOccurrences = wordInfos[0].occurrences;
 
         this.context.font = "25px HeroRegular";
-        this.context.fillText("Die momentan meistaufgeschriebenen Worte: ", 30, 40);
+        this.context.fillText("Die momentan meistaufgeschriebenen Worte:", 320, 40);
         
         var rectWidth = Math.max(this.context.measureText(wordInfos[0].word).width + 30, 136);
         this.context.strokeStyle = "#7F7F7F";
@@ -517,7 +517,7 @@ var GraphGraphics = new Class({
         for (var i = 1; i < Math.min(8, wordInfos.length); i++)
             wordList.push(wordInfos[i].word);
         this._drawWordBoxes(30, 100, 600, wordList, null);
-            /*
+            /* ALTERNATIV DAZU
             this._fillTextRect(wordInfos.filter(function(wordInfo, index){return index > 0;}).map(function(wordInfo){return       
                 wordInfo.word}), 10, 150, 600, 10, 50);
             */         
@@ -536,12 +536,10 @@ var GraphGraphics = new Class({
 
             if (posY + fontSize > 640 - padding)
                 break;
-
         
-    this.context.fillStyle = (wordInfos[i].word == highlightedWord ? "red" : "black");
+            this.context.fillStyle = (wordInfos[i].word == highlightedWord ? "red" : "black");
             this.context.font = fontSize + "px HeroRegular";
             this.context.fillText(wordInfos[i].word, posX, posY);
-
             
             j++;
             
@@ -564,13 +562,20 @@ var GraphGraphics = new Class({
 
         var maxOccurrences = wordInfos[0].occurrences;
 
+        var hotspots = [];
+
+        for (var i = 0; i < Math.min(8, wordInfos.length); i++)
+            hotspots.push({
+                x1: 0,
+                y1: 0,
+                x2: 0,
+                y2: 0,
+            });
         
         this.context.textAlign = "center";
               
         var padding = 260;
         var posY = padding;
-
-        var hotspots = [];
 
         var j = 0;
         var defaultX = 100;
@@ -583,20 +588,14 @@ var GraphGraphics = new Class({
             if (posY + fontSize > 640 - padding)
                 break;
 
+            this.context.font = fontSize + "px HeroRegular";
+
             hotspots.push({
                 x1: posX - this.context.measureText(wordInfos[i].word).width/2,
-                y1: posY,
+                y1: posY - fontSize,
                 x2: posX + this.context.measureText(wordInfos[i].word).width/2,
-                y2: posY + fontSize,
+                y2: posY,
             });
-            
-            console.log();
-/*
-
-            this.context.fillStyle = "black";
-            this.context.font = fontSize + "px HeroRegular";
-            this.context.fillText(wordInfos[i].word, posX, posY);
-*/
             
             j++;
             
@@ -772,40 +771,39 @@ var GraphGraphics = new Class({
         if (isRoot)
         {   
             
+            
             this.context.font = "20px HeroRegular";
             this._drawGnoviIcon(posX, posY, 50, true, true);
             this.context.fillStyle = Graphics._rgba(0, 0, 0, alpha);
-            this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 40);
-        	
+            this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 30);
+            this.context.closePath();
+            
+            var nodewidth = this.context.measureText(node.word).width;
+
+
+            this.context.beginPath();
+            this.context.moveTo(Math.round(posX)-nodewidth/2, Math.round(posY)+44);
+            this.context.lineTo(Math.round(posX)+nodewidth/2, Math.round(posY)+44);
+            this.context.strokeStyle = Graphics._rgba(0xa7, 0xcf, 0x4a, alpha);;
+            this.context.lineWidth = 4;
+            this.context.stroke();
+            
+            this.context.beginPath();
+            this.context.moveTo(Math.round(posX)-nodewidth/2, Math.round(posY)+44);
+            this.context.lineTo(Math.round(posX)-((node.connotation*nodewidth) / 2), Math.round(posY)+44);
+            this.context.strokeStyle = Graphics._rgba(0xff, 0x00, 0x00, alpha);;
+            this.context.lineWidth = 4;
+            this.context.stroke();
         }
         else
         {
             this.context.font = "15px HeroRegular";
             this._drawGnoviIcon(posX, posY, 30, mouseOver, false);
+
             this.context.fillStyle = Graphics._rgba(0, 0, 0, alpha);
             this.context.fillText(node.word, Math.round(posX), Math.round(posY) + 25);
             
-/*          SHOW CONNOTATION
-            this.context.beginPath();
-            this.context.arc(posX, posY, 15, 4.8, 6.4, false);
-        	this.context.lineWidth=4;
-        	this.context.strokeStyle="red";
-        	this.context.stroke();
-        	
-
-            this.context.beginPath();
-            this.context.arc(posX, posY, 15, 0.1, 4.8, false);
-        	this.context.lineWidth=4;
-        	this.context.strokeStyle="green";
-        	this.context.stroke();
-*/
-
-            
         }
-
-        /* WRITE CONNOTATION
-        this.context.fillStyle = "black";
-        this.context.fillText(node.connotation, Math.round(posX), Math.round(posY)); */
         
     },
 

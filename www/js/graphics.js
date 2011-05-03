@@ -445,35 +445,67 @@ var GraphGraphics = new Class({
 
     drawFrequentWords: function(wordInfos, highlightedWord)
     {
-        this._clearCanvas();
 
+        this._clearCanvas();  
+            
         if (wordInfos.length == 0)
             return;
 
         var maxOccurrences = wordInfos[0].occurrences;
 
-        this.context.textBaseline = "top";
-        this.context.textAlign = "center";
-        
         this.context.font = "25px HeroRegular";
-        this.context.fillText("Die momentan meistaufgeschriebenen Worte: ", 320, 0);
+        this.context.fillText("Die momentan meistaufgeschriebenen Worte: ", 30, 40);
+        
+        var rectWidth = Math.max(this.context.measureText(wordInfos[0].word).width + 30, 136);
+        this.context.strokeStyle = "#7F7F7F";
+        this.context.fillStyle = "#231F20";
+        this._コード(this.context.canvas.width / 2 - rectWidth/2, 85, rectWidth, 44, 12);
+        this.context.fillStyle = "white";
+        this.context.textAlign = "center";
+        this.context.fillText(wordInfos[0].word, this.context.canvas.width / 2, 115);
+                
+        var wordList = [];
+        for (var i = 1; i < Math.min(8, wordInfos.length); i++)
+            wordList.push(wordInfos[i].word);
+            this._fillTextRect(wordList, 30, 100, 600, 10, 50);
+            /*
+            this._fillTextRect(wordInfos.filter(function(wordInfo, index){return index > 0;}).map(function(wordInfo){return       
+                wordInfo.word}), 10, 150, 600, 10, 50);
+            */         
 
-        var padding = 40;
+        var j = 0;
+        var defaultX = 100;
+        var posX = defaultX;
+        
+        var padding = 260;
         var posY = padding;
-
-        for (var i = 0; i < wordInfos.length; i++)
+        
+        for (var i = 8; i < wordInfos.length; i++)
         {
-            var fontSize = Math.round(wordInfos[i].occurrences / maxOccurrences * 38);
+            
+            var fontSize = Math.round(wordInfos[i].occurrences / maxOccurrences * 46);
 
-            if (posY + fontSize > 540 - padding)
+            if (posY + fontSize > 640 - padding)
                 break;
 
-            this.context.fillStyle = (wordInfos[i].word == highlightedWord ? "red" : "black");
+        
+    this.context.fillStyle = (wordInfos[i].word == highlightedWord ? "red" : "black");
             this.context.font = fontSize + "px HeroRegular";
-            this.context.fillText(wordInfos[i].word, 320, posY);
+            this.context.fillText(wordInfos[i].word, posX, posY);
 
-            posY += fontSize + 4;
+            
+            j++;
+            
+            posX += 144;
+            
+            if (j == 4)
+            {
+                posY += fontSize + 4;
+                j -= 4;
+                posX = defaultX;
+            }
         }
+
     },
 
     getFrequentWordsHotspots: function(wordInfos)
@@ -483,27 +515,52 @@ var GraphGraphics = new Class({
 
         var maxOccurrences = wordInfos[0].occurrences;
 
-        var padding = 40;
+        
+        this.context.textAlign = "center";
+              
+        var padding = 260;
         var posY = padding;
 
         var hotspots = [];
 
-        for (var i = 0; i < wordInfos.length; i++)
+        var j = 0;
+        var defaultX = 100;
+        var posX = defaultX;
+        
+        for (var i = 8; i < wordInfos.length; i++)
         {
-            var fontSize = Math.round(wordInfos[i].occurrences / maxOccurrences * 38);
+            var fontSize = Math.round(wordInfos[i].occurrences / maxOccurrences * 46);
 
-            if (posY + fontSize > 540 - padding)
+            if (posY + fontSize > 640 - padding)
                 break;
 
             hotspots.push({
-                time: 0,
-                x1: 100,
+                x1: posX - this.context.measureText(wordInfos[i].word).width/2,
                 y1: posY,
-                x2: 540,
+                x2: posX + this.context.measureText(wordInfos[i].word).width/2,
                 y2: posY + fontSize,
             });
+            
+            console.log();
+/*
 
-            posY += fontSize + 4;
+            this.context.fillStyle = "black";
+            this.context.font = fontSize + "px HeroRegular";
+            this.context.fillText(wordInfos[i].word, posX, posY);
+*/
+            
+            j++;
+            
+            posX += 144;
+            
+            if (j == 4)
+            {
+                posY += fontSize + 4;
+                j -= 4;
+                posX = defaultX;
+            }
+
+
         }
 
         return hotspots;

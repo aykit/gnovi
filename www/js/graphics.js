@@ -90,11 +90,11 @@ var Graphics = new Class({
             }
 
             this.context.strokeStyle = "#7F7F7F";
-            this.context.fillStyle = markedFlags && markedFlags[i] ? "red" : "#7F7F7F";
+            this.context.fillStyle = "#7F7F7F";
             this._コード(x + wordOffsetX, y + wordOffsetY + 42, textWidth, 44, 12);
 
             this.context.fillStyle = "#FFFFFF";
-            this.context.fillText(wordList[i], x + wordOffsetX + textWidth/2, y + wordOffsetY + 70 );
+            this.context.fillText(markedFlags && markedFlags[i] ? wordList[i]+" *" : wordList[i], x + wordOffsetX + textWidth/2, y + wordOffsetY + 70 );
 
             wordOffsetX += textWidth + spacing;
         }

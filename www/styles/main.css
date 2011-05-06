@@ -196,6 +196,24 @@ input[type="submit"] {
         -webkit-border-radius: 8px;
 }
 
+#word_search_form {
+    position: relative;
+}
+
+#word_suggestions {
+    display: none;
+    z-index: 1;
+    background-color: white;
+    border-style: solid;
+    border-width: 2px;
+    position: absolute;
+    top: 45px;
+    left: 80px;
+}
+
+#word_suggestions .selected {
+    background-color: #CCCCCC;
+}
 
 /* CLASSES */
 

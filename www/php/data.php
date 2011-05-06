@@ -40,6 +40,9 @@ class DataExchanger
             case "getfrequent":
                 $this->returnFrequentWords(@$_GET["view"]);
                 break;
+            case "searchcompletion":
+                $this->returnSearchCompletion(@$_GET["word"]);
+                break;
             default:
                 $this->setResponseError("unknown_command", @$_GET["cmd"]);
             }
@@ -568,7 +571,30 @@ class DataExchanger
             "nodes" => $relations,
             "changeTimes" => $changeTimes,
         ));
-        return;
+    }
+
+    protected function returnSearchCompletion($word)
+    {
+        if (!$this->connectDb())
+            return;
+
+        $escWord = $this->db->escape_string($word);
+
+        $result = $this->db->query(
+            "SELECT `Word`, COUNT(*) AS `Occurrences` FROM `Words` " .
+            "LEFT JOIN `RunWords` ON `RunWords`.`WordID` = `Words`.`ID`" .
+            "WHERE `Word` COLLATE utf8_unicode_ci LIKE '$escWord%'" .
+            "GROUP BY `Words`.`ID` ORDER BY `Occurrences` DESC, `Word` ASC LIMIT 10");
+        if (!$this->checkForDbError())
+            return null;
+
+        $results = array();
+        while ($row = $result->fetch_assoc())
+        {
+            $results[] = $row["Word"];
+        }
+
+        $this->setResponseData($results);
     }
 
     protected function connectDb()

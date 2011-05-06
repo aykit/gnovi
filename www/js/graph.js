@@ -28,6 +28,11 @@ var Graph = new Class({
 
     frequentWords: [],
 
+    searchCompletionTimer: -1,
+    lastSearchCompletionRequest: "",
+    searchSuggestionSelection: -1,
+    searchSuggestions: [],
+
     initialize: function(canvas, viewMode)
     {
         this.viewMode = viewMode;
@@ -38,6 +43,7 @@ var Graph = new Class({
         this.wordSearchForm = document.getElementById("word_search_form");
         this.wordInputField = document.getElementById("word_input");
         this.wordSubmitButton = document.getElementById("word_submit");
+        this.wordSuggesiontsElement = document.getElementById("word_suggestions");
         this.graphNotfoundElement = document.getElementById("graph_notfound");
         this.personalGrapLink = document.getElementById("personal_graph_link");
         this.globalGrapLink = document.getElementById("global_graph_link");
@@ -46,11 +52,17 @@ var Graph = new Class({
         this.globalViewButton = document.getElementById("global_view_button");
 
         this.wordSearchForm.addEventListener("submit", this.onSearchWordSubmit.bind(this), false);
+        this.wordInputField.addEventListener("keydown", this.onSearchKeydown.bind(this), false);
 
         this.personalViewButton.addEventListener("click", this.onPersonalViewClick.bind(this), false);
         this.globalViewButton.addEventListener("click", this.onGlobalViewClick.bind(this), false);
 
         this.setTimer("normalfps");
+
+        this.searchCompletionRequest = new Request.JSON({
+            url: "/php/data.php",
+            onSuccess: this.onSeachCompletionRequestSuccess.bind(this),
+        });
     },
 
     loadWordFromCurrentUri: function()
@@ -618,6 +630,91 @@ var Graph = new Class({
 
         this.loadView(this.wordInputField.value, this.viewTime, this.viewMode, false, true);
         this.wordInputField.value = "";
+    },
+
+    onSearchKeydown: function(event)
+    {
+        var key = event.charCode || event.keyCode;
+
+        if (key == 38 || key == 40 || key == 27)
+        {
+            event.preventDefault();
+
+            if (this.searchSuggestionSelection >= 0)
+                this.wordSuggesiontsElement.children[this.searchSuggestionSelection].removeClass("selected");
+
+            switch (key)
+            {
+            case 27: /* esc */
+                this.searchSuggestionSelection = -1;
+                break;
+            case 38: /* up */
+                if (this.searchSuggestionSelection != 0)
+                    this.searchSuggestionSelection--;
+                break;
+            case 40: /* down */
+                if (this.searchSuggestionSelection != this.wordSuggesiontsElement.childElementCount - 1)
+                    this.searchSuggestionSelection++;
+                break;
+            }
+
+            if (this.searchSuggestionSelection >= 0)
+            {
+                this.wordSuggesiontsElement.children[this.searchSuggestionSelection].addClass("selected");
+                this.wordInputField.value = this.searchSuggestions[this.searchSuggestionSelection];
+            }
+
+            return;
+        }
+
+        clearTimeout(this.searchCompletionDelay);
+        this.searchCompletionRequest.cancel();
+
+        this.searchCompletionDelay = (function ()
+        {
+            var word = this.wordInputField.value;
+
+            if (word == this.lastSearchCompletionRequest)
+                return;
+            this.lastSearchCompletionRequest = word;
+
+            if (word == "")
+            {
+                this.showSearchCompletionsWords([]);
+                return;
+            }
+
+            console.log("requesting: " + word)
+            this.searchCompletionRequest.setOptions({data: "cmd=searchcompletion&word=" + encodeURIComponent(word)});
+            this.searchCompletionRequest.send({method: "get"});
+        }).bind(this).delay(100);
+    },
+
+    onSeachCompletionRequestSuccess: function(response)
+    {
+        this.showSearchCompletionsWords(response.data);
+    },
+
+    showSearchCompletionsWords: function(words)
+    {
+        this.searchSuggestions = words;
+        this.searchSuggestionSelection = -1;
+
+        if (words.length == 0)
+        {
+            this.wordSuggesiontsElement.style.display = "none";
+            return;
+        }
+
+        this.wordSuggesiontsElement.style.display = "block";
+        this.wordSuggesiontsElement.empty();
+
+        words.each(function(word) {
+            var suggestionElement = new Element("li");
+            suggestionElement.appendText(word);
+
+            this.wordSuggesiontsElement.appendChild(suggestionElement);
+        }.bind(this));
     },
 
     onPersonalViewClick: function(event)

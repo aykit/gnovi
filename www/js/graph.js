@@ -28,6 +28,11 @@ var Graph = new Class({
 
     frequentWords: [],
 
+    searchCompletionTimer: -1,
+    lastSearchCompletionRequest: "",
+    searchSuggestionSelection: -1,
+    searchSuggestions: [],
+
     initialize: function(canvas, viewMode)
     {
         this.viewMode = viewMode;
@@ -58,8 +63,6 @@ var Graph = new Class({
             url: "/php/data.php",
             onSuccess: this.onSeachCompletionRequestSuccess.bind(this),
         });
-        this.searchCompletionTimer = 0;
-        this.lastSearchCompletionRequest = "";
     },
 
     loadWordFromCurrentUri: function()
@@ -631,6 +634,39 @@ var Graph = new Class({
 
     onSearchKeydown: function(event)
     {
+        var key = event.charCode || event.keyCode;
+
+        if (key == 38 || key == 40 || key == 27)
+        {
+            event.preventDefault();
+
+            if (this.searchSuggestionSelection >= 0)
+                this.wordSuggesiontsElement.children[this.searchSuggestionSelection].removeClass("selected");
+
+            switch (key)
+            {
+            case 27: /* esc */
+                this.searchSuggestionSelection = -1;
+                break;
+            case 38: /* up */
+                if (this.searchSuggestionSelection != -1)
+                    this.searchSuggestionSelection--;
+                break;
+            case 40: /* down */
+                if (this.searchSuggestionSelection != this.wordSuggesiontsElement.childElementCount - 1)
+                    this.searchSuggestionSelection++;
+                break;
+            }
+
+            if (this.searchSuggestionSelection >= 0)
+            {
+                this.wordSuggesiontsElement.children[this.searchSuggestionSelection].addClass("selected");
+                this.wordInputField.value = this.searchSuggestions[this.searchSuggestionSelection];
+            }
+
+            return;
+        }
+
         clearTimeout(this.searchCompletionDelay);
         this.searchCompletionRequest.cancel();
 
@@ -661,6 +697,9 @@ var Graph = new Class({
 
     showSearchCompletionsWords: function(words)
     {
+        this.searchSuggestions = words;
+        this.searchSuggestionSelection = -1;
+
         if (words.length == 0)
         {
             this.wordSuggesiontsElement.style.display = "none";

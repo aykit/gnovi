@@ -582,9 +582,9 @@ class DataExchanger
 
         $result = $this->db->query(
             "SELECT `Word`, COUNT(*) AS `Occurrences` FROM `Words` " .
-            "INNER JOIN `RunWords` ON `RunWords`.`WordID` = `Words`.`ID`" .
+            "LEFT JOIN `RunWords` ON `RunWords`.`WordID` = `Words`.`ID`" .
             "WHERE `Word` COLLATE utf8_unicode_ci LIKE '$escWord%'" .
-            "GROUP BY `Words`.`ID` ORDER BY `Occurrences` DESC LIMIT 10");
+            "GROUP BY `Words`.`ID` ORDER BY `Occurrences` DESC, `Word` ASC LIMIT 10");
         if (!$this->checkForDbError())
             return null;
 

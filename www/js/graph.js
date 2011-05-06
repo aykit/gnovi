@@ -649,7 +649,7 @@ var Graph = new Class({
                 this.searchSuggestionSelection = -1;
                 break;
             case 38: /* up */
-                if (this.searchSuggestionSelection != -1)
+                if (this.searchSuggestionSelection != 0)
                     this.searchSuggestionSelection--;
                 break;
             case 40: /* down */

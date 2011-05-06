@@ -196,6 +196,18 @@ input[type="submit"] {
         -webkit-border-radius: 8px;
 }
 
+#word_search_form {
+    position: relative;
+}
+
+#word_suggestions {
+    display: none;
+    border-style: solid;
+    border-width: 2px;
+    position: absolute;
+    top: 45px;
+    left: 80px;
+}
 
 /* CLASSES */
 

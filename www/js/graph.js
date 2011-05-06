@@ -38,6 +38,7 @@ var Graph = new Class({
         this.wordSearchForm = document.getElementById("word_search_form");
         this.wordInputField = document.getElementById("word_input");
         this.wordSubmitButton = document.getElementById("word_submit");
+        this.wordSuggesiontsElement = document.getElementById("word_suggestions");
         this.graphNotfoundElement = document.getElementById("graph_notfound");
         this.personalGrapLink = document.getElementById("personal_graph_link");
         this.globalGrapLink = document.getElementById("global_graph_link");
@@ -46,11 +47,19 @@ var Graph = new Class({
         this.globalViewButton = document.getElementById("global_view_button");
 
         this.wordSearchForm.addEventListener("submit", this.onSearchWordSubmit.bind(this), false);
+        this.wordInputField.addEventListener("keydown", this.onSearchKeydown.bind(this), false);
 
         this.personalViewButton.addEventListener("click", this.onPersonalViewClick.bind(this), false);
         this.globalViewButton.addEventListener("click", this.onGlobalViewClick.bind(this), false);
 
         this.setTimer("normalfps");
+
+        this.searchCompletionRequest = new Request.JSON({
+            url: "/php/data.php",
+            onSuccess: this.onSeachCompletionRequestSuccess.bind(this),
+        });
+        this.searchCompletionTimer = 0;
+        this.lastSearchCompletionRequest = "";
     },
 
     loadWordFromCurrentUri: function()
@@ -618,6 +627,55 @@ var Graph = new Class({
 
         this.loadView(this.wordInputField.value, this.viewTime, this.viewMode, false, true);
         this.wordInputField.value = "";
+    },
+
+    onSearchKeydown: function(event)
+    {
+        clearTimeout(this.searchCompletionDelay);
+        this.searchCompletionRequest.cancel();
+
+        this.searchCompletionDelay = (function ()
+        {
+            var word = this.wordInputField.value;
+
+            if (word == this.lastSearchCompletionRequest)
+                return;
+            this.lastSearchCompletionRequest = word;
+
+            if (word == "")
+            {
+                this.showSearchCompletionsWords([]);
+                return;
+            }
+
+            console.log("requesting: " + word)
+            this.searchCompletionRequest.setOptions({data: "cmd=searchcompletion&word=" + encodeURIComponent(word)});
+            this.searchCompletionRequest.send({method: "get"});
+        }).bind(this).delay(100);
+    },
+
+    onSeachCompletionRequestSuccess: function(response)
+    {
+        this.showSearchCompletionsWords(response.data);
+    },
+
+    showSearchCompletionsWords: function(words)
+    {
+        if (words.length == 0)
+        {
+            this.wordSuggesiontsElement.style.display = "none";
+            return;
+        }
+
+        this.wordSuggesiontsElement.style.display = "block";
+        this.wordSuggesiontsElement.empty();
+
+        words.each(function(word) {
+            var suggestionElement = new Element("li");
+            suggestionElement.appendText(word);
+
+            this.wordSuggesiontsElement.appendChild(suggestionElement);
+        }.bind(this));
     },
 
     onPersonalViewClick: function(event)

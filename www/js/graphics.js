@@ -90,11 +90,11 @@ var Graphics = new Class({
             }
 
             this.context.strokeStyle = "#7F7F7F";
-            this.context.fillStyle = markedFlags && markedFlags[i] ? "red" : "#7F7F7F";
+            this.context.fillStyle = "#7F7F7F";
             this._コード(x + wordOffsetX, y + wordOffsetY + 42, textWidth, 44, 12);
 
             this.context.fillStyle = "#FFFFFF";
-            this.context.fillText(wordList[i], x + wordOffsetX + textWidth/2, y + wordOffsetY + 70 );
+            this.context.fillText(markedFlags && markedFlags[i] ? wordList[i]+" *" : wordList[i], x + wordOffsetX + textWidth/2, y + wordOffsetY + 70 );
 
             wordOffsetX += textWidth + spacing;
         }
@@ -563,14 +563,21 @@ var GraphGraphics = new Class({
         var maxOccurrences = wordInfos[0].occurrences;
 
         var hotspots = [];
+        
+        this.context.font = "25px HeroRegular";
+ 
+        var rectWidth = Math.max(this.context.measureText(wordInfos[0].word).width + 30, 136);
+        hotspots.push({
+            x1: this.context.canvas.width / 2 - rectWidth/2,
+            y1: 85,
+            x2: this.context.canvas.width / 2 - rectWidth/2 + rectWidth,
+            y2: 85 + 44,
+        });
 
-        for (var i = 0; i < Math.min(8, wordInfos.length); i++)
-            hotspots.push({
-                x1: 0,
-                y1: 0,
-                x2: 0,
-                y2: 0,
-            });
+        var wordList = [];
+        for (var i = 1; i < Math.min(8, wordInfos.length); i++)
+            wordList.push(wordInfos[i].word);
+        hotspots = hotspots.combine(this._getWordBoxesHotspots(30, 100, 600, wordList, null));
         
         this.context.textAlign = "center";
               

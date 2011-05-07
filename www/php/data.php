@@ -594,7 +594,7 @@ class DataExchanger
             "SELECT `Word`, COUNT(*) AS `Occurrences` FROM `Words` " .
             "LEFT JOIN `RunWords` ON `RunWords`.`WordID` = `Words`.`ID`" .
             "WHERE `Word` COLLATE utf8_unicode_ci LIKE '$escWord%'" .
-            "GROUP BY `Words`.`ID` ORDER BY `Occurrences` DESC, `Word` ASC LIMIT 10");
+            "GROUP BY `Words`.`ID` ORDER BY `Occurrences` DESC, `Word` COLLATE utf8_unicode_ci ASC LIMIT 10");
         if (!$this->checkForDbError())
             return null;
 

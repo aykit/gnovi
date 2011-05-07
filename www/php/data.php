@@ -130,15 +130,25 @@ class DataExchanger
         }
     }
 
-    protected function getConnotation($wordId)
+    protected function getConnotation($wordId, $userId, $time)
     {
         if (!$this->connectDb())
             return null;
 
         $intWordId = (int)$wordId;
+        $intTime = (int)$time;
+        $intUserId = (int)$userId;
 
-        $result = $this->db->query("SELECT AVG(`Connotation`) AS `AverageConnotation`" . 
-            "FROM `RunWords` `WordID` = '$wordId' GROUP BY `WordID`");
+        $filter = "`WordID` = '$wordId'";
+        if ($intTime > 0)
+            $filter .= " AND `Time` <= '$intTime'";
+
+        if ($intUserId > 0)
+             $filter .= " AND `UserID` = '$intUserId'";
+
+        $result = $this->db->query("SELECT AVG(`Connotation`) AS `AverageConnotation` FROM `RunWords` " .
+            "INNER JOIN `Runs` ON `Runs`.`ID` = `RunWords`.`RunID` " .
+            "WHERE $filter GROUP BY `WordID`");
         if (!$this->checkForDbError())
             return null;
 
@@ -540,7 +550,7 @@ class DataExchanger
         if ($wordInfo === null)
             return null;
 
-        $wordInfo["connotation"] = $this->getConnotation($wordInfo["id"]);
+        $wordInfo["connotation"] = $this->getConnotation($wordInfo["id"], $viewMode == "all" ? 0 : $this->userId, $time);
 
         $relations = $this->getRelations($wordInfo["id"], $viewMode == "all" ? 0 : $this->userId, $time, 10, 0);
         if ($relations === null)

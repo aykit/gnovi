@@ -45,8 +45,8 @@ var Graph = new Class({
         this.wordSubmitButton = document.getElementById("word_submit");
         this.wordSuggesiontsElement = document.getElementById("word_suggestions");
         this.graphNotfoundElement = document.getElementById("graph_notfound");
-        this.personalGrapLink = document.getElementById("personal_graph_link");
-        this.globalGrapLink = document.getElementById("global_graph_link");
+        this.personalGraphLink = document.getElementById("personal_graph_link");
+        this.globalGraphLink = document.getElementById("global_graph_link");
 
         this.personalViewButton = document.getElementById("personal_view_button");
         this.globalViewButton = document.getElementById("global_view_button");
@@ -133,7 +133,7 @@ var Graph = new Class({
         {
             var title = "Graph - " + this.viewWord;
 
-            var path = this.viewMode == "all" ? this.globalGrapLink.href : this.personalGrapLink.href;
+            var path = this.viewMode == "all" ? this.globalGraphLink.href : this.personalGraphLink.href;
             if (this.viewWord != "" || this.viewTime != 0)
                 path += "/" + encodeURIComponent(this.viewWord);
             if (this.viewTime != 0)

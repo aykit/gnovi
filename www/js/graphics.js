@@ -787,20 +787,22 @@ var GraphGraphics = new Class({
             
             var nodewidth = this.context.measureText(node.word).width;
 
+            if (node.connotation !== null)
+            {
+                this.context.beginPath();
+                this.context.moveTo(Math.round(posX)-nodewidth/2, Math.round(posY)+46);
+                this.context.lineTo(Math.round(posX)+nodewidth/2, Math.round(posY)+46);
+                this.context.strokeStyle = Graphics._rgba(0xa7, 0xcf, 0x4a, alpha);;
+                this.context.lineWidth = 4;
+                this.context.stroke();
 
-            this.context.beginPath();
-            this.context.moveTo(Math.round(posX)-nodewidth/2, Math.round(posY)+46);
-            this.context.lineTo(Math.round(posX)+nodewidth/2, Math.round(posY)+46);
-            this.context.strokeStyle = Graphics._rgba(0xa7, 0xcf, 0x4a, alpha);;
-            this.context.lineWidth = 4;
-            this.context.stroke();
-            
-            this.context.beginPath();
-            this.context.moveTo(Math.round(posX)-nodewidth/2, Math.round(posY)+46);
-            this.context.lineTo(Math.round(posX)-((node.connotation*nodewidth) / 2), Math.round(posY)+46);
-            this.context.strokeStyle = Graphics._rgba(0xff, 0x00, 0x00, alpha);;
-            this.context.lineWidth = 4;
-            this.context.stroke();
+                this.context.beginPath();
+                this.context.moveTo(Math.round(posX)-nodewidth/2, Math.round(posY)+46);
+                this.context.lineTo(Math.round(posX)-((node.connotation*nodewidth) / 2), Math.round(posY)+46);
+                this.context.strokeStyle = Graphics._rgba(0xff, 0x00, 0x00, alpha);;
+                this.context.lineWidth = 4;
+                this.context.stroke();
+            }
         }
         else
         {
